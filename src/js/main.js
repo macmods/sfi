@@ -18,6 +18,8 @@ require([
   var trailsLayer = new FeatureLayer({
     url:
       "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0",
+      visible: false,
+
   });
   // add layer
   map.add(trailsLayer, 0);
@@ -31,6 +33,7 @@ require([
   // add layer
   map.add(parksLayer, 0);
 
+  // Data Layer 1 
   var parksLayerToggle = document.getElementById("streetsLayer");
 
   /*****************************************************************
@@ -42,4 +45,20 @@ require([
   parksLayerToggle.addEventListener("change", function () {
     parksLayer.visible = parksLayerToggle.checked;
   });
+
+  // Data Layer 2
+  var trailsLayerToggle = document.getElementById("trailsLayer");
+
+  trailsLayerToggle.addEventListener("change", function () {
+    trailsLayer.visible = trailsLayerToggle.checked;
+  });
+
+  // TODO: ADD 6 Layers 
+  // 1. Kelp Productivity Map (B) 
+  // 2. Bathymetry (OC) 
+  // 3. Distance to Port (OC) 
+  // 4. Shipping Lanes (MSP) 
+  // 5. Danger Zones and Restricted Areas (MSP) 
+  // 6. MPA Inventory (MSP) 
+
 });

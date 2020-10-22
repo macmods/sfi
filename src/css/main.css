@@ -20,6 +20,10 @@ h1 {
   line-height: 50px;
 }
 
+li{
+  margin: 10px;
+}
+
 #layerToggle {
   top: 60px;
   right: 20px;
