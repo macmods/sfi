@@ -1,3 +1,5 @@
+//import { kelpProductivityLayerUrl, shippingLanesLayerUrl } from './config.js';
+
 require([
   // mapping
   "esri/Map",
@@ -13,42 +15,64 @@ require([
   // widgets
   Legend
 ) {
-  // Trails feature layer (lines)
-  const trailsLayer = new FeatureLayer({
-    url:
-      "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0",
-    visible: false,
+  // Kelp productivity layer
+  const kelpProductivityLayer = new FeatureLayer({
+    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0",
+    visible: false
   });
 
-  // Parks and open spaces (polygons)
-  const parksLayer = new FeatureLayer({
-    url:
-      "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space/FeatureServer/0",
-    visible: false,
+  // Shipping lanes layer
+  const shippingLanesLayer = new FeatureLayer({
+    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1",
+    visible: false
+  });
+
+  // Danger zones and restricted areas layer
+  const dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
+    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0",
+    visible: false
+  });
+
+  // MPA inventory layer
+  const mpaInventoryLayer = new FeatureLayer({
+    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0",
+    visible: false
   });
 
   const map = new Map({
     basemap: "topo-vector",
-    layers: [trailsLayer, parksLayer],
+    layers: [kelpProductivityLayer, shippingLanesLayer, dangerZonesAndRestrictedAreasLayer, mpaInventoryLayer]
   });
 
   const view = new MapView({
     container: "viewDiv",
     map: map,
     center: [-118.805, 34.027], // longitude, latitude
-    zoom: 13,
+    zoom: 13
   });
 
-  // Toggle function of Layer 1
-  const parksLayerToggle = document.getElementById("parksLayer");
-  parksLayerToggle.addEventListener("change", function () {
-    parksLayer.visible = parksLayerToggle.checked;
+  // Toggle function of kelp productivity layer
+  const kelpProductivityLayerToggle = document.getElementById("kelpProductivityLayer");
+  kelpProductivityLayerToggle.addEventListener("change", function () {
+    kelpProductivityLayer.visible = kelpProductivityLayerToggle.checked;
   });
 
-  // Toggle function of Layer 2
-  const trailsLayerToggle = document.getElementById("trailsLayer");
-  trailsLayerToggle.addEventListener("change", function () {
-    trailsLayer.visible = trailsLayerToggle.checked;
+  // Toggle function of shipping lanes layer
+  const shippingLanesLayerToggle = document.getElementById("shippingLanesLayer");
+  shippingLanesLayerToggle.addEventListener("change", function () {
+    shippingLanesLayer.visible = shippingLanesLayerToggle.checked;
+  });
+
+  // Toggle function of danger zones and restricted areas layer
+  const dangerZonesAndRestrictedAreasLayerToggle = document.getElementById("dangerZonesAndRestrictedAreasLayer");
+  dangerZonesAndRestrictedAreasLayerToggle.addEventListener("change", function () {
+    dangerZonesAndRestrictedAreasLayer.visible = dangerZonesAndRestrictedAreasLayerToggle.checked;
+  });
+
+  // Toggle function of MPA inventory layer
+  const mpaInventoryLayerToggle = document.getElementById("mpaInventoryLayer");
+  mpaInventoryLayerToggle.addEventListener("change", function () {
+    mpaInventoryLayer.visible = mpaInventoryLayerToggle.checked;
   });
 
   view.when(function () {
@@ -56,14 +80,22 @@ require([
       view: view,
       layerInfos: [
         {
-          layer: trailsLayer,
-          title: "Trails",
+          layer: kelpProductivityLayer,
+          title: "Kelp Productivity"
         },
         {
-          layer: parksLayer,
-          title: "Parks",
+          layer: shippingLanesLayer,
+          title: "Shipping Lanes"
         },
-      ],
+        {
+          layer: dangerZonesAndRestrictedAreasLayer,
+          title: "Danger Zones and Restricted Areas"
+        },
+        {
+          layer: mpaInventoryLayer,
+          title: "MPA Inventory"
+        }
+      ]
     });
     // Add widget to the bottom right corner of the view
     view.ui.add(legend, "bottom-right");
