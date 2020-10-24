@@ -1,7 +1,8 @@
 // This nav.js file contains functions needed for controlling the navigation bar 
 // including the buttons for toggling on and off each feature
 
-function myFunction(a) {
+
+function navButton(a) {
     if (a == "layer-toggle") {
         var x = document.getElementById("layerToggle"); //layerToggle is the id of widget 
         if (x.style.display === "none") {
