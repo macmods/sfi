@@ -84,7 +84,7 @@ require([
     container: "viewDiv",
     map: map,
     center: [-118.805, 34.027], // longitude, latitude
-    zoom: 13
+    zoom: 9
   });
 
   // Toggle function of kelp productivity layer

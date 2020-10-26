@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
     <title>Seaweed Farming Index</title>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.17/esri/themes/light/main.css">
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.17/esri/themes/light/main.css"
+    />
     <script src="https://js.arcgis.com/4.17/"></script>
     <script src="js/main.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/nav.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
   </head>
 
   <body>
     <h1>Seaweed Farming Index</h1>
+
+    <div class="navbar">
+      <button id="layer-toggle" onclick="navButton('layer-toggle')">
+        <input id="icons" type="image" src="images/nav-layer-toggle.png" />
+      </button>
+      <button id="sfi-calc" onclick="navButton('sfi-calc')">
+        <input id="icons" type="image" src="images/nav-sfi-calc.png" />
+      </button>
+      <button id="report-sfi" onclick="navButton('report-sfi')">
+        <input id="icons" type="image" src="images/nav-report.png" />
+      </button>
+    </div>
+
     <div id="viewDiv"></div>
-    <ul style="list-style-type:none;">
+    <ul style="list-style-type: none">
       <span id="layerToggle" class="esri-widget">
         <li><input type="checkbox" id="kelpProductivityLayer"/> Kelp Productivity </li>
         <li><input type="checkbox" id="federalAndStateWatersLayer"/> Federal and State Waters </li>
@@ -23,7 +42,5 @@
         <li><input type="checkbox" id="mpaInventoryLayer"/> MPA Inventory </li>
       </span>
     </ul>
-
   </body>
-
 </html>
