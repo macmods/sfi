@@ -66,7 +66,9 @@ require([
   // Shipping lanes layer
   const shippingLanesLayer = new FeatureLayer({
     url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1",
-    visible: false
+    visible: false,
+    definitionExpression: "(OBJECTID < 3 OR " +
+                          "OBJECTID > 4)"
   });
 
   // Danger zones and restricted areas layer
@@ -78,7 +80,12 @@ require([
   // MPA inventory layer
   const mpaInventoryLayer = new FeatureLayer({
     url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0",
-    visible: false
+    visible: false,
+    definitionExpression: "(OBJECTID < 20 OR " +
+                          "OBJECTID > 49 AND "+
+                          "OBJECTID < 54 OR " +
+                          "OBJECTID > 54 AND " +
+                          "OBJECTID < 94)"
   });
 
   const map = new Map({
