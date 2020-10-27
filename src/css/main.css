@@ -28,21 +28,7 @@ h1 {
   position: absolute;
 }
 
-#layer-toggle {
-  border: none;
-  background: none;
-  max-height: 15px;
-  width: auto;
-}
-
-#sfi-calc {
-  border: none;
-  background: none;
-  max-height: 15px;
-  width: auto;
-}
-
-#report-sfi {
+.nav-button {
   border: none;
   background: none;
   max-height: 15px;
@@ -61,7 +47,7 @@ li {
 }
 
 #layerToggle {
-  top: 60px;
+  top: 140px;
   right: 20px;
   position: absolute;
   z-index: 99;
@@ -69,4 +55,8 @@ li {
   border-radius: 8px;
   padding: 10px;
   opacity: 0.75;
+}
+
+.esri-menu__list-item {
+  padding: 0px;
 }

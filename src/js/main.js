@@ -7,14 +7,20 @@ require([
   "esri/layers/FeatureLayer",
   // widgets
   "esri/widgets/Legend",
+  "esri/widgets/Search"
 ], function (
   // mapping
   Map,
   MapView,
   FeatureLayer,
   // widgets
-  Legend
+  Legend,
+  Search
 ) {
+
+  /****************************************************
+  * Initialize the map
+  ****************************************************/
   // Display kelp productivity with the heat map mode
   const renderer = {
     type: "heatmap",
@@ -87,6 +93,9 @@ require([
     zoom: 9
   });
 
+  /****************************************************
+  * Initialize the listeners
+  ****************************************************/
   // Toggle function of kelp productivity layer
   const kelpProductivityLayerToggle = document.getElementById("kelpProductivityLayer");
   kelpProductivityLayerToggle.addEventListener("change", function () {
@@ -125,6 +134,10 @@ require([
     mpaInventoryLayer.visible = mpaInventoryLayerToggle.checked;
   });
 
+  /****************************************************
+  * Define the UI
+  ****************************************************/
+  // Widget #1: Legend
   view.when(function () {
     var legend = new Legend({
       view: view,
@@ -155,9 +168,13 @@ require([
         }
       ]
     });
-    // Add widget to the bottom right corner of the view
+
     view.ui.add(legend, "bottom-right");
   });
+
+  // widget #2: Search
+  const searchWidget = new Search({view});
+  view.ui.add(searchWidget, "top-right");
 
   // TODO: ADD 6 Layers
   // 1. Kelp Productivity Map (B)
