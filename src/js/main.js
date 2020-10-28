@@ -7,7 +7,7 @@ require([
   "esri/layers/FeatureLayer",
   // widgets
   "esri/widgets/Legend",
-  "esri/widgets/Search"
+  "esri/widgets/Search",
 ], function (
   // mapping
   Map,
@@ -17,36 +17,73 @@ require([
   Legend,
   Search
 ) {
-
   /****************************************************
-  * Initialize the map
-  ****************************************************/
-  // Display kelp productivity with the heat map mode
-  const renderer = {
-    type: "heatmap",
-    colorStops: [
-      { color: "rgba(63, 40, 102, 0)", ratio: 0 },
-      { color: "#472b77", ratio: 0.083 },
-      { color: "#4e2d87", ratio: 0.166 },
-      { color: "#563098", ratio: 0.249 },
-      { color: "#5d32a8", ratio: 0.332 },
-      { color: "#6735be", ratio: 0.415 },
-      { color: "#7139d4", ratio: 0.498 },
-      { color: "#7b3ce9", ratio: 0.581 },
-      { color: "#853fff", ratio: 0.664 },
-      { color: "#a46fbf", ratio: 0.747 },
-      { color: "#c29f80", ratio: 0.83 },
-      { color: "#e0cf40", ratio: 0.913 },
-      { color: "#ffff00", ratio: 1 }
-    ],
-    maxPixelIntensity: 10,
-    minPixelIntensity: 0
+   * Initialize the map
+   ****************************************************/
+  // Display kelp productivity with simple renderer
+  const referenceScale = 900000;
+
+  const kelpProductivityRenderer = {
+    type: "simple", // autocasts as new SimpleRenderer()
+    symbol: {
+      type: "simple-marker",
+      size: 6,
+      color: "black",
+      outline: {
+        width: 0,
+        color: "white"
+      }
+    },
+    visualVariables: [
+      {
+        type: "size",
+        field: "biomass",
+        minDataValue: 0,
+        maxDataValue: 5.5,
+        minSize: {
+          type: "size",
+          valueExpression: "$view.scale",
+          // adjust the min size by scale
+          stops: [
+            { value: referenceScale, size: 8 },
+            { value: referenceScale * 2, size: 6 },
+            { value: referenceScale * 4, size: 4 },
+            { value: referenceScale * 8, size: 2 }
+          ]
+        },
+        maxSize: {
+          type: "size",
+          valueExpression: "$view.scale",
+          // adjust the max size by scale
+          stops: [
+            { value: referenceScale, size: 40 },
+            { value: referenceScale * 2, size: 30 },
+            { value: referenceScale * 4, size: 20 },
+            { value: referenceScale * 8, size: 10 }
+          ]
+        }
+      },
+      {
+        type: "color",
+        field: "biomass",
+        stops: [
+          { value: 0.0, color: "#BFF3C6", opacity: 0.2},
+          { value: 1.5, color: "#73D191", opacity: 0.2},
+          { value: 3.0, color: "#27B05D", opacity: 0.2},
+          { value: 4.5, color: "#1C7F43", opacity: 0.2},
+          { value: 5.5, color: "#124F29", opacity: 0.2}
+        ]
+      }
+    ]
   };
+  
   // Kelp productivity layer
   const kelpProductivityLayer = new FeatureLayer({
-    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0",
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0",
     visible: false,
-    renderer: renderer
+    renderer: kelpProductivityRenderer,
+    minScale: 9000000 // map scale at which layer becomes invisible
   });
 
   /*
@@ -59,52 +96,65 @@ require([
 
   // Federal and state waters layer
   const federalAndStateWatersLayer = new FeatureLayer({
-    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
-    visible: false
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
+    visible: false,
   });
 
   // Shipping lanes layer
   const shippingLanesLayer = new FeatureLayer({
-    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1",
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1",
     visible: false,
-    definitionExpression: "(OBJECTID < 3 OR " +
-                          "OBJECTID > 4)"
+    definitionExpression: "(OBJECTID < 3 OR " + "OBJECTID > 4)",
   });
 
   // Danger zones and restricted areas layer
   const dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
-    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0",
-    visible: false
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0",
+    visible: false,
   });
 
   // MPA inventory layer
   const mpaInventoryLayer = new FeatureLayer({
-    url: "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0",
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0",
     visible: false,
-    definitionExpression: "(OBJECTID < 20 OR " +
-                          "OBJECTID > 49 AND "+
-                          "OBJECTID < 54 OR " +
-                          "OBJECTID > 54 AND " +
-                          "OBJECTID < 94)"
+    definitionExpression:
+      "(OBJECTID < 20 OR " +
+      "OBJECTID > 49 AND " +
+      "OBJECTID < 54 OR " +
+      "OBJECTID > 54 AND " +
+      "OBJECTID < 94)",
   });
 
   const map = new Map({
     basemap: "topo-vector",
-    layers: [kelpProductivityLayer, /*bathymetryLayer,*/ federalAndStateWatersLayer, shippingLanesLayer, dangerZonesAndRestrictedAreasLayer, mpaInventoryLayer]
+    layers: [
+      kelpProductivityLayer,
+      /*bathymetryLayer,*/ federalAndStateWatersLayer,
+      shippingLanesLayer,
+      dangerZonesAndRestrictedAreasLayer,
+      mpaInventoryLayer,
+    ],
   });
 
   const view = new MapView({
     container: "viewDiv",
     map: map,
     center: [-118.805, 34.027], // longitude, latitude
-    zoom: 9
+    zoom: 9,
+    scale: referenceScale * 4
   });
 
   /****************************************************
-  * Initialize the listeners
-  ****************************************************/
+   * Initialize the listeners
+   ****************************************************/
   // Toggle function of kelp productivity layer
-  const kelpProductivityLayerToggle = document.getElementById("kelpProductivityLayer");
+  const kelpProductivityLayerToggle = document.getElementById(
+    "kelpProductivityLayer"
+  );
   kelpProductivityLayerToggle.addEventListener("change", function () {
     kelpProductivityLayer.visible = kelpProductivityLayerToggle.checked;
   });
@@ -118,22 +168,33 @@ require([
   */
 
   // Toggle function of federal and state waters layer
-  const federalAndStateWatersLayerToggle = document.getElementById("federalAndStateWatersLayer");
+  const federalAndStateWatersLayerToggle = document.getElementById(
+    "federalAndStateWatersLayer"
+  );
   federalAndStateWatersLayerToggle.addEventListener("change", function () {
-    federalAndStateWatersLayer.visible = federalAndStateWatersLayerToggle.checked;
+    federalAndStateWatersLayer.visible =
+      federalAndStateWatersLayerToggle.checked;
   });
 
   // Toggle function of shipping lanes layer
-  const shippingLanesLayerToggle = document.getElementById("shippingLanesLayer");
+  const shippingLanesLayerToggle = document.getElementById(
+    "shippingLanesLayer"
+  );
   shippingLanesLayerToggle.addEventListener("change", function () {
     shippingLanesLayer.visible = shippingLanesLayerToggle.checked;
   });
 
   // Toggle function of danger zones and restricted areas layer
-  const dangerZonesAndRestrictedAreasLayerToggle = document.getElementById("dangerZonesAndRestrictedAreasLayer");
-  dangerZonesAndRestrictedAreasLayerToggle.addEventListener("change", function () {
-    dangerZonesAndRestrictedAreasLayer.visible = dangerZonesAndRestrictedAreasLayerToggle.checked;
-  });
+  const dangerZonesAndRestrictedAreasLayerToggle = document.getElementById(
+    "dangerZonesAndRestrictedAreasLayer"
+  );
+  dangerZonesAndRestrictedAreasLayerToggle.addEventListener(
+    "change",
+    function () {
+      dangerZonesAndRestrictedAreasLayer.visible =
+        dangerZonesAndRestrictedAreasLayerToggle.checked;
+    }
+  );
 
   // Toggle function of MPA inventory layer
   const mpaInventoryLayerToggle = document.getElementById("mpaInventoryLayer");
@@ -142,8 +203,8 @@ require([
   });
 
   /****************************************************
-  * Define the UI
-  ****************************************************/
+   * Define the UI
+   ****************************************************/
   // Widget #1: Legend
   view.when(function () {
     var legend = new Legend({
@@ -151,7 +212,7 @@ require([
       layerInfos: [
         {
           layer: kelpProductivityLayer,
-          title: "Kelp Productivity"
+          title: "Kelp Productivity",
         },
         /*{
           layer: bathymetryLayer,
@@ -159,28 +220,28 @@ require([
         },*/
         {
           layer: federalAndStateWatersLayer,
-          title: "Federal and State Waters"
+          title: "Federal and State Waters",
         },
         {
           layer: shippingLanesLayer,
-          title: "Shipping Lanes"
+          title: "Shipping Lanes",
         },
         {
           layer: dangerZonesAndRestrictedAreasLayer,
-          title: "Danger Zones and Restricted Areas"
+          title: "Danger Zones and Restricted Areas",
         },
         {
           layer: mpaInventoryLayer,
-          title: "MPA Inventory"
-        }
-      ]
+          title: "MPA Inventory",
+        },
+      ],
     });
 
     view.ui.add(legend, "bottom-right");
   });
 
   // widget #2: Search
-  const searchWidget = new Search({view});
+  const searchWidget = new Search({ view });
   view.ui.add(searchWidget, "top-right");
 
   // TODO: ADD 6 Layers
