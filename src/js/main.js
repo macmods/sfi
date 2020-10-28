@@ -8,6 +8,7 @@ require([
   // widgets
   "esri/widgets/Legend",
   "esri/widgets/Search",
+  "esri/widgets/Expand",
 ], function (
   // mapping
   Map,
@@ -15,7 +16,8 @@ require([
   FeatureLayer,
   // widgets
   Legend,
-  Search
+  Search,
+  Expand
 ) {
   /****************************************************
    * Initialize the map
@@ -31,8 +33,8 @@ require([
       color: "black",
       outline: {
         width: 0,
-        color: "white"
-      }
+        color: "white",
+      },
     },
     visualVariables: [
       {
@@ -40,50 +42,53 @@ require([
         field: "biomass",
         minDataValue: 0,
         maxDataValue: 5.5,
+        legendOptions: {
+          showLegend: false,
+        },
         minSize: {
           type: "size",
           valueExpression: "$view.scale",
           // adjust the min size by scale
           stops: [
-            { value: referenceScale, size: 8 },
-            { value: referenceScale * 2, size: 6 },
-            { value: referenceScale * 4, size: 4 },
-            { value: referenceScale * 8, size: 2 }
-          ]
+            { value: referenceScale, size: 5 },
+            { value: referenceScale * 2, size: 4 },
+            { value: referenceScale * 4, size: 3 },
+            { value: referenceScale * 6, size: 2 },
+          ],
         },
         maxSize: {
           type: "size",
           valueExpression: "$view.scale",
           // adjust the max size by scale
           stops: [
-            { value: referenceScale, size: 40 },
-            { value: referenceScale * 2, size: 30 },
-            { value: referenceScale * 4, size: 20 },
-            { value: referenceScale * 8, size: 10 }
-          ]
-        }
+            { value: referenceScale, size: 35 },
+            { value: referenceScale * 2, size: 20 },
+            { value: referenceScale * 4, size: 8 },
+            { value: referenceScale * 6, size: 2 },
+          ],
+        },
       },
       {
         type: "color",
         field: "biomass",
         stops: [
-          { value: 0.0, color: "#BFF3C6", opacity: 0.2},
-          { value: 1.5, color: "#73D191", opacity: 0.2},
-          { value: 3.0, color: "#27B05D", opacity: 0.2},
-          { value: 4.5, color: "#1C7F43", opacity: 0.2},
-          { value: 5.5, color: "#124F29", opacity: 0.2}
-        ]
-      }
-    ]
+          { value: 0.0, color: "#BFF3C6", opacity: 0.15 },
+          { value: 1.5, color: "#73D191", opacity: 0.15 },
+          { value: 3.0, color: "#27B05D", opacity: 0.15 },
+          { value: 4.5, color: "#1C7F43", opacity: 0.15 },
+          { value: 5.5, color: "#124F29", opacity: 0.15 },
+        ],
+      },
+    ],
   };
-  
+
   // Kelp productivity layer
   const kelpProductivityLayer = new FeatureLayer({
     url:
       "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0",
     visible: false,
     renderer: kelpProductivityRenderer,
-    minScale: 9000000 // map scale at which layer becomes invisible
+    minScale: 9000000, // map scale at which layer becomes invisible
   });
 
   /*
@@ -145,7 +150,7 @@ require([
     map: map,
     center: [-118.805, 34.027], // longitude, latitude
     zoom: 9,
-    scale: referenceScale * 4
+    scale: referenceScale * 4,
   });
 
   /****************************************************
@@ -207,37 +212,40 @@ require([
    ****************************************************/
   // Widget #1: Legend
   view.when(function () {
-    var legend = new Legend({
+    const legend = new Expand({
+      content: new Legend({
+        view: view,
+        layerInfos: [
+          {
+            layer: kelpProductivityLayer,
+            title: "Kelp Productivity",
+          },
+          /*{
+            layer: bathymetryLayer,
+            title: "Bathymetry"
+          },*/
+          {
+            layer: federalAndStateWatersLayer,
+            title: "Federal and State Waters",
+          },
+          {
+            layer: shippingLanesLayer,
+            title: "Shipping Lanes",
+          },
+          {
+            layer: dangerZonesAndRestrictedAreasLayer,
+            title: "Danger Zones and Restricted Areas",
+          },
+          {
+            layer: mpaInventoryLayer,
+            title: "MPA Inventory",
+          },
+        ],
+      }),
       view: view,
-      layerInfos: [
-        {
-          layer: kelpProductivityLayer,
-          title: "Kelp Productivity",
-        },
-        /*{
-          layer: bathymetryLayer,
-          title: "Bathymetry"
-        },*/
-        {
-          layer: federalAndStateWatersLayer,
-          title: "Federal and State Waters",
-        },
-        {
-          layer: shippingLanesLayer,
-          title: "Shipping Lanes",
-        },
-        {
-          layer: dangerZonesAndRestrictedAreasLayer,
-          title: "Danger Zones and Restricted Areas",
-        },
-        {
-          layer: mpaInventoryLayer,
-          title: "MPA Inventory",
-        },
-      ],
+      expanded: true,
     });
-
-    view.ui.add(legend, "bottom-right");
+    view.ui.add(legend, "top-left");
   });
 
   // widget #2: Search
