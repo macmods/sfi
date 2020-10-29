@@ -4,26 +4,33 @@
 
 function navButton(selectedButton) {
     if (selectedButton == "layer-toggle") {
-        var x = document.getElementById("layerToggle"); //layerToggle is the id of widget 
-        if (x.style.display === "none") {
-          x.style.display = "block";
-        } else {
-          x.style.display = "none";
-        }
+      toggleOn("layer-toggle");
     } else if (selectedButton == "sfi-calc") {
-        var x = document.getElementById("sfiCalc"); // TODO: Need to implement feature and name widget id to sfiCalc
-        if (x.style.display === "none") {
-          x.style.display = "block";
-        } else {
-          x.style.display = "none";
-        }
+      toggleOn("sfi-calc");
     } else if (selectedButton == "report-sfi") {
-        var x = document.getElementById("reportSfi"); // TODO: Need to implement feature and name widget id to reportSfi
-        if (x.style.display === "none") {
-          x.style.display = "block";
-        } else {
-          x.style.display = "none";
-        }
+      toggleOn("report-sfi");
     }
-    
+
   }
+
+function toggleOn(selectedButton) {
+const layerToggle = document.getElementById("layerToggle"); //layerToggle is the id of widget 
+const sfiCalc = document.getElementById("sfiCalc"); // TODO: Need to implement feature and name widget id to sfiCalc
+const reportSfi = document.getElementById("reportSfi"); // TODO: Need to implement feature and name widget id to reportSfi
+layerToggle.style.display = "none";
+sfiCalc.style.display = "none";
+reportSfi.style.display = "none";
+switch(selectedButton) {
+  case "layer-toggle":
+    layerToggle.style.display = "block";
+    break;
+  case "sfi-calc":
+    sfiCalc.style.display = "block";
+    break;
+  case "report-sfi":
+    reportSfi.style.display = "block";
+    break;
+  default:
+    break;
+}
+}

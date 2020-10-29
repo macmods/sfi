@@ -34,7 +34,7 @@
 
     <div id="viewDiv"></div>
     <ul style="list-style-type: none">
-      <span id="layerToggle" class="esri-widget">
+      <span id="layerToggle" class="esri-widget" style = "display: none">
         <li><input type="checkbox" id="kelpProductivityLayer"/> Kelp Productivity </li>
         <li><input type="checkbox" id="federalAndStateWatersLayer"/> Federal and State Waters </li>
         <li><input type="checkbox" id="shippingLanesLayer"/> Shipping Lanes </li>
@@ -42,5 +42,17 @@
         <li><input type="checkbox" id="mpaInventoryLayer"/> MPA Inventory </li>
       </span>
     </ul>
+
+    <!-- User Input Query SFI -->
+    <div id="sfiCalc" class="esri-widget" style = "display: none">
+      Water Area: Only State, Both, Only Federal:
+      <div id="waterSlider" class="slider"></div>
+      <button id="query-sfi" class="esri-widget">Query Seaweed Farming Index</button>
+      <div id="results" class="esri-widget"></div>
+    </div>
+
+    <!-- Report SFI -->
+    <div id="reportSfi" class="esri-widget" style = "display: none">
+    </div>
   </body>
 </html>
