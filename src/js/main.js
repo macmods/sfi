@@ -9,6 +9,7 @@ require([
   "esri/widgets/Legend",
   "esri/widgets/Search",
   "esri/widgets/Expand",
+  "esri/widgets/Slider",
 ], function (
   // mapping
   Map,
@@ -17,7 +18,8 @@ require([
   // widgets
   Legend,
   Search,
-  Expand
+  Expand,
+  Slider
 ) {
   /****************************************************
    * Initialize the map
@@ -100,7 +102,7 @@ require([
   */
 
   // Federal and state waters layer
-  const federalAndStateWatersLayer = new FeatureLayer({
+  var federalAndStateWatersLayer = new FeatureLayer({
     url:
       "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
     visible: false,
@@ -251,6 +253,69 @@ require([
   // widget #2: Search
   const searchWidget = new Search({ view });
   view.ui.add(searchWidget, "top-right");
+
+  // User Input
+
+  // water slider
+  const waterSlider = new Slider({
+    container: "waterSlider",
+    min: 0,
+    max: 2,
+    steps: 1,
+    values: [1],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const minOCDepthSlider = new Slider({
+    container: "minOCDepthSlider",
+    min: 0,
+    max: 2,
+    steps: 1,
+    values: [1],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const maxOCDepthSlider = new Slider({
+    container: "maxOCDepthSlider",
+    min: 10,
+    max: 10000,
+    steps: 10,
+    values: [10],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const wtrSlider = new Slider({
+    container: "maxOCToPortSlider",
+    min: 10,
+    max: 10000,
+    steps: 10,
+    values: [10000],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const weightingFactor = new Slider({
+    container: "weightingFactor",
+    min: 0,
+    max: 1,
+    steps: 1,
+    values: [0],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
 
   // TODO: ADD 6 Layers
   // 1. Kelp Productivity Map (B)

@@ -36,7 +36,7 @@ h1 {
   width: auto;
 }
 
-#icons{
+#icons {
   max-height: 30px;
   width: auto;
 }
@@ -61,7 +61,6 @@ li {
 .esri-menu__list-item {
   padding: 0px;
 }
-
 
 #sfiCalc {
   top: 140px;

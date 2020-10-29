@@ -21,38 +21,65 @@
     <h1>Seaweed Farming Index</h1>
 
     <div class="navbar">
-      <button id="layer-toggle" class="nav-button" onclick="navButton('layer-toggle')">
+      <button
+        id="layer-toggle"
+        class="nav-button"
+        onclick="navButton('layer-toggle')"
+      >
         <input id="icons" type="image" src="images/nav-layer-toggle.png" />
       </button>
       <button id="sfi-calc" class="nav-button" onclick="navButton('sfi-calc')">
         <input id="icons" type="image" src="images/nav-sfi-calc.png" />
       </button>
-      <button id="report-sfi" class="nav-button" onclick="navButton('report-sfi')">
+      <button
+        id="report-sfi"
+        class="nav-button"
+        onclick="navButton('report-sfi')"
+      >
         <input id="icons" type="image" src="images/nav-report.png" />
       </button>
     </div>
 
     <div id="viewDiv"></div>
     <ul style="list-style-type: none">
-      <span id="layerToggle" class="esri-widget" style = "display: none">
-        <li><input type="checkbox" id="kelpProductivityLayer"/> Kelp Productivity </li>
-        <li><input type="checkbox" id="federalAndStateWatersLayer"/> Federal and State Waters </li>
-        <li><input type="checkbox" id="shippingLanesLayer"/> Shipping Lanes </li>
-        <li><input type="checkbox" id="dangerZonesAndRestrictedAreasLayer"/> Danger Zones and Restricted Areas </li>
-        <li><input type="checkbox" id="mpaInventoryLayer"/> MPA Inventory </li>
+      <span id="layerToggle" class="esri-widget" style="display: none">
+        <li>
+          <input type="checkbox" id="kelpProductivityLayer" /> Kelp Productivity
+        </li>
+        <li>
+          <input type="checkbox" id="federalAndStateWatersLayer" /> Federal and
+          State Waters
+        </li>
+        <li>
+          <input type="checkbox" id="shippingLanesLayer" /> Shipping Lanes
+        </li>
+        <li>
+          <input type="checkbox" id="dangerZonesAndRestrictedAreasLayer" />
+          Danger Zones and Restricted Areas
+        </li>
+        <li><input type="checkbox" id="mpaInventoryLayer" /> MPA Inventory</li>
       </span>
     </ul>
 
     <!-- User Input Query SFI -->
-    <div id="sfiCalc" class="esri-widget" style = "display: none">
-      Water Area: Only State, Both, Only Federal:
+    <div id="sfiCalc" class="esri-widget" style="display: none">
+      Water Area: 0 - Only State, 1 - Both, 2 - Only Federal
       <div id="waterSlider" class="slider"></div>
-      <button id="query-sfi" class="esri-widget">Query Seaweed Farming Index</button>
+      OC minimum seafloor depth (meters)
+      <div id="minOCDepthSlider" class="slider"></div>
+      OC maximum seafloor depth (meters)
+      <div id="maxOCDepthSlider" class="slider"></div>
+      OC maximum distance to port (km)
+      <div id="maxOCToPortSlider" class="slider"></div>
+      Weighting factor: 0 - alpha_b, 1 - alpha_OC
+      <div id="weightingFactor" class="slider"></div>
+      <button id="query-sfi" class="esri-widget">
+        Query Seaweed Farming Index
+      </button>
       <div id="results" class="esri-widget"></div>
     </div>
 
     <!-- Report SFI -->
-    <div id="reportSfi" class="esri-widget" style = "display: none">
-    </div>
+    <div id="reportSfi" class="esri-widget" style="display: none"></div>
   </body>
 </html>
