@@ -134,6 +134,13 @@ require([
       "OBJECTID < 94)",
   });
 
+  // Principle ports layer
+  const principlePortsLayer = new FeatureLayer({
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/PrincipalPorts_SCA/FeatureServer/0",
+    visible: false,
+  });
+
   const map = new Map({
     basemap: "topo-vector",
     layers: [
@@ -142,6 +149,7 @@ require([
       shippingLanesLayer,
       dangerZonesAndRestrictedAreasLayer,
       mpaInventoryLayer,
+      principlePortsLayer,
     ],
   });
 
@@ -207,6 +215,14 @@ require([
     mpaInventoryLayer.visible = mpaInventoryLayerToggle.checked;
   });
 
+  // Toggle function of principle ports layer
+  const principlePortsLayerToggle = document.getElementById(
+    "principlePortsLayer"
+  );
+  principlePortsLayerToggle.addEventListener("change", function () {
+    principlePortsLayer.visible = principlePortsLayerToggle.checked;
+  });
+
   /****************************************************
    * Define the UI
    ****************************************************/
@@ -240,6 +256,10 @@ require([
             layer: mpaInventoryLayer,
             title: "MPA Inventory",
           },
+          {
+            layer: principlePortsLayer,
+            title: "Principle Ports",
+          },
         ],
       }),
       view: view,
@@ -253,10 +273,10 @@ require([
   view.ui.add(searchWidget, "top-right");
 
   // TODO: ADD 6 Layers
-  // 1. Kelp Productivity Map (B)
+  // (done) 1. Kelp Productivity Map (B)
   // 2. Bathymetry (OC)
-  // 3. Distance to Port (OC)
-  // 4. Shipping Lanes (MSP)
-  // 5. Danger Zones and Restricted Areas (MSP)
-  // 6. MPA Inventory (MSP)
+  // (done) 3. Distance to Port (OC)
+  // (done) 4. Shipping Lanes (MSP)
+  // (done) 5. Danger Zones and Restricted Areas (MSP)
+  // (done) 6. MPA Inventory (MSP)
 });
