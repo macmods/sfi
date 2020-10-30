@@ -42,7 +42,7 @@
 
     <div id="viewDiv"></div>
     <ul style="list-style-type: none">
-      <span id="layerToggle" class="esri-widget" style="display: none">
+      <span id="layerToggle" class="esri-widget">
         <li>
           <input type="checkbox" id="kelpProductivityLayer" /> Kelp Productivity
         </li>
@@ -58,6 +58,9 @@
           Danger Zones and Restricted Areas
         </li>
         <li><input type="checkbox" id="mpaInventoryLayer" /> MPA Inventory</li>
+        <li>
+          <input type="checkbox" id="principalPortsLayer" /> Principle Ports
+        </li>
       </span>
     </ul>
 
@@ -74,7 +77,7 @@
       <div id="maxOCToPortSlider" class="slider"></div>
 
       <h2>Weighting Factor</h2>
-      Weighting factor: 0 - alpha_b, 1 - alpha_OC
+      Weighting factor: 0 - Farm Productivity, 1 - Operational Constraints
       <div id="weightingFactor" class="slider"></div>
 
       <h2>Marine Spatial Planning</h2>
