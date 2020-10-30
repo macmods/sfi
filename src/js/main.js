@@ -2,7 +2,7 @@
 
 require([
   // mapping
-  "esri/Map",
+  "esri/WebMap",
   "esri/views/MapView",
   "esri/layers/FeatureLayer",
   // widgets
@@ -10,16 +10,18 @@ require([
   "esri/widgets/Search",
   "esri/widgets/Expand",
   "esri/tasks/Locator",
+  "esri/widgets/Bookmarks",
 ], function (
   // mapping
-  Map,
+  WebMap,
   MapView,
   FeatureLayer,
   // widgets
   Legend,
   Search,
   Expand,
-  Locator
+  Locator，
+  Bookmarks
 ) {
   /****************************************************
    * Initialize the map
@@ -439,11 +441,14 @@ require([
     url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
   });
 
-  const map = new Map({
-    basemap: "topo-vector",
+  const webmap = new WebMap({
+    portalItem: {
+      id: "401c823992004a93aef4401f89b65060",
+    },
     layers: [
       kelpProductivityLayer,
-      /*bathymetryLayer,*/ federalAndStateWatersLayer,
+      /*bathymetryLayer,*/
+      federalAndStateWatersLayer,
       shippingLanesLayer,
       dangerZonesAndRestrictedAreasLayer,
       mpaInventoryLayer,
@@ -453,7 +458,7 @@ require([
 
   const view = new MapView({
     container: "viewDiv",
-    map: map,
+    map: webmap,
     center: [-118.805, 34.027], // longitude, latitude
     zoom: 9,
     scale: referenceScale * 4,
@@ -569,6 +574,19 @@ require([
   // Widget #2: Search
   const searchWidget = new Search({ view });
   view.ui.add(searchWidget, "top-right");
+
+  // widget #3: Bookmarks
+  const bookmarks = new Bookmarks({
+    view: view,
+    // allows bookmarks to be added, edited, or deleted
+    editingEnabled: true,
+  });
+  const bkExpand = new Expand({
+    view: view,
+    content: bookmarks,
+    expanded: false,
+  });
+  view.ui.add(bkExpand, "top-left");
 
   // TODO: ADD 6 Layers
   // 1. Kelp Productivity Map (B)
