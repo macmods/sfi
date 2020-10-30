@@ -10,6 +10,7 @@ require([
   "esri/widgets/Search",
   "esri/widgets/Expand",
   "esri/widgets/Bookmarks",
+  "esri/widgets/Slider",
 ], function (
   // mapping
   WebMap,
@@ -19,7 +20,8 @@ require([
   Legend,
   Search,
   Expand,
-  Bookmarks
+  Bookmarks,
+  Slider
 ) {
   /****************************************************
    * Initialize the map
@@ -269,6 +271,55 @@ require([
     expanded: false,
   });
   view.ui.add(bkExpand, "top-left");
+  /***  User Input SFI feature   ***/
+
+  const minOCDepthSlider = new Slider({
+    container: "minOCDepthSlider",
+    min: 10,
+    max: 10000,
+    steps: 10,
+    values: [10],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const maxOCDepthSlider = new Slider({
+    container: "maxOCDepthSlider",
+    min: 10,
+    max: 10000,
+    steps: 10,
+    values: [10000],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const maxOCToPortSlider = new Slider({
+    container: "maxOCToPortSlider",
+    min: 1,
+    max: 10000,
+    steps: 10,
+    values: [10000],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
+
+  const weightingFactor = new Slider({
+    container: "weightingFactor",
+    min: 0,
+    max: 1,
+    steps: 1,
+    values: [0],
+    visibleElements: {
+      labels: true,
+      rangeLabels: true,
+    },
+  });
 
   // TODO: ADD 6 Layers
   // 1. Kelp Productivity Map (B)
