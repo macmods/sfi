@@ -1,4 +1,4 @@
-//import { kelpProductivityLayerUrl, shippingLanesLayerUrl, dangerZonesAndRestrictedAreasLayerUrl, mpaInventoryLayerUrl } from './config.js';
+// import { kelpProductivityLayerUrl, shippingLanesLayerUrl, dangerZonesAndRestrictedAreasLayerUrl, mpaInventoryLayerUrl } from './config.js';
 
 require([
   // mapping
@@ -9,6 +9,8 @@ require([
   "esri/widgets/Legend",
   "esri/widgets/Search",
   "esri/widgets/Expand",
+  // popup
+  "esri/tasks/Locator",
 ], function (
   // mapping
   Map,
@@ -17,7 +19,9 @@ require([
   // widgets
   Legend,
   Search,
-  Expand
+  Expand,
+  // popup
+  Locator
 ) {
   /****************************************************
    * Initialize the map
@@ -134,6 +138,18 @@ require([
       "OBJECTID < 94)",
   });
 
+  // Principle ports layer
+  const principlePortsLayer = new FeatureLayer({
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/PrincipalPorts_SCA/FeatureServer/0",
+    visible: false,
+  });
+
+  // Create a locator task using the world geocoding service
+  const locatorTask = new Locator({
+    url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+  });
+
   const map = new Map({
     basemap: "topo-vector",
     layers: [
@@ -142,6 +158,7 @@ require([
       shippingLanesLayer,
       dangerZonesAndRestrictedAreasLayer,
       mpaInventoryLayer,
+      principlePortsLayer,
     ],
   });
 
@@ -156,6 +173,21 @@ require([
   /****************************************************
    * Initialize the listeners
    ****************************************************/
+  view.popup.autoOpenEnabled = false;
+  view.on("click", function (event) {
+    // Get the coordinates of the click on the view
+    // around the decimals to 3 decimals
+    var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+    var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+
+    view.popup.open({
+      // Set the popup's title to the coordinates of the clicked location
+      title: "Geographic coordinates: [" + lon + ", " + lat + "]",
+      location: event.mapPoint, // Set the location of the popup to the clicked location
+      content: "test",
+    });
+  });
+
   // Toggle function of kelp productivity layer
   const kelpProductivityLayerToggle = document.getElementById(
     "kelpProductivityLayer"
@@ -207,6 +239,14 @@ require([
     mpaInventoryLayer.visible = mpaInventoryLayerToggle.checked;
   });
 
+  // Toggle function of principle ports layer
+  const principlePortsLayerToggle = document.getElementById(
+    "principlePortsLayer"
+  );
+  principlePortsLayerToggle.addEventListener("change", function () {
+    principlePortsLayer.visible = principlePortsLayerToggle.checked;
+  });
+
   /****************************************************
    * Define the UI
    ****************************************************/
@@ -239,6 +279,10 @@ require([
           {
             layer: mpaInventoryLayer,
             title: "MPA Inventory",
+          },
+          {
+            layer: principlePortsLayer,
+            title: "Principle Ports",
           },
         ],
       }),
