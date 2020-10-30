@@ -108,13 +108,13 @@ require([
   // Popup template for federal and state waters layer
   var federalAndStateWatersPopupTemplate = {
     // autocasts as new PopupTemplate()
-    title: "FederalAndStateWaters: {Jurisdicti}",
+    title: "FederalAndStateWaters: {Jurisdiction}",
     content: [
       {
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "Jurisdicti",
+            fieldName: "Jurisdiction",
             label: "Jurisdiction",
           },
           {
