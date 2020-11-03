@@ -108,13 +108,14 @@ require([
   // Popup template for federal and state waters layer
   var federalAndStateWatersPopupTemplate = {
     // autocasts as new PopupTemplate()
-    title: "FederalAndStateWaters: {Jurisdiction}",
+    title: "Federal and State Waters",
     content: [
       {
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "Jurisdiction",
+            fieldName: "Jurisdicti",
+            label: "Jurisdiction",
           },
         ],
       },
@@ -124,7 +125,7 @@ require([
   // Popup template for shipping lanes layer
   var shippingLanesPopupTemplate = {
     // autocasts as new PopupTemplate()
-    title: "ShippingLanes_SCA: {THEMELAYER}",
+    title: "Shipping Lanes",
     content: [
       {
         type: "fields",
@@ -141,7 +142,7 @@ require([
   // Popup template for danger zones and restricted areas layer
   var dangerZonesAndRestrictedAreasPopupTemplate = {
     // autocasts as new PopupTemplate()
-    title: "DangerZonesAndRestrictedAreas_SCA",
+    title: "Danger Zones and Restricted Areas",
     content: [
       {
         type: "fields",
@@ -166,7 +167,7 @@ require([
   // Popup template for MPA inventory layer
   var mpaInventoryPopupTeamplate = {
     // autocasts as new PopupTemplate()
-    title: "Marine Protected Area Inventory: {Site_ID}",
+    title: "Marine Protected Area Inventory",
     content: [
       {
         type: "fields",
@@ -187,7 +188,7 @@ require([
   // Popup template for principal ports layer
   var principalPortsPopupTemplate = {
     // autocasts as new PopupTemplate()
-    title: "PrincipalPorts_SCA: {portName}",
+    title: "Principal Ports",
     content: [
       {
         type: "fields",
