@@ -590,6 +590,29 @@ require([
   });
   view.ui.add(bkExpand, "top-left");
 
+  // widget #4: Mouse coordinates
+  const coordsWidget = document.getElementById("coordsWidget");
+  view.ui.add(coordsWidget, "bottom-right");
+
+  function showCoordinates(pt) {
+    var coords =
+      "Lat/Lon: " +
+      pt.latitude.toFixed(3) +
+      " " +
+      pt.longitude.toFixed(3) +
+      " | Zoom: " +
+      view.zoom;
+    coordsWidget.innerHTML = coords;
+  }
+
+  view.watch(["stationary"], function () {
+    showCoordinates(view.center);
+  });
+
+  view.on(["pointer-down", "pointer-move"], function (evt) {
+    showCoordinates(view.toMap({ x: evt.x, y: evt.y }));
+  });
+
   /***  User Input SFI feature   ***/
   const minOCDepthSlider = new Slider({
     container: "minOCDepthSlider",
