@@ -87,7 +87,7 @@ require([
       },
     ],
   };
-
+  
   // Popup template for kelp productivity layer
   var kelpProductivityPopupTemplate = {
     // autocasts as new PopupTemplate()
@@ -98,7 +98,7 @@ require([
         fieldInfos: [
           {
             fieldName: "biomass",
-            label: "Biomass",
+            label: "Biomass (kilograms-dry)",
           },
         ],
       },
@@ -115,25 +115,6 @@ require([
         fieldInfos: [
           {
             fieldName: "Jurisdiction",
-            label: "Jurisdiction",
-          },
-          {
-            fieldName: "area_mi2",
-            label: "Area (square miles)",
-          },
-          {
-            fieldName: "area_km2",
-            label: "Area (square kilometers)",
-          },
-          {
-            fieldName: "area_nm2",
-            label: "Area (square nautical miles)",
-          },
-          {
-            fieldName: "Shape__Area",
-          },
-          {
-            fieldName: "Shape__Length",
           },
         ],
       },
@@ -149,28 +130,8 @@ require([
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "OBJL",
-          },
-          {
             fieldName: "THEMELAYER",
-          },
-          {
-            fieldName: "INFORM",
-          },
-          {
-            fieldName: "OBJNAM",
-          },
-          {
-            fieldName: "Shape_Leng",
-          },
-          {
-            fieldName: "Shape_Area",
-          },
-          {
-            fieldName: "Shape__Area",
-          },
-          {
-            fieldName: "Shape__Length",
+            label: "Theme Layer",
           },
         ],
       },
@@ -186,52 +147,16 @@ require([
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "effectiveD",
-          },
-          {
-            fieldName: "boundaryId",
-          },
-          {
             fieldName: "boundaryNa",
+            label: "Boundary Name",
           },
           {
             fieldName: "boundaryTy",
+            label: "Boundary Type",
           },
           {
             fieldName: "boundaryDe",
-          },
-          {
-            fieldName: "instanceCo",
-          },
-          {
-            fieldName: "boundarySo",
-          },
-          {
-            fieldName: "boundary_1",
-          },
-          {
-            fieldName: "agencyOfUs",
-          },
-          {
-            fieldName: "contact",
-          },
-          {
-            fieldName: "nativeDatu",
-          },
-          {
-            fieldName: "state",
-          },
-          {
-            fieldName: "Shape_Leng",
-          },
-          {
-            fieldName: "Shape_Area",
-          },
-          {
-            fieldName: "Shape__Area",
-          },
-          {
-            fieldName: "Shape__Length",
+            label: "Boundary Description",
           },
         ],
       },
@@ -241,91 +166,18 @@ require([
   // Popup template for MPA inventory layer
   var mpaInventoryPopupTeamplate = {
     // autocasts as new PopupTemplate()
-    title: "MPA Inventory: {Site_ID}",
+    title: "Marine Protected Area Inventory: {Site_ID}",
     content: [
       {
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "Site_ID",
-          },
-          {
-            fieldName: "Area_KM_To",
-          },
-          {
-            fieldName: "Date_GIS_U",
-          },
-          {
-            fieldName: "Shape_Leng",
-          },
-          {
             fieldName: "Site_Name",
-          },
-          {
-            fieldName: "Site_Label",
+            label: "Site Name",
           },
           {
             fieldName: "Gov_Level",
-          },
-          {
-            fieldName: "State",
-          },
-          {
-            fieldName: "NS_Full",
-          },
-          {
-            fieldName: "Prot_Lvl",
-          },
-          {
-            fieldName: "Mgmt_Plan",
-          },
-          {
-            fieldName: "Mgmt_Agen",
-          },
-          {
-            fieldName: "Fish_Rstr",
-          },
-          {
-            fieldName: "Pri_Con_Fo",
-          },
-          {
-            fieldName: "Cons_Focus",
-          },
-          {
-            fieldName: "Prot_Focus",
-          },
-          {
-            fieldName: "Permanence",
-          },
-          {
-            fieldName: "Constancy",
-          },
-          {
-            fieldName: "Estab_Yr",
-          },
-          {
-            fieldName: "URL",
-          },
-          {
-            fieldName: "Vessel",
-          },
-          {
-            fieldName: "Anchor",
-          },
-          {
-            fieldName: "Area_KM_Ma",
-          },
-          {
-            fieldName: "Shape_Le_1",
-          },
-          {
-            fieldName: "Shape_Area",
-          },
-          {
-            fieldName: "Shape__Area",
-          },
-          {
-            fieldName: "Shape__Length",
+            label: "Level of Government",
           },
         ],
       },
@@ -341,32 +193,8 @@ require([
         type: "fields",
         fieldInfos: [
           {
-            fieldName: "portNumber",
-            label: "Port Number",
-          },
-          {
             fieldName: "portName",
             label: "Port Name",
-          },
-          {
-            fieldName: "totalCommo",
-            label: "Total Common",
-          },
-          {
-            fieldName: "domesticCo",
-            label: "Domestic Common",
-          },
-          {
-            fieldName: "foreignCom",
-            label: "Foreign Common",
-          },
-          {
-            fieldName: "importComm",
-            label: "Import Common",
-          },
-          {
-            fieldName: "exportComm",
-            label: "Export Common",
           },
         ],
       },
@@ -559,7 +387,7 @@ require([
           },
           {
             layer: mpaInventoryLayer,
-            title: "MPA Inventory",
+            title: "Marine Protected Area Inventory",
           },
           {
             layer: principalPortsLayer,
