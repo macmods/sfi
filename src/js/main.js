@@ -598,7 +598,7 @@ require([
     var coords =
       "Lat/Lon: " +
       pt.latitude.toFixed(3) +
-      " " +
+      ", " +
       pt.longitude.toFixed(3) +
       " | Zoom: " +
       view.zoom;
