@@ -39,8 +39,8 @@ require([
     type: "simple", // autocasts as new SimpleRenderer()
     symbol: {
       type: "simple-marker",
-      size: 6,
-      color: "black",
+      size: 10,
+      // color: "black",
       outline: {
         width: 0,
         color: "white",
@@ -48,46 +48,95 @@ require([
     },
     visualVariables: [
       {
-        type: "size",
-        field: "biomass",
-        minDataValue: 0,
-        maxDataValue: 5.5,
-        legendOptions: {
-          showLegend: false,
-        },
-        minSize: {
-          type: "size",
-          valueExpression: "$view.scale",
-          // adjust the min size by scale
-          stops: [
-            { value: referenceScale, size: 5 },
-            { value: referenceScale * 2, size: 4 },
-            { value: referenceScale * 4, size: 3 },
-            { value: referenceScale * 6, size: 2 },
-          ],
-        },
-        maxSize: {
-          type: "size",
-          valueExpression: "$view.scale",
-          // adjust the max size by scale
-          stops: [
-            { value: referenceScale, size: 35 },
-            { value: referenceScale * 2, size: 20 },
-            { value: referenceScale * 4, size: 8 },
-            { value: referenceScale * 6, size: 2 },
-          ],
-        },
-      },
-      {
         type: "color",
         field: "biomass",
         stops: [
-          { value: 0.0, color: "#BFF3C6", opacity: 0.15 },
-          { value: 1.5, color: "#73D191", opacity: 0.15 },
-          { value: 3.0, color: "#27B05D", opacity: 0.15 },
-          { value: 4.5, color: "#1C7F43", opacity: 0.15 },
-          { value: 5.5, color: "#124F29", opacity: 0.15 },
+          { value: 0.0, color: "#BFF3C6", opacity: 0.7 },
+          { value: 1.0, color: "#73D191", opacity: 0.7 },
+          { value: 2.0, color: "#27B05D", opacity: 0.7 },
+          { value: 3.0, color: "#1C7F43", opacity: 0.7 },
+          { value: 4.2, color: "#124F29", opacity: 0.7 },
         ],
+      },
+    ],
+  };
+
+  // // Display bathymetry with simple renderer
+  // const bathymetryRenderer = {
+  //   type: "simple",
+  //   symbol: {
+  //     type: "simple-marker",
+  //     size: 6,
+  //     color: "black",
+  //     outline: {
+  //       width: 0,
+  //       color: "white",
+  //     },
+  //   },
+  //   visualVariables: [
+  //     {
+  //       type: "color",
+  //       field: "depth",
+  //       stops: [
+  //         { value: 0, color: "#F5FFD7", opacity: 0.2 },
+  //         { value: 1000, color: "#83B5BC", opacity: 0.2 },
+  //         { value: 2000, color: "#5D9CB3", opacity: 0.2 },
+  //         { value: 3000, color: "#3783AA", opacity: 0.2 },
+  //         { value: 4000, color: "#126BA2", opacity: 0.2 },
+  //       ],
+  //     },
+  //   ],
+  // };
+
+  // Display danger zones and restricted areas with simple renderer
+
+  // define fill symbols for each class break
+  const danger = {
+    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+    color: "#900C3F",
+    style: "backward-diagonal",
+    outline: {
+      width: 1,
+      color: [144, 12, 63, 1],
+    },
+  };
+
+  const restricted = {
+    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+    color: "#FFC300",
+    style: "backward-diagonal",
+    outline: {
+      width: 1,
+      color: [255, 195, 0, 1],
+    },
+  };
+
+  const dangerZonesAndRestrictedAreasRenderer = {
+    type: "unique-value",
+    legendOptions: {
+      title: "Boundary Type",
+    },
+    defaultSymbol: {
+      type: "simple-fill", // autocasts as new SimpleFillSymbol()
+      color: "black",
+      style: "backward-diagonal",
+      outline: {
+        width: 0.5,
+        color: [50, 50, 50, 0.6],
+      },
+    },
+    defaultLabel: "No Data",
+    field: "boundaryTy",
+    uniqueValueInfos: [
+      {
+        value: "Danger Zone",
+        symbol: danger,
+        label: "Danger Zone",
+      },
+      {
+        value: "Restricted Area",
+        symbol: restricted,
+        label: "Restricted Area",
       },
     ],
   };
@@ -109,22 +158,22 @@ require([
     ],
   };
 
-  // Popup template for federal and state waters layer
-  var federalAndStateWatersPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Federal and State Waters",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "Jurisdicti",
-            label: "Jurisdiction",
-          },
-        ],
-      },
-    ],
-  };
+  // // Popup template for bathymetry layer
+  // var bathymetryPopupTemplate = {
+  //   //autocasts as new PopupTemplate()
+  //   title: "Bathymetry",
+  //   content: [
+  //     {
+  //       type: "fields",
+  //       fieldInfos: [
+  //         {
+  //           fieldName: "depth",
+  //           label: "Depth (meters)",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // };
 
   // Popup template for shipping lanes layer
   var shippingLanesPopupTemplate = {
@@ -206,31 +255,40 @@ require([
     ],
   };
 
+  // Popup template for federal and state waters layer
+  var federalAndStateWatersPopupTemplate = {
+    // autocasts as new PopupTemplate()
+    title: "Federal and State Waters",
+    content: [
+      {
+        type: "fields",
+        fieldInfos: [
+          {
+            fieldName: "Jurisdicti",
+            label: "Jurisdiction",
+          },
+        ],
+      },
+    ],
+  };
+
   // Kelp productivity layer
   const kelpProductivityLayer = new FeatureLayer({
     url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0",
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_maxcanopy/FeatureServer/0",
     visible: false,
     renderer: kelpProductivityRenderer,
-    minScale: 9000000, // map scale at which layer becomes invisible
     popupTemplate: kelpProductivityPopupTemplate,
   });
 
-  /*
-  // Bathymetry layer
-  const bathymetryLayer = new FeatureLayer({
-    url: "https://oceans2.arcgis.com/arcgis/rest/services/Seafloor_Bathymetry/ImageServer",
-    visible: false
-  });
-  */
-
-  // Federal and state waters layer
-  const federalAndStateWatersLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
-    visible: false,
-    popupTemplate: federalAndStateWatersPopupTemplate,
-  });
+  // // Bathymetry layer
+  // const bathymetryLayer = new FeatureLayer({
+  //   url:
+  //     "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_bathymetry/FeatureServer/0",
+  //   visible: false,
+  //   renderer: bathymetryRenderer,
+  //   popupTemplate: bathymetryPopupTemplate,
+  // });
 
   // Shipping lanes layer
   const shippingLanesLayer = new FeatureLayer({
@@ -246,6 +304,7 @@ require([
     url:
       "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0",
     visible: false,
+    renderer: dangerZonesAndRestrictedAreasRenderer,
     popupTemplate: dangerZonesAndRestrictedAreasPopupTemplate,
   });
 
@@ -271,6 +330,14 @@ require([
     popupTemplate: principalPortsPopupTemplate,
   });
 
+  // Federal and state waters layer
+  const federalAndStateWatersLayer = new FeatureLayer({
+    url:
+      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
+    visible: false,
+    popupTemplate: federalAndStateWatersPopupTemplate,
+  });
+
   // Create a locator task using the world geocoding service
   const locatorTask = new Locator({
     url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
@@ -282,14 +349,23 @@ require([
     },
     layers: [
       kelpProductivityLayer,
-      /*bathymetryLayer,*/
-      federalAndStateWatersLayer,
+      // bathymetryLayer,
       shippingLanesLayer,
       dangerZonesAndRestrictedAreasLayer,
       mpaInventoryLayer,
       principalPortsLayer,
+      federalAndStateWatersLayer,
     ],
   });
+
+  // Reorder layers - sink federal and state waters and bathymetry layers to the bottom
+  // webmap.layers.reorder(bathymetryLayer, 0);
+  webmap.layers.reorder(federalAndStateWatersLayer, 1);
+  webmap.layers.reorder(kelpProductivityLayer, 2);
+  webmap.layers.reorder(mpaInventoryLayer, 3);
+  webmap.layers.reorder(dangerZonesAndRestrictedAreasLayer, 4);
+  webmap.layers.reorder(shippingLanesLayer, 5);
+  webmap.layers.reorder(principalPortsLayer, 6);
 
   const view = new MapView({
     container: "viewDiv",
@@ -310,22 +386,11 @@ require([
     kelpProductivityLayer.visible = kelpProductivityLayerToggle.checked;
   });
 
-  /*
-  // Toggle function of bathymetry layer
-  const bathymetryLayerToggle = document.getElementById("bathymetryLayer");
-  bathymetryLayerToggle.addEventListener("change", function () {
-    bathymetryLayer.visible = bathymetryLayerToggle.checked;
-  });
-  */
-
-  // Toggle function of federal and state waters layer
-  const federalAndStateWatersLayerToggle = document.getElementById(
-    "federalAndStateWatersLayer"
-  );
-  federalAndStateWatersLayerToggle.addEventListener("change", function () {
-    federalAndStateWatersLayer.visible =
-      federalAndStateWatersLayerToggle.checked;
-  });
+  // // Toggle function of bathymetry layer
+  // const bathymetryLayerToggle = document.getElementById("bathymetryLayer");
+  // bathymetryLayerToggle.addEventListener("change", function () {
+  //   bathymetryLayer.visible = bathymetryLayerToggle.checked;
+  // });
 
   // Toggle function of shipping lanes layer
   const shippingLanesLayerToggle = document.getElementById(
@@ -361,6 +426,15 @@ require([
     principalPortsLayer.visible = principalPortsLayerToggle.checked;
   });
 
+  // Toggle function of federal and state waters layer
+  const federalAndStateWatersLayerToggle = document.getElementById(
+    "federalAndStateWatersLayer"
+  );
+  federalAndStateWatersLayerToggle.addEventListener("change", function () {
+    federalAndStateWatersLayer.visible =
+      federalAndStateWatersLayerToggle.checked;
+  });
+
   /****************************************************
    * Define the UI
    ****************************************************/
@@ -372,16 +446,12 @@ require([
         layerInfos: [
           {
             layer: kelpProductivityLayer,
-            title: "Kelp Productivity",
+            title: "Kelp Productivity (Biomass in kilogram-dry)",
           },
-          /*{
-            layer: bathymetryLayer,
-            title: "Bathymetry"
-          },*/
-          {
-            layer: federalAndStateWatersLayer,
-            title: "Federal and State Waters",
-          },
+          // {
+          //   layer: bathymetryLayer,
+          //   title: "Bathymetry (Depth in meters)",
+          // },
           {
             layer: shippingLanesLayer,
             title: "Shipping Lanes",
@@ -397,6 +467,10 @@ require([
           {
             layer: principalPortsLayer,
             title: "Principal Ports",
+          },
+          {
+            layer: federalAndStateWatersLayer,
+            title: "Federal and State Waters",
           },
         ],
       }),
@@ -564,11 +638,12 @@ require([
     },
   });
 
-  // TODO: ADD 6 Layers
+  // TODO: ADD 7 Layers
   // 1. Kelp Productivity Map (B)
   // 2. Bathymetry (OC)
   // 3. Distance to Port (OC)
   // 4. Shipping Lanes (MSP)
   // 5. Danger Zones and Restricted Areas (MSP)
   // 6. MPA Inventory (MSP)
+  // 7. Federal and State Waters (MSP)
 });
