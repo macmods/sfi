@@ -521,7 +521,7 @@ require([
     min: 10,
     max: 10000,
     steps: 10,
-    values: [10],
+    values: [5000],
     visibleElements: {
       labels: true,
       rangeLabels: true,
@@ -533,7 +533,7 @@ require([
     min: 10,
     max: 10000,
     steps: 10,
-    values: [10000],
+    values: [5000],
     visibleElements: {
       labels: true,
       rangeLabels: true,
@@ -545,7 +545,7 @@ require([
     min: 1,
     max: 10000,
     steps: 10,
-    values: [10000],
+    values: [5000],
     visibleElements: {
       labels: true,
       rangeLabels: true,
