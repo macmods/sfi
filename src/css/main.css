@@ -47,13 +47,6 @@ li {
   margin: 10px;
 }
 
-hr {
-  height: 1px;
-  width: 100%;
-  border-width: 0;
-  background-color: rgb(167, 167, 167);
-}
-
 #layerToggle {
   top: 140px;
   right: 20px;
