@@ -69,11 +69,11 @@
 
     <!-- User Input Query SFI -->
     <div id="sfiCalc" class="esri-widget" style="display: none">
-      <h2>Operational Constraints</h2>
-      Minimum Seafloor Depth (meters)
+      <h2 id="oc">Operational Constraints</h2>
+      Minimum Seafloor Depth (m)
       <div id="minOCDepthSlider" class="slider"></div>
 
-      Maximum Seafloor Depth (meters)
+      Maximum Seafloor Depth (m)
       <div id="maxOCDepthSlider" class="slider"></div>
 
       Maximum Distance to Port (km)
@@ -83,27 +83,25 @@
       Weighting factor: 0 - Farm Productivity, 1 - Operational Constraints
       <div id="weightingFactor" class="slider"></div>
 
-      <h2>MSP</h2>
-      <ul style="list-style-type: none">
-        <span id="msp" class="esri-widget">
-          <li>
-            <input type="checkbox" id="includeFederal" /> Federal Water Included
-          </li>
-          <li>
-            <input type="checkbox" id="includeState" /> State Water Included
-          </li>
-          <li>
-            <input type="checkbox" id="includShippingLanes" /> Shipping Lanes
-            Included
-          </li>
-          <li>
-            <input type="checkbox" id="includRestrictedArea" /> Restricted And
-            Dangerous Area Included
-          </li>
-        </span>
-      </ul>
+      <h2>Marine Spatial Planning</h2>
+
+      <div class="msp">
+        <input type="checkbox" id="includeFederal" /> Federal Water Included
+      </div>
+      <div class="msp">
+        <input type="checkbox" id="includeState" /> State Water Included
+      </div>
+      <div class="msp">
+        <input type="checkbox" id="includShippingLanes" /> Shipping Lanes
+        Included
+      </div>
+      <div class="msp">
+        <input type="checkbox" id="includRestrictedArea" /> Restricted And
+        Dangerous Area Included
+      </div>
 
       <button id="query-sfi" class="esri-widget">Calculate SFI</button>
+      <button id="clear-report" class="esri-widget">Clear Report</button>
     </div>
 
     <!-- User Input Query SFI -->
@@ -114,9 +112,18 @@
 
     <!-- Distance Measurement -->
     <div id="measureBar">
-      <button class="action-button esri-icon-measure-line" id="distanceButton" type="button"
-        title="Measure distance between two or more points"></button>
-      <button class="action-button esri-icon-measure-area" id="areaButton" type="button" title="Measure area"></button>
+      <button
+        class="action-button esri-icon-measure-line"
+        id="distanceButton"
+        type="button"
+        title="Measure distance between two or more points"
+      ></button>
+      <button
+        class="action-button esri-icon-measure-area"
+        id="areaButton"
+        type="button"
+        title="Measure area"
+      ></button>
     </div>
   </body>
 </html>
