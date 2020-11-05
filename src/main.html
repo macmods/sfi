@@ -36,7 +36,7 @@
         class="nav-button"
         onclick="navButton('report-sfi')"
       >
-        <input id="icons" type="image" src="images/nav-report.png" />
+        <input id="icons" type="image" src="images/nav-report.png"/>
       </button>
     </div>
 
@@ -44,25 +44,30 @@
     <ul style="list-style-type: none">
       <span id="layerToggle" class="esri-widget">
         <li>
-          <input type="checkbox" id="kelpProductivityLayer" /> Kelp Productivity
+          <input type="checkbox" id="kelpProductivityLayer"/> Kelp Productivity
+        </li>
+        <div id="checkbox" style="font-weight: bold;">Operational Constraints</div> 
+        <li>
+          <input type="checkbox" id="bathymetryLayer"/> Bathymetry
         </li>
         <li>
-          <input type="checkbox" id="federalAndStateWatersLayer" /> Federal and
-          State Waters
+          <input type="checkbox" id="principalPortsLayer"/> Principal Ports
+        </li>
+        <div id="checkbox" style="font-weight: bold;">Marine Spatial Planning</div> 
+        <li>
+          <input type="checkbox" id="shippingLanesLayer"/> Shipping Lanes
         </li>
         <li>
-          <input type="checkbox" id="shippingLanesLayer" /> Shipping Lanes
-        </li>
-        <li>
-          <input type="checkbox" id="dangerZonesAndRestrictedAreasLayer" />
+          <input type="checkbox" id="dangerZonesAndRestrictedAreasLayer"/>
           Danger Zones and Restricted Areas
         </li>
         <li>
-          <input type="checkbox" id="mpaInventoryLayer" /> Marine Protected Area
+          <input type="checkbox" id="mpaInventoryLayer"/> Marine Protected Area
           Inventory
         </li>
         <li>
-          <input type="checkbox" id="principalPortsLayer" /> Principal Ports
+          <input type="checkbox" id="federalAndStateWatersLayer"/> Federal and
+          State Waters
         </li>
       </span>
     </ul>
