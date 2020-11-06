@@ -18,7 +18,7 @@ import {
 import {
   kelpProductivityRenderer,
   dangerZonesAndRestrictedAreasRenderer,
-} from "./render.js";
+} from "./renderer.js";
 
 require([
   // mapping
