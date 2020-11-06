@@ -107,4 +107,8 @@ const dangerZonesAndRestrictedAreasRenderer = {
   ],
 };
 
-export { kelpProductivityRenderer, dangerZonesAndRestrictedAreasRenderer };
+export {
+  referenceScale,
+  kelpProductivityRenderer,
+  dangerZonesAndRestrictedAreasRenderer,
+};
