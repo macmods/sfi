@@ -16,6 +16,7 @@ import {
   principalPortsPopupTemplate,
 } from "./popup_template.js";
 import {
+  referenceScale,
   kelpProductivityRenderer,
   dangerZonesAndRestrictedAreasRenderer,
 } from "./renderer.js";
