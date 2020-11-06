@@ -1,4 +1,24 @@
-// import { kelpProductivityLayerUrl, shippingLanesLayerUrl, dangerZonesAndRestrictedAreasLayerUrl, mpaInventoryLayerUrl } from './config.js';
+import {
+  kelpProductivityLayerUrl,
+  shippingLanesLayerUrl,
+  dangerZonesAndRestrictedAreasLayerUrl,
+  mpaInventoryLayerUrl,
+  principalPortsLayerUrl,
+  federalAndStateWatersLayerUrl,
+  locatorTaskUrl,
+} from "./config.js";
+import {
+  kelpProductivityPopupTemplate,
+  federalAndStateWatersPopupTemplate,
+  shippingLanesPopupTemplate,
+  dangerZonesAndRestrictedAreasPopupTemplate,
+  mpaInventoryPopupTeamplate,
+  principalPortsPopupTemplate,
+} from "./popup_template.js";
+import {
+  kelpProductivityRenderer,
+  dangerZonesAndRestrictedAreasRenderer,
+} from "./render.js";
 
 require([
   // mapping
@@ -32,250 +52,9 @@ require([
   /****************************************************
    * Initialize the map
    ****************************************************/
-  // Display kelp productivity with simple renderer
-  const referenceScale = 900000;
-
-  const kelpProductivityRenderer = {
-    type: "simple", // autocasts as new SimpleRenderer()
-    symbol: {
-      type: "simple-marker",
-      size: 10,
-      // color: "black",
-      outline: {
-        width: 0,
-        color: "white",
-      },
-    },
-    visualVariables: [
-      {
-        type: "color",
-        field: "biomass",
-        stops: [
-          { value: 0.0, color: "#BFF3C6", opacity: 0.7 },
-          { value: 1.0, color: "#73D191", opacity: 0.7 },
-          { value: 2.0, color: "#27B05D", opacity: 0.7 },
-          { value: 3.0, color: "#1C7F43", opacity: 0.7 },
-          { value: 4.2, color: "#124F29", opacity: 0.7 },
-        ],
-      },
-    ],
-  };
-
-  // // Display bathymetry with simple renderer
-  // const bathymetryRenderer = {
-  //   type: "simple",
-  //   symbol: {
-  //     type: "simple-marker",
-  //     size: 6,
-  //     color: "black",
-  //     outline: {
-  //       width: 0,
-  //       color: "white",
-  //     },
-  //   },
-  //   visualVariables: [
-  //     {
-  //       type: "color",
-  //       field: "depth",
-  //       stops: [
-  //         { value: 0, color: "#F5FFD7", opacity: 0.2 },
-  //         { value: 1000, color: "#83B5BC", opacity: 0.2 },
-  //         { value: 2000, color: "#5D9CB3", opacity: 0.2 },
-  //         { value: 3000, color: "#3783AA", opacity: 0.2 },
-  //         { value: 4000, color: "#126BA2", opacity: 0.2 },
-  //       ],
-  //     },
-  //   ],
-  // };
-
-  // Display danger zones and restricted areas with simple renderer
-
-  // define fill symbols for each class break
-  const danger = {
-    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-    color: "#900C3F",
-    style: "backward-diagonal",
-    outline: {
-      width: 1,
-      color: [144, 12, 63, 1],
-    },
-  };
-
-  const restricted = {
-    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-    color: "#FFC300",
-    style: "backward-diagonal",
-    outline: {
-      width: 1,
-      color: [255, 195, 0, 1],
-    },
-  };
-
-  const dangerZonesAndRestrictedAreasRenderer = {
-    type: "unique-value",
-    legendOptions: {
-      title: "Boundary Type",
-    },
-    defaultSymbol: {
-      type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "black",
-      style: "backward-diagonal",
-      outline: {
-        width: 0.5,
-        color: [50, 50, 50, 0.6],
-      },
-    },
-    defaultLabel: "No Data",
-    field: "boundaryTy",
-    uniqueValueInfos: [
-      {
-        value: "Danger Zone",
-        symbol: danger,
-        label: "Danger Zone",
-      },
-      {
-        value: "Restricted Area",
-        symbol: restricted,
-        label: "Restricted Area",
-      },
-    ],
-  };
-
-  // Popup template for kelp productivity layer
-  var kelpProductivityPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Kelp Productivity",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "biomass",
-            label: "Biomass (kilograms-dry)",
-          },
-        ],
-      },
-    ],
-  };
-
-  // // Popup template for bathymetry layer
-  // var bathymetryPopupTemplate = {
-  //   //autocasts as new PopupTemplate()
-  //   title: "Bathymetry",
-  //   content: [
-  //     {
-  //       type: "fields",
-  //       fieldInfos: [
-  //         {
-  //           fieldName: "depth",
-  //           label: "Depth (meters)",
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
-
-  // Popup template for shipping lanes layer
-  var shippingLanesPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Shipping Lanes",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "THEMELAYER",
-            label: "Theme Layer",
-          },
-        ],
-      },
-    ],
-  };
-
-  // Popup template for danger zones and restricted areas layer
-  var dangerZonesAndRestrictedAreasPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Danger Zones and Restricted Areas",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "boundaryNa",
-            label: "Boundary Name",
-          },
-          {
-            fieldName: "boundaryTy",
-            label: "Boundary Type",
-          },
-          {
-            fieldName: "boundaryDe",
-            label: "Boundary Description",
-          },
-        ],
-      },
-    ],
-  };
-
-  // Popup template for MPA inventory layer
-  var mpaInventoryPopupTeamplate = {
-    // autocasts as new PopupTemplate()
-    title: "Marine Protected Area Inventory",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "Site_Name",
-            label: "Site Name",
-          },
-          {
-            fieldName: "Gov_Level",
-            label: "Level of Government",
-          },
-        ],
-      },
-    ],
-  };
-
-  // Popup template for principal ports layer
-  var principalPortsPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Principal Ports",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "portName",
-            label: "Port Name",
-          },
-        ],
-      },
-    ],
-  };
-
-  // Popup template for federal and state waters layer
-  var federalAndStateWatersPopupTemplate = {
-    // autocasts as new PopupTemplate()
-    title: "Federal and State Waters",
-    content: [
-      {
-        type: "fields",
-        fieldInfos: [
-          {
-            fieldName: "Jurisdicti",
-            label: "Jurisdiction",
-          },
-        ],
-      },
-    ],
-  };
-
   // Kelp productivity layer
   const kelpProductivityLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_maxcanopy/FeatureServer/0",
+    url: kelpProductivityLayerUrl,
     visible: false,
     renderer: kelpProductivityRenderer,
     popupTemplate: kelpProductivityPopupTemplate,
@@ -292,8 +71,7 @@ require([
 
   // Shipping lanes layer
   const shippingLanesLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1",
+    url: shippingLanesLayerUrl,
     visible: false,
     definitionExpression: "(OBJECTID < 3 OR " + "OBJECTID > 4)",
     popupTemplate: shippingLanesPopupTemplate,
@@ -301,8 +79,7 @@ require([
 
   // Danger zones and restricted areas layer
   const dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0",
+    url: dangerZonesAndRestrictedAreasLayerUrl,
     visible: false,
     renderer: dangerZonesAndRestrictedAreasRenderer,
     popupTemplate: dangerZonesAndRestrictedAreasPopupTemplate,
@@ -310,8 +87,7 @@ require([
 
   // MPA inventory layer
   const mpaInventoryLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0",
+    url: mpaInventoryLayerUrl,
     visible: false,
     definitionExpression:
       "(OBJECTID < 20 OR " +
@@ -324,23 +100,21 @@ require([
 
   // Principal ports layer
   const principalPortsLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/PrincipalPorts_SCA/FeatureServer/0",
+    url: principalPortsLayerUrl,
     visible: false,
     popupTemplate: principalPortsPopupTemplate,
   });
 
   // Federal and state waters layer
   const federalAndStateWatersLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0",
+    url: federalAndStateWatersLayerUrl,
     visible: false,
     popupTemplate: federalAndStateWatersPopupTemplate,
   });
 
   // Create a locator task using the world geocoding service
   const locatorTask = new Locator({
-    url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+    url: locatorTaskUrl,
   });
 
   const webmap = new WebMap({
