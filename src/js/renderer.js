@@ -5,8 +5,7 @@ const kelpProductivityRenderer = {
   type: "simple", // autocasts as new SimpleRenderer()
   symbol: {
     type: "simple-marker",
-    size: 10,
-    // color: "black",
+    size: 5,
     outline: {
       width: 0,
       color: "white",
@@ -27,32 +26,33 @@ const kelpProductivityRenderer = {
   ],
 };
 
-// // Display bathymetry with simple renderer
-// const bathymetryRenderer = {
-//   type: "simple",
-//   symbol: {
-//     type: "simple-marker",
-//     size: 6,
-//     color: "black",
-//     outline: {
-//       width: 0,
-//       color: "white",
-//     },
-//   },
-//   visualVariables: [
-//     {
-//       type: "color",
-//       field: "depth",
-//       stops: [
-//         { value: 0, color: "#F5FFD7", opacity: 0.2 },
-//         { value: 1000, color: "#83B5BC", opacity: 0.2 },
-//         { value: 2000, color: "#5D9CB3", opacity: 0.2 },
-//         { value: 3000, color: "#3783AA", opacity: 0.2 },
-//         { value: 4000, color: "#126BA2", opacity: 0.2 },
-//       ],
-//     },
-//   ],
-// };
+// Display bathymetry with simple renderer
+const bathymetryRenderer = {
+  type: "simple",
+  symbol: {
+    type: "simple-marker",
+    size: 6,
+    outline: {
+      width: 0,
+      color: "white",
+    },
+  },
+  visualVariables: [
+    {
+      type: "color",
+      field: "depth",
+      stops: [
+        { value: 0, color: "#FDFD5A", opacity: 0.2 },
+        { value: 250, color: "#27DF87", opacity: 0.2 },
+        { value: 500, color: "#1382C3", opacity: 0.2 },
+        { value: 1000, color: "#0025FF", opacity: 0.2 },
+        { value: 2000, color: "#0F21E0", opacity: 0.2 },
+        { value: 3000, color: "#1E1DC2", opacity: 0.2 },
+        { value: 4000, color: "#2E1AA4", opacity: 0.2 },
+      ],
+    },
+  ],
+};
 
 // Display danger zones and restricted areas with simple renderer
 
@@ -110,5 +110,6 @@ const dangerZonesAndRestrictedAreasRenderer = {
 export {
   referenceScale,
   kelpProductivityRenderer,
+  bathymetryRenderer,
   dangerZonesAndRestrictedAreasRenderer,
 };

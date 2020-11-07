@@ -15,22 +15,22 @@ var kelpProductivityPopupTemplate = {
   ],
 };
 
-// // Popup template for bathymetry layer
-// var bathymetryPopupTemplate = {
-//   //autocasts as new PopupTemplate()
-//   title: "Bathymetry",
-//   content: [
-//     {
-//       type: "fields",
-//       fieldInfos: [
-//         {
-//           fieldName: "depth",
-//           label: "Depth (meters)",
-//         },
-//       ],
-//     },
-//   ],
-// };
+// Popup template for bathymetry layer
+var bathymetryPopupTemplate = {
+  //autocasts as new PopupTemplate()
+  title: "Bathymetry",
+  content: [
+    {
+      type: "fields",
+      fieldInfos: [
+        {
+          fieldName: "depth",
+          label: "Depth (meters)",
+        },
+      ],
+    },
+  ],
+};
 
 // Popup template for shipping lanes layer
 var shippingLanesPopupTemplate = {
@@ -131,6 +131,7 @@ var federalAndStateWatersPopupTemplate = {
 
 export {
   kelpProductivityPopupTemplate,
+  bathymetryPopupTemplate,
   shippingLanesPopupTemplate,
   dangerZonesAndRestrictedAreasPopupTemplate,
   mpaInventoryPopupTeamplate,
