@@ -1,5 +1,6 @@
 import {
   kelpProductivityLayerUrl,
+  bathymetryLayerUrl,
   shippingLanesLayerUrl,
   dangerZonesAndRestrictedAreasLayerUrl,
   mpaInventoryLayerUrl,
@@ -9,6 +10,7 @@ import {
 } from "./config.js";
 import {
   kelpProductivityPopupTemplate,
+  bathymetryPopupTemplate,
   federalAndStateWatersPopupTemplate,
   shippingLanesPopupTemplate,
   dangerZonesAndRestrictedAreasPopupTemplate,
@@ -18,6 +20,7 @@ import {
 import {
   referenceScale,
   kelpProductivityRenderer,
+  bathymetryRenderer,
   dangerZonesAndRestrictedAreasRenderer,
 } from "./renderer.js";
 
@@ -61,14 +64,13 @@ require([
     popupTemplate: kelpProductivityPopupTemplate,
   });
 
-  // // Bathymetry layer
-  // const bathymetryLayer = new FeatureLayer({
-  //   url:
-  //     "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_bathymetry/FeatureServer/0",
-  //   visible: false,
-  //   renderer: bathymetryRenderer,
-  //   popupTemplate: bathymetryPopupTemplate,
-  // });
+  // Bathymetry layer
+  const bathymetryLayer = new FeatureLayer({
+    url: bathymetryLayerUrl,
+    visible: false,
+    renderer: bathymetryRenderer,
+    popupTemplate: bathymetryPopupTemplate,
+  });
 
   // Shipping lanes layer
   const shippingLanesLayer = new FeatureLayer({
@@ -124,7 +126,7 @@ require([
     },
     layers: [
       kelpProductivityLayer,
-      // bathymetryLayer,
+      bathymetryLayer,
       shippingLanesLayer,
       dangerZonesAndRestrictedAreasLayer,
       mpaInventoryLayer,
@@ -134,7 +136,7 @@ require([
   });
 
   // Reorder layers - sink federal and state waters and bathymetry layers to the bottom
-  // webmap.layers.reorder(bathymetryLayer, 0);
+  webmap.layers.reorder(bathymetryLayer, 0);
   webmap.layers.reorder(federalAndStateWatersLayer, 1);
   webmap.layers.reorder(kelpProductivityLayer, 2);
   webmap.layers.reorder(mpaInventoryLayer, 3);
@@ -142,11 +144,15 @@ require([
   webmap.layers.reorder(shippingLanesLayer, 5);
   webmap.layers.reorder(principalPortsLayer, 6);
 
+  // Set minimum scale 
+  kelpProductivityLayer.minScale = 0; 
+  bathymetryLayer.minScale = 0;
+
   const view = new MapView({
     container: "viewDiv",
     map: webmap,
     center: [-118.805, 34.027], // longitude, latitude
-    zoom: 9,
+    zoom: 7,
     scale: referenceScale * 4,
   });
 
@@ -161,11 +167,11 @@ require([
     kelpProductivityLayer.visible = kelpProductivityLayerToggle.checked;
   });
 
-  // // Toggle function of bathymetry layer
-  // const bathymetryLayerToggle = document.getElementById("bathymetryLayer");
-  // bathymetryLayerToggle.addEventListener("change", function () {
-  //   bathymetryLayer.visible = bathymetryLayerToggle.checked;
-  // });
+  // Toggle function of bathymetry layer
+  const bathymetryLayerToggle = document.getElementById("bathymetryLayer");
+  bathymetryLayerToggle.addEventListener("change", function () {
+    bathymetryLayer.visible = bathymetryLayerToggle.checked;
+  });
 
   // Toggle function of shipping lanes layer
   const shippingLanesLayerToggle = document.getElementById(
@@ -223,10 +229,10 @@ require([
             layer: kelpProductivityLayer,
             title: "Kelp Productivity (Biomass in kilogram-dry)",
           },
-          // {
-          //   layer: bathymetryLayer,
-          //   title: "Bathymetry (Depth in meters)",
-          // },
+          {
+            layer: bathymetryLayer,
+            title: "Bathymetry (Depth in meters)",
+          },
           {
             layer: shippingLanesLayer,
             title: "Shipping Lanes",

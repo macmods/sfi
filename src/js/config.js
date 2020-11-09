@@ -1,5 +1,7 @@
 const kelpProductivityLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ussw11999_maxcanopy/FeatureServer/0";
+  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_maxcanopy/FeatureServer/0";
+const bathymetryLayerUrl = 
+"https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/Join_Features_to_l2scb_maxcanopy/FeatureServer/0";
 const shippingLanesLayerUrl =
   "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1";
 const dangerZonesAndRestrictedAreasLayerUrl =
@@ -16,6 +18,7 @@ const locatorTaskUrl =
 
 export {
   kelpProductivityLayerUrl,
+  bathymetryLayerUrl,
   shippingLanesLayerUrl,
   dangerZonesAndRestrictedAreasLayerUrl,
   mpaInventoryLayerUrl,
