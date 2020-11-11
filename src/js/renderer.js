@@ -31,7 +31,7 @@ const bathymetryRenderer = {
   type: "simple",
   symbol: {
     type: "simple-marker",
-    size: 6,
+    size: 8,
     outline: {
       width: 0,
       color: "white",

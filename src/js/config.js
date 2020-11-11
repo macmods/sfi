@@ -1,17 +1,17 @@
 const kelpProductivityLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/l2scb_maxcanopy/FeatureServer/0";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Kelp_Productivity/FeatureServer/0";
 const bathymetryLayerUrl = 
-"https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/Join_Features_to_l2scb_maxcanopy/FeatureServer/0";
+"https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Bathymetry_Matched/FeatureServer/0";
 const shippingLanesLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/ShippingLanes_SCA/FeatureServer/1";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Shipping_Lanes/FeatureServer/1";
 const dangerZonesAndRestrictedAreasLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/DangerZonesAndRestrictedAreas_SCA/FeatureServer/0";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Danger_Zones_and_Restricted_Areas/FeatureServer/0";
 const mpaInventoryLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/arcgis/rest/services/MPAInventory_SCA/FeatureServer/0";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Marine_Protected_Area_Inventory/FeatureServer/0";
 const principalPortsLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/PrincipalPorts_SCA/FeatureServer/0";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Principal_Ports/FeatureServer/0";
 const federalAndStateWatersLayerUrl =
-  "https://services7.arcgis.com/4c8njmg1eMIbzYXM/ArcGIS/rest/services/FederalAndStateWaters/FeatureServer/0";
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Federal_vs_State_Waters/FeatureServer/0";
 
 const locatorTaskUrl =
   "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";

@@ -121,7 +121,7 @@ var federalAndStateWatersPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "Jurisdicti",
+          fieldName: "FEDORSTATE",
           label: "Jurisdiction",
         },
       ],
