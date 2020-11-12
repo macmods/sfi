@@ -29,6 +29,10 @@ require([
   "esri/WebMap",
   "esri/views/MapView",
   "esri/layers/FeatureLayer",
+  "esri/layers/GraphicsLayer",
+  "esri/Graphic",
+  "esri/geometry/geometryEngine",
+  "esri/core/promiseUtils",
   // widgets
   "esri/widgets/Legend",
   "esri/widgets/Search",
@@ -38,11 +42,16 @@ require([
   "esri/widgets/Slider",
   "esri/widgets/DistanceMeasurement2D",
   "esri/widgets/AreaMeasurement2D",
+  "esri/widgets/Sketch/SketchViewModel",
 ], function (
   // mapping
   WebMap,
   MapView,
   FeatureLayer,
+  GraphicsLayer,
+  Graphic,
+  geometryEngine,
+  promiseUtils,
   // widgets
   Legend,
   Search,
@@ -51,7 +60,8 @@ require([
   Bookmarks,
   Slider,
   DistanceMeasurement2D,
-  AreaMeasurement2D
+  AreaMeasurement2D,
+  SketchViewModel
 ) {
   /****************************************************
    * Initialize the map
@@ -144,8 +154,8 @@ require([
   webmap.layers.reorder(shippingLanesLayer, 5);
   webmap.layers.reorder(principalPortsLayer, 6);
 
-  // Set minimum scale 
-  kelpProductivityLayer.minScale = 0; 
+  // Set minimum scale
+  kelpProductivityLayer.minScale = 0;
   bathymetryLayer.minScale = 0;
 
   const view = new MapView({
@@ -301,7 +311,68 @@ require([
     showCoordinates(view.toMap({ x: evt.x, y: evt.y }));
   });
 
-  // widget #5: Distance measurement
+  // widget #5: Geometry Query
+  window.view = view;
+
+  // add a GraphicsLayer for the sketches and the buffer
+  const sketchLayer = new GraphicsLayer();
+  view.map.addMany([sketchLayer]);
+
+  webmap.load().then(function () {
+    queryDiv.style.display = "block";
+  });
+  view.ui.add([queryDiv], "bottom-left");
+
+  // use SketchViewModel to draw polygons that are used as a query
+  let sketchGeometry = null;
+  const sketchViewModel = new SketchViewModel({
+    layer: sketchLayer,
+    defaultUpdateOptions: {
+      tool: "reshape",
+      toggleToolOnClick: false,
+    },
+    view: view,
+    defaultCreateOptions: { hasZ: false },
+  });
+
+  sketchViewModel.on("create", function (event) {
+    if (event.state === "complete") {
+      sketchGeometry = event.graphic.geometry;
+    }
+  });
+
+  sketchViewModel.on("update", function (event) {
+    if (event.state === "complete") {
+      sketchGeometry = event.graphics[0].geometry;
+    }
+  });
+
+  // draw geometry buttons - use the selected geometry to sktech
+  document
+    .getElementById("point-geometry-button")
+    .addEventListener("click", geometryButtonsClickHandler);
+  document
+    .getElementById("polygon-geometry-button")
+    .addEventListener("click", geometryButtonsClickHandler);
+  function geometryButtonsClickHandler(event) {
+    const geometryType = event.target.value;
+    clearGeometry();
+    sketchViewModel.create(geometryType);
+  }
+
+  // Clear the geometry and set the default renderer
+  document
+    .getElementById("clearGeometry")
+    .addEventListener("click", clearGeometry);
+
+  // Clear the geometry and set the default renderer
+  function clearGeometry() {
+    sketchGeometry = null;
+    sketchViewModel.cancel();
+    sketchLayer.removeAll();
+  }
+
+  // widget #6: Distance measurement
   view.ui.add("measureBar", "bottom-left");
 
   var activeWidget = null;
@@ -370,6 +441,7 @@ require([
       selectedButton.classList.add("active");
     }
   }
+
   /***  User Input SFI feature   ***/
   const minOCDepthSlider = new Slider({
     container: "minOCDepthSlider",

@@ -111,8 +111,33 @@
       <button id="clear-report" class="esri-widget">Clear Report</button>
     </div>
 
-    <!-- User Input Query SFI -->
-    <div id="reportSfi" class="esri-widget" style="display: none"></div>
+    <!-- Geometry Query -->
+    <div id="queryDiv" class="esri-widget" style="display: none">
+      <b>Query by geometry</b><br />
+      <br />Draw a geometry to query by:
+      <div class="geometry-options">
+        <button
+          class="esri-widget--button esri-icon-map-pin geometry-button"
+          id="point-geometry-button"
+          value="point"
+          title="Query by point"
+        ></button>
+        <button
+          class="esri-widget--button esri-icon-polygon geometry-button"
+          id="polygon-geometry-button"
+          value="polygon"
+          title="Query by polygon"
+        ></button>
+      </div>
+      <br />
+      <button class="esri-button" id="clearGeometry" type="button">
+        Clear
+      </button>
+      <br />
+      <button class="esri-button" id="printPage" type="button">
+        Print Page
+      </button>
+    </div>
 
     <!-- Coordinates widget -->
     <div id="coordsWidget" class="esri-widget esri-component"></div>

@@ -1,7 +1,7 @@
 const kelpProductivityLayerUrl =
   "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Kelp_Productivity/FeatureServer/0";
-const bathymetryLayerUrl = 
-"https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Bathymetry_Matched/FeatureServer/0";
+const bathymetryLayerUrl =
+  "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Bathymetry_Matched/FeatureServer/0";
 const shippingLanesLayerUrl =
   "https://services6.arcgis.com/vhDSkImOgoRe9GRT/arcgis/rest/services/Shipping_Lanes/FeatureServer/1";
 const dangerZonesAndRestrictedAreasLayerUrl =
