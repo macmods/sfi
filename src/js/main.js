@@ -323,6 +323,55 @@ require([
   });
   view.ui.add([queryDiv], "bottom-left");
 
+  // use SketchViewModel to draw polygons that are used as a query
+  let sketchGeometry = null;
+  const sketchViewModel = new SketchViewModel({
+    layer: sketchLayer,
+    defaultUpdateOptions: {
+      tool: "reshape",
+      toggleToolOnClick: false,
+    },
+    view: view,
+    defaultCreateOptions: { hasZ: false },
+  });
+
+  sketchViewModel.on("create", function (event) {
+    if (event.state === "complete") {
+      sketchGeometry = event.graphic.geometry;
+    }
+  });
+
+  sketchViewModel.on("update", function (event) {
+    if (event.state === "complete") {
+      sketchGeometry = event.graphics[0].geometry;
+    }
+  });
+
+  // draw geometry buttons - use the selected geometry to sktech
+  document
+    .getElementById("point-geometry-button")
+    .addEventListener("click", geometryButtonsClickHandler);
+  document
+    .getElementById("polygon-geometry-button")
+    .addEventListener("click", geometryButtonsClickHandler);
+  function geometryButtonsClickHandler(event) {
+    const geometryType = event.target.value;
+    clearGeometry();
+    sketchViewModel.create(geometryType);
+  }
+
+  // Clear the geometry and set the default renderer
+  document
+    .getElementById("clearGeometry")
+    .addEventListener("click", clearGeometry);
+
+  // Clear the geometry and set the default renderer
+  function clearGeometry() {
+    sketchGeometry = null;
+    sketchViewModel.cancel();
+    sketchLayer.removeAll();
+  }
+
   // widget #6: Distance measurement
   view.ui.add("measureBar", "bottom-left");
 
