@@ -131,6 +131,8 @@ require([
     url: locatorTaskUrl,
   });
 
+  const resultsLayer = new GraphicsLayer();
+
   const webmap = new WebMap({
     portalItem: {
       id: "ab809d7d499b4ba9b7c87dbdefc4bbf7",
@@ -143,6 +145,7 @@ require([
       mpaInventoryLayer,
       principalPortsLayer,
       federalAndStateWatersLayer,
+      resultsLayer,
     ],
   });
 
@@ -154,6 +157,7 @@ require([
   webmap.layers.reorder(dangerZonesAndRestrictedAreasLayer, 4);
   webmap.layers.reorder(shippingLanesLayer, 5);
   webmap.layers.reorder(principalPortsLayer, 6);
+  webmap.layers.reorder(resultsLayer, 7);
 
   // Set minimum scale
   kelpProductivityLayer.minScale = 0;
@@ -490,6 +494,55 @@ require([
       labels: true,
       rangeLabels: true,
     },
+  });
+
+  const querySFI = document.getElementById("query-sfi");
+
+  querySFI.addEventListener("click", function () {
+    resultsLayer.removeAll();
+    const querySizeLimit = 5000;
+    for (let i = 1; i < 320000; i += querySizeLimit) {
+      queryData(i, querySizeLimit).then(displayResults);
+    }
+
+    function queryData(index, querySizeLimit) {
+      const query = kelpProductivityLayer.createQuery();
+      query.start = index;
+      query.num = querySizeLimit;
+      return kelpProductivityLayer.queryFeatures(query);
+    }
+    function displayResults(results) {
+      const maxProductivity = getMaxBiomassValues(results.features);
+      const features = results.features.map(function (graphic) {
+        let newBiomass = graphic.attributes.biomass / maxProductivity;
+        graphic.attributes = {
+          biomass: newBiomass.toFixed(6),
+        };
+        graphic.symbol = {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          size: 1,
+          color: "green",
+        };
+        return graphic;
+      });
+      resultsLayer.addMany(features);
+
+      function getMaxBiomassValues(features) {
+        var maxValue = 0;
+        features.map(function (feature) {
+          if (feature.attributes.biomass > maxValue)
+            maxValue = feature.attributes.biomass;
+        });
+        return maxValue;
+      }
+    }
+  });
+
+  const clearSFI = document.getElementById("clear-report");
+  clearSFI.addEventListener("click", function () {
+    view.when(function () {
+      resultsLayer.removeAll();
+    });
   });
 
   // TODO: ADD 7 Layers
