@@ -103,12 +103,6 @@ require([
   const mpaInventoryLayer = new FeatureLayer({
     url: mpaInventoryLayerUrl,
     visible: false,
-    // definitionExpression:
-    //   "(OBJECTID < 20 OR " +
-    //   "OBJECTID > 49 AND " +
-    //   "OBJECTID < 54 OR " +
-    //   "OBJECTID > 54 AND " +
-    //   "OBJECTID < 94)",
     popupTemplate: mpaInventoryPopupTeamplate,
   });
 
@@ -519,7 +513,7 @@ require([
           biomass: newBiomass.toFixed(6),
         };
         graphic.symbol = {
-          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          type: "simple-marker",
           size: 1,
           color: "green",
         };
@@ -544,13 +538,4 @@ require([
       resultsLayer.removeAll();
     });
   });
-
-  // TODO: ADD 7 Layers
-  // 1. Kelp Productivity Map (B)
-  // 2. Bathymetry (OC)
-  // 3. Distance to Port (OC)
-  // 4. Shipping Lanes (MSP)
-  // 5. Danger Zones and Restricted Areas (MSP)
-  // 6. MPA Inventory (MSP)
-  // 7. Federal and State Waters (MSP)
 });
