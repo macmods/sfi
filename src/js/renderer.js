@@ -2,7 +2,7 @@
 const referenceScale = 900000;
 
 const kelpProductivityRenderer = {
-  type: "simple", // autocasts as new SimpleRenderer()
+  type: "simple",
   symbol: {
     type: "simple-marker",
     size: 5,
@@ -29,6 +29,4 @@ const kelpProductivityRenderer = {
 export {
   referenceScale,
   kelpProductivityRenderer,
-  // bathymetryRenderer,
-  // dangerZonesAndRestrictedAreasRenderer,
 };

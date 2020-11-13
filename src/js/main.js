@@ -20,8 +20,6 @@ import {
 import {
   referenceScale,
   kelpProductivityRenderer,
-  // bathymetryRenderer,
-  // dangerZonesAndRestrictedAreasRenderer,
 } from "./renderer.js";
 
 require([
