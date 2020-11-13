@@ -20,8 +20,8 @@ import {
 import {
   referenceScale,
   kelpProductivityRenderer,
-  bathymetryRenderer,
-  dangerZonesAndRestrictedAreasRenderer,
+  // bathymetryRenderer,
+  // dangerZonesAndRestrictedAreasRenderer,
 } from "./renderer.js";
 
 require([
@@ -71,6 +71,7 @@ require([
     url: kelpProductivityLayerUrl,
     visible: false,
     renderer: kelpProductivityRenderer,
+    definitionExpression: "(Maximum_An > 0)",
     popupTemplate: kelpProductivityPopupTemplate,
   });
 
@@ -78,7 +79,7 @@ require([
   const bathymetryLayer = new FeatureLayer({
     url: bathymetryLayerUrl,
     visible: false,
-    renderer: bathymetryRenderer,
+    // renderer: bathymetryRenderer,
     popupTemplate: bathymetryPopupTemplate,
   });
 
@@ -94,7 +95,7 @@ require([
   const dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
     url: dangerZonesAndRestrictedAreasLayerUrl,
     visible: false,
-    renderer: dangerZonesAndRestrictedAreasRenderer,
+    // renderer: dangerZonesAndRestrictedAreasRenderer,
     popupTemplate: dangerZonesAndRestrictedAreasPopupTemplate,
   });
 
@@ -102,12 +103,12 @@ require([
   const mpaInventoryLayer = new FeatureLayer({
     url: mpaInventoryLayerUrl,
     visible: false,
-    definitionExpression:
-      "(OBJECTID < 20 OR " +
-      "OBJECTID > 49 AND " +
-      "OBJECTID < 54 OR " +
-      "OBJECTID > 54 AND " +
-      "OBJECTID < 94)",
+    // definitionExpression:
+    //   "(OBJECTID < 20 OR " +
+    //   "OBJECTID > 49 AND " +
+    //   "OBJECTID < 54 OR " +
+    //   "OBJECTID > 54 AND " +
+    //   "OBJECTID < 94)",
     popupTemplate: mpaInventoryPopupTeamplate,
   });
 
