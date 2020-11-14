@@ -351,6 +351,7 @@ require([
     function addGeometryQueryWidget() {
       // widget #5: Geometry Query
       window.view = view;
+      view.ui.add([queryDiv], "bottom-left");
     }
 
     function addDistanceMeasurementWidget() {
@@ -537,11 +538,6 @@ require([
     // add a GraphicsLayer for the sketches and the buffer
     const sketchLayer = new GraphicsLayer();
     view.map.addMany([sketchLayer]);
-
-    webmap.load().then(function () {
-      queryDiv.style.display = "block";
-    });
-    view.ui.add([queryDiv], "bottom-left");
 
     // use SketchViewModel to draw polygons that are used as a query
     let sketchGeometry = null;
