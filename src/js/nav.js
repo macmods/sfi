@@ -14,7 +14,7 @@ function navButton(selectedButton) {
 function toggle(selectedButton) {
   const layerToggle = document.getElementById("layerToggle"); //layerToggle is the id of widget
   const sfiCalc = document.getElementById("sfiCalc"); // TODO: Need to implement feature and name widget id to sfiCalc
-  const reportSfi = document.getElementById("reportSfi"); // TODO: Need to implement feature and name widget id to reportSfi
+  const reportSfi = document.getElementById("queryDiv"); // queryDiv is the id of widget
   switch (selectedButton) {
     case "layer-toggle":
       layerToggle.style.display = reverseDisplayStatus(
