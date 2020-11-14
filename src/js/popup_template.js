@@ -7,7 +7,7 @@ var kelpProductivityPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "biomass",
+          fieldName: "Maximum_An",
           label: "Biomass (kilograms-dry)",
         },
       ],
@@ -121,7 +121,7 @@ var federalAndStateWatersPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "Jurisdicti",
+          fieldName: "FEDORSTATE",
           label: "Jurisdiction",
         },
       ],
