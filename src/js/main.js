@@ -17,12 +17,7 @@ import {
   mpaInventoryPopupTeamplate,
   principalPortsPopupTemplate,
 } from "./popup_template.js";
-import {
-  referenceScale,
-  kelpProductivityRenderer,
-  bathymetryRenderer,
-  dangerZonesAndRestrictedAreasRenderer,
-} from "./renderer.js";
+import { referenceScale, kelpProductivityRenderer } from "./renderer.js";
 
 require([
   // mapping
@@ -102,6 +97,7 @@ require([
         url: kelpProductivityLayerUrl,
         visible: false,
         renderer: kelpProductivityRenderer,
+        definitionExpression: "(Maximum_An > 0)",
         popupTemplate: kelpProductivityPopupTemplate,
       });
 
@@ -109,7 +105,7 @@ require([
       bathymetryLayer = new FeatureLayer({
         url: bathymetryLayerUrl,
         visible: false,
-        renderer: bathymetryRenderer,
+        // renderer: bathymetryRenderer,
         popupTemplate: bathymetryPopupTemplate,
       });
 
@@ -125,7 +121,7 @@ require([
       dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
         url: dangerZonesAndRestrictedAreasLayerUrl,
         visible: false,
-        renderer: dangerZonesAndRestrictedAreasRenderer,
+        // renderer: dangerZonesAndRestrictedAreasRenderer,
         popupTemplate: dangerZonesAndRestrictedAreasPopupTemplate,
       });
 
@@ -133,12 +129,6 @@ require([
       mpaInventoryLayer = new FeatureLayer({
         url: mpaInventoryLayerUrl,
         visible: false,
-        definitionExpression:
-          "(OBJECTID < 20 OR " +
-          "OBJECTID > 49 AND " +
-          "OBJECTID < 54 OR " +
-          "OBJECTID > 54 AND " +
-          "OBJECTID < 94)",
         popupTemplate: mpaInventoryPopupTeamplate,
       });
 
@@ -602,13 +592,4 @@ require([
       sketchLayer.removeAll();
     }
   }
-
-  // TODO: ADD 7 Layers
-  // 1. Kelp Productivity Map (B)
-  // 2. Bathymetry (OC)
-  // 3. Distance to Port (OC)
-  // 4. Shipping Lanes (MSP)
-  // 5. Danger Zones and Restricted Areas (MSP)
-  // 6. MPA Inventory (MSP)
-  // 7. Federal and State Waters (MSP)
 });

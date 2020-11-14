@@ -7,7 +7,7 @@ var kelpProductivityPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "biomass",
+          fieldName: "Maximum_An",
           label: "Biomass (kilograms-dry)",
         },
       ],
