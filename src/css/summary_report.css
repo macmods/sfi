@@ -1,0 +1,30 @@
+.progress-container {
+  height: 4px;
+  background: #162b36;
+  max-width: 100%;
+  margin-top: 3px; 
+  margin-bottom: 2px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #162b36;
+  width: 0%;
+}
+
+.content {
+  margin: 15px auto 0 auto;
+}
+
+.reportHead {
+  font-family: Roboto;
+  font-weight: Bold;
+  font-size: 20px;
+}
+
+.subHead {
+  font-family: Roboto;
+  font-weight: Bolder;
+  font-size: 14px;
+}
+
