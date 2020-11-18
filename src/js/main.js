@@ -257,6 +257,7 @@ require([
     addBookmarksWidget();
     addMouseCoordinatesWidget();
     addGeometryQueryWidget();
+    addSummaryReportWidget();
     addDistanceMeasurementWidget();
     function addLegendWidget() {
       // Widget #1: Legend
@@ -354,6 +355,10 @@ require([
       view.ui.add([queryDiv], "bottom-left");
     }
 
+    function addSummaryReportWidget() {
+      view.ui.add([resultDiv], "top-right");
+    }
+
     function addDistanceMeasurementWidget() {
       // widget #6: Distance measurement
       view.ui.add("measureBar", "bottom-left");
@@ -430,7 +435,7 @@ require([
   }
 
   /********************************************************************************
-   *                         Under construction
+   *                         Under construction: Calculate SFI
    * ******************************************************************************/
   function addCalculateSFIFeature() {
     const minOCDepthSlider = new Slider({
@@ -532,7 +537,7 @@ require([
   }
 
   /********************************************************************************
-   *                         Under construction
+   *                         Under construction: Report SFI
    * ******************************************************************************/
   function addReportSFIFeature() {
     // add a GraphicsLayer for the sketches and the buffer
@@ -554,12 +559,16 @@ require([
     sketchViewModel.on("create", function (event) {
       if (event.state === "complete") {
         sketchGeometry = event.graphic.geometry;
+        // make summary result pop up visible
+        resultDiv.style.display = "block";
       }
     });
 
     sketchViewModel.on("update", function (event) {
       if (event.state === "complete") {
         sketchGeometry = event.graphics[0].geometry;
+        // make summary result pop up visible
+        resultDiv.style.display = "block";
       }
     });
 
@@ -586,6 +595,8 @@ require([
       sketchGeometry = null;
       sketchViewModel.cancel();
       sketchLayer.removeAll();
+      // make summary result pop up invisible
+      resultDiv.style.display = "none";
     }
   }
 });
