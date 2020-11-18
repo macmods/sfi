@@ -257,7 +257,7 @@ require([
     addBookmarksWidget();
     addMouseCoordinatesWidget();
     addGeometryQueryWidget();
-    addSummaryReportWidget()
+    addSummaryReportWidget();
     addDistanceMeasurementWidget();
     function addLegendWidget() {
       // Widget #1: Legend
