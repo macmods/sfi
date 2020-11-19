@@ -438,6 +438,11 @@ require([
    *                         Under construction: Calculate SFI
    * ******************************************************************************/
   function addCalculateSFIFeature() {
+    var minOCDepth = 20;
+    var maxOcDepth = 500;
+    var FarmFactor = 0.5;
+    var OCFactor = 0.5;
+
     const minOCDepthSlider = new Slider({
       container: "minOCDepthSlider",
       min: 10,
@@ -474,7 +479,7 @@ require([
       },
     });
 
-    const weightingFactor = new Slider({
+    const weightingFactorSlider = new Slider({
       container: "weightingFactor",
       min: 0,
       max: 1,
@@ -486,12 +491,27 @@ require([
       },
     });
 
+    minOCDepthSlider.on("thumb-drag", function (event) {
+      minOCDepth = event.value;
+    });
+
+    maxOCDepthSlider.on("thumb-drag", function (event) {
+      maxOcDepth = event.value;
+    });
+
+    weightingFactorSlider.on("thumb-drag", function (event) {
+      FarmFactor = event.value;
+      OCFactor = 1 - FarmFactor;
+    });
+
     const querySFI = document.getElementById("query-sfi");
 
     querySFI.addEventListener("click", function () {
       resultsLayer.removeAll();
       const querySizeLimit = 5000;
-      for (let i = 1; i < 320000; i += querySizeLimit) {
+      const maxProductivity = 4;
+
+      for (let i = 1; i < 50000; i += querySizeLimit) {
         queryData(i, querySizeLimit).then(displayResults);
       }
 
@@ -502,11 +522,19 @@ require([
         return kelpProductivityLayer.queryFeatures(query);
       }
       function displayResults(results) {
-        const maxProductivity = getMaxBiomassValues(results.features);
         const features = results.features.map(function (graphic) {
-          let newBiomass = graphic.attributes.biomass / maxProductivity;
+          let biomass = graphic.attributes.Maximum_An;
+          let bathymetry = graphic.attributes.Depth;
+          let sfi = 0;
+          const Bn = biomass / maxProductivity;
+          const OCz = 1 - Math.pow((bathymetry - minOCDepth) / maxOcDepth, 2);
+          if (bathymetry >= minOCDepth && bathymetry <= maxOcDepth) {
+            sfi = FarmFactor * Bn + OCFactor * OCz;
+          }
           graphic.attributes = {
-            biomass: newBiomass.toFixed(6),
+            Biomass: biomass,
+            Bathymetry: bathymetry,
+            SFI: sfi,
           };
           graphic.symbol = {
             type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
@@ -516,15 +544,6 @@ require([
           return graphic;
         });
         resultsLayer.addMany(features);
-
-        function getMaxBiomassValues(features) {
-          var maxValue = 0;
-          features.map(function (feature) {
-            if (feature.attributes.biomass > maxValue)
-              maxValue = feature.attributes.biomass;
-          });
-          return maxValue;
-        }
       }
     });
 
