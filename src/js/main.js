@@ -521,6 +521,7 @@ require([
         query.num = querySizeLimit;
         return kelpProductivityLayer.queryFeatures(query);
       }
+
       function displayResults(results) {
         const features = results.features.map(function (graphic) {
           let biomass = graphic.attributes.Maximum_An;
@@ -624,7 +625,7 @@ require([
 
       // make summary result pop up visible
       resultDiv.style.display = "block";
-      return;
+      return promiseUtils.eachAlways([queryBathymetry()]);
     });
 
     function runQuery() {
@@ -634,6 +635,28 @@ require([
         }
 
         console.error(error);
+      });
+    }
+
+    function queryBathymetry() {
+      // query for the average depth of a selected area
+      const avgDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "avgDepth",
+        statisticType: "avg",
+      };
+
+      const query = bathymetryLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = [avgDepth];
+
+      bathymetryLayer.queryFeatures(query).then(function (response) {
+        var stats = response.features[0].attributes;
+        const avgDepthConntainer = document.getElementById("avgDepth");
+        const avgDepthText = document.createElement("p");
+        avgDepthText.innerHTML =
+          "<b>" + "Average Depth:" + "</b> " + stats.avgDepth + "m";
+        avgDepthConntainer.appendChild(avgDepthText);
       });
     }
   }
