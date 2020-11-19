@@ -24,7 +24,7 @@ var bathymetryPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "depth",
+          fieldName: "Depth",
           label: "Depth (meters)",
         },
       ],
@@ -58,15 +58,15 @@ var dangerZonesAndRestrictedAreasPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "boundaryNa",
+          fieldName: "boundaryName",
           label: "Boundary Name",
         },
         {
-          fieldName: "boundaryTy",
+          fieldName: "boundaryType",
           label: "Boundary Type",
         },
         {
-          fieldName: "boundaryDe",
+          fieldName: "boundaryDescription",
           label: "Boundary Description",
         },
       ],
@@ -104,7 +104,7 @@ var principalPortsPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "portName",
+          fieldName: "Name",
           label: "Port Name",
         },
       ],
@@ -121,8 +121,7 @@ var federalAndStateWatersPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "FEDORSTATE",
-          label: "Jurisdiction",
+          fieldName: "Jurisdiction",
         },
       ],
     },
