@@ -559,16 +559,14 @@ require([
     sketchViewModel.on("create", function (event) {
       if (event.state === "complete") {
         sketchGeometry = event.graphic.geometry;
-        // make summary result pop up visible
-        resultDiv.style.display = "block";
+        runQuery();
       }
     });
 
     sketchViewModel.on("update", function (event) {
       if (event.state === "complete") {
         sketchGeometry = event.graphics[0].geometry;
-        // make summary result pop up visible
-        resultDiv.style.display = "block";
+        runQuery();
       }
     });
 
@@ -597,6 +595,27 @@ require([
       sketchLayer.removeAll();
       // make summary result pop up invisible
       resultDiv.style.display = "none";
+    }
+
+    // set the geometry query
+    var debouncedRunQuery = promiseUtils.debounce(function () {
+      if (!sketchGeometry) {
+        return;
+      }
+
+      // make summary result pop up visible
+      resultDiv.style.display = "block";
+      return;
+    });
+
+    function runQuery() {
+      debouncedRunQuery().catch((error) => {
+        if (error.name === "AbortError") {
+          return;
+        }
+
+        console.error(error);
+      });
     }
   }
 });
