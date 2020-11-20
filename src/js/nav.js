@@ -15,6 +15,7 @@ function toggle(selectedButton) {
   const layerToggle = document.getElementById("layerToggle"); //layerToggle is the id of widget
   const sfiCalc = document.getElementById("sfiCalc"); // TODO: Need to implement feature and name widget id to sfiCalc
   const reportSfi = document.getElementById("queryDiv"); // queryDiv is the id of widget
+  const reportSummarySfi = document.getElementById("resultDiv"); // resultDiv is the id of the report summary widget
   switch (selectedButton) {
     case "layer-toggle":
       layerToggle.style.display = reverseDisplayStatus(
@@ -22,14 +23,17 @@ function toggle(selectedButton) {
       );
       sfiCalc.style.display = "none";
       reportSfi.style.display = "none";
+      reportSummarySfi.style.display = "none";
       break;
     case "sfi-calc":
       sfiCalc.style.display = reverseDisplayStatus(sfiCalc.style.display);
       layerToggle.style.display = "none";
       reportSfi.style.display = "none";
+      reportSummarySfi.style.display = "none";
       break;
     case "report-sfi":
       reportSfi.style.display = reverseDisplayStatus(reportSfi.style.display);
+      reportSummarySfi.style.display = "none";
       layerToggle.style.display = "none";
       sfiCalc.style.display = "none";
       break;
