@@ -639,6 +639,13 @@ require([
     }
 
     function queryBathymetry() {
+      // query for the minimum depth of a selected area
+      const minDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "minDepth",
+        statisticType: "min",
+      };
+
       // query for the average depth of a selected area
       const avgDepth = {
         onStatisticField: "Contour",
@@ -646,17 +653,43 @@ require([
         statisticType: "avg",
       };
 
+      // query for the maximum depth of a selected area
+      const maxDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "maxDepth",
+        statisticType: "max",
+      };
+
       const query = bathymetryLayer.createQuery();
       query.geometry = sketchGeometry;
-      query.outStatistics = [avgDepth];
+      query.outStatistics = [minDepth, avgDepth, maxDepth];
 
       bathymetryLayer.queryFeatures(query).then(function (response) {
         var stats = response.features[0].attributes;
-        const avgDepthConntainer = document.getElementById("avgDepth");
-        const avgDepthText = document.createElement("p");
-        avgDepthText.innerHTML =
-          "<b>" + "Average Depth:" + "</b> " + stats.avgDepth + "m";
-        avgDepthConntainer.appendChild(avgDepthText);
+        const depthInfoContainer = document.getElementById(
+          "depthInfoContainer"
+        );
+        const depthInfoText = document.createElement("p");
+        depthInfoText.innerHTML =
+          "<b>" +
+          "Minimum Depth:" +
+          "</b> " +
+          stats.minDepth +
+          "m" +
+          "<br>" +
+          "<b>" +
+          "Average Depth:" +
+          "</b> " +
+          stats.avgDepth +
+          "m" +
+          "<br>" +
+          "<b>" +
+          "Maximum Depth:" +
+          "</b> " +
+          stats.maxDepth +
+          "m" +
+          "<br>";
+        depthInfoContainer.appendChild(depthInfoText);
       });
     }
   }
