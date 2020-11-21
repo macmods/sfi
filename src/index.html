@@ -160,7 +160,7 @@
       <div class="progress-container">
         <div class="progress-bar" id="myBar"></div>
       </div>
-      <div class="content">
+      <div id="content">
         <span class="subHead">GENERAL INFORMATION</span>
         <p>
           The report provides an analysis of the Seaweed Farming Index for the
@@ -168,41 +168,114 @@
           and information for the size, seafloor depth, jurisdictional
           boundaries, and proximity to port of the selected area.
         </p>
-        <span class="subHead">Seaweed Farming Index</span>
-        <p>
-          The Seaweed Farming Index varies from zero to one, where high values
-          are more favorable to farming, lower values are less favorable, and a
-          value of zero is exclusive to farming. The Index incorporates both
-          potential kelp productivity and those operational constraints selected
-          by the user.
-        </p>
-        <span class="subHead">Attribution Analaysis</span>
-        <p>
-          The breakdown of the Seaweed Farming Index for the selected area is as
-          follows:
-        </p>
-        <span class="subHead">Report Area</span>
-        <p>Needs content</p>
-        <span class="subHead">Seafloor Depth</span>
-        <p>
-          Seafloor depth is an important consideration for farm installation and
-          operational costs. Minimum, maximum and average seafloor depth
-          (meters) are reported as positive values below the sea surface.
-        </p>
-        <span class="subHead">Distance to Port</span>
-        <p>
-          Distance to the nearest port or harbor is an important consideration
-          for farm access and operational costs.
-        </p>
-        <span class="subHead">Jurisdictional Boundaries</span>
-        <p>
-          Seaweed farming activities can fall within differing governing
-          jurisdictions. Having a clear understanding of the jurisdictions in
-          which a proposed activity might occur will help determine which
-          statutes, regulations, and administrative procedures must be
-          addressed. The report shows the breakdown of the selected area which
-          falls within federal versus state waters.
-        </p>
+
+        <div class="nestedSections">
+          <span class="subHead">Seaweed Farming Index</span>
+          <hr />
+          <p>
+            The Seaweed Farming Index varies from zero to one, where high values
+            are more favorable to farming, lower values are less favorable, and
+            a value of zero is exclusive to farming. The Index incorporates both
+            potential kelp productivity and those operational constraints
+            selected by the user.
+          </p>
+          <div class="statement">
+            <span>The average value of the selected area is</span>
+            <div id="sfiOutput">XX</div>
+            <span>Histogram of Seaweed Farming Index (SFI)</span>
+            <div id="sfiHistogram">Histogram Here</div>
+          </div>
+        </div>
+
+        <div class="nestedSections">
+          <span class="subHead">Attribution Analaysis</span>
+          <hr />
+          <p>
+            The breakdown of the Seaweed Farming Index for the selected area is
+            as follows:
+          </p>
+          <div class="statement">
+            <div id="sfiFormula">Formula Here</div>
+          </div>
+        </div>
+
+        <div class="nestedSections">
+          <span class="subHead">Report Area</span>
+          <hr />
+          <div class="statement">
+            <span>The average value of the selected area is</span>
+            <div id="reportAreaOut">XX km<sup>2</sup></div>
+          </div>
+        </div>
+
+        <div class="nestedSections">
+          <span class="subHead">Seafloor Depth</span>
+          <hr />
+          <p>
+            Seafloor depth is an important consideration for farm installation
+            and operational costs. Minimum, maximum and average seafloor depth
+            (meters) are reported as positive values below the sea surface.
+          </p>
+          <div class="statement">
+            <table>
+              <tr>
+                <td>
+                  <div id="depthOutput">XX</div>
+                </td>
+                <td>
+                  <div id="depthOutput">XX</div>
+                </td>
+                <td>
+                  <div id="depthOutput">XX</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  average
+                </td>
+                <td>
+                  minimum
+                </td>
+                <td>
+                  maximum
+                </td>
+              </tr>
+            </table>
+            <span
+              >The minimum and maximum seafloor depth available to seaweed
+              farming was selected as XX and XXXX, respectively</span
+            >
+          </div>
+        </div>
+
+        <div class="nestedSections">
+          <span class="subHead">Distance to Port</span>
+          <hr />
+          <p>
+            Distance to the nearest port or harbor is an important consideration
+            for farm access and operational costs.
+          </p>
+          <div class="statement">
+            <div id="portOutput">XX km to Port Name</div>
+            <span>The maximum allowable distance to port was selected as XX</span>
+          </div>
+        </div>
+
+        <div class="nestedSections">
+          <span class="subHead">Jurisdictional Boundaries</span>
+          <hr />
+          <p>
+            Seaweed farming activities can fall within differing governing
+            jurisdictions. Having a clear understanding of the jurisdictions in
+            which a proposed activity might occur will help determine which
+            statutes, regulations, and administrative procedures must be
+            addressed. The report shows the breakdown of the selected area which
+            falls within federal versus state waters.
+          </p>
+          <div class=statement>
+            <div id="jurisdictionPieChart">Chart Here</div>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -21,6 +21,16 @@ h1 {
   line-height: 50px;
 }
 
+hr {
+  color: #E3E3E3;
+}
+
+p {
+  font-family: Roboto;
+  font-weight: Regular;
+  color: black;
+}
+
 /* Feature Toggle Buttons in Navigation Bar */
 
 .navbar {
@@ -65,7 +75,7 @@ li {
 #sfiCalc {
   top: 140px;
   right: 20px;
-  height: 600px;
+  max-height: 540px;
   position: absolute;
   z-index: 99;
   background-color: white;
@@ -81,8 +91,10 @@ li {
 }
 
 table {
-  max-width: 400px;
   text-align: center;
+  margin-left: auto;
+  margin-right:auto;
+  padding: 0px 0px 10px 0px;
 }
 
 #sliderColumn {
