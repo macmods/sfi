@@ -62,17 +62,6 @@ li {
   padding: 0px;
 }
 
-#resultDiv {
-  min-width: 400px;
-  max-width: 35%;
-  max-height: 570px;
-  font-size: 14px;
-  padding: 15px;
-  display: none;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
 #sfiCalc {
   top: 140px;
   right: 20px;
@@ -89,6 +78,15 @@ li {
 .slider {
   width: 100%;
   height: 60px;
+}
+
+table {
+  max-width: 400px;
+  text-align: center;
+}
+
+#sliderColumn {
+  min-width: 180px;
 }
 
 #coordsWidget {
