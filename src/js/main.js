@@ -508,7 +508,9 @@ require([
       FarmFactor = event.value;
       OCFactor = 1 - FarmFactor;
       weightingFactorSlider.labelFormatFunction = function (value, type) {
-        return (type === "value") ? Math.round(100 - value * 100) + " : " + Math.round(value * 100) : null;
+        return type === "value"
+          ? Math.round(100 - value * 100) + " : " + Math.round(value * 100)
+          : null;
       };
     });
 
