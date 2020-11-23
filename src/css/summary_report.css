@@ -1,8 +1,19 @@
+#resultDiv {
+  min-width: 400px;
+  max-width: 35%;
+  max-height: 570px;
+  font-size: 14px;
+  padding: 15px;
+  display: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .progress-container {
   height: 4px;
   background: #162b36;
   max-width: 100%;
-  margin-top: 3px; 
+  margin-top: 3px;
   margin-bottom: 2px;
 }
 
@@ -27,4 +38,3 @@
   font-weight: Bolder;
   font-size: 14px;
 }
-

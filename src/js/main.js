@@ -483,11 +483,16 @@ require([
       container: "weightingFactor",
       min: 0,
       max: 1,
-      steps: 0.01,
+      steps: 0.1,
       values: [0.5],
       visibleElements: {
         labels: true,
-        rangeLabels: true,
+        rangeLabels: false,
+      },
+      labelFormatFunction: (value, type) => {
+        return type === "value"
+          ? Math.round(value * 100) + " : " + Math.round(100 - value * 100)
+          : null;
       },
     });
 
@@ -502,6 +507,11 @@ require([
     weightingFactorSlider.on("thumb-drag", function (event) {
       FarmFactor = event.value;
       OCFactor = 1 - FarmFactor;
+      weightingFactorSlider.labelFormatFunction = function (value, type) {
+        return type === "value"
+          ? Math.round(100 - value * 100) + " : " + Math.round(value * 100)
+          : null;
+      };
     });
 
     const querySFI = document.getElementById("query-sfi");
