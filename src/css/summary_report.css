@@ -1,5 +1,4 @@
 #resultDiv {
-<<<<<<< HEAD
   top: 140px;
   min-width: 400px;
   max-width: 40%;
@@ -8,13 +7,6 @@
   font-family: Roboto;
   padding: 20px;
   color: #162b36;
-=======
-  min-width: 400px;
-  max-width: 35%;
-  max-height: 570px;
-  font-size: 14px;
-  padding: 15px;
->>>>>>> 497c467d8e8090e06a17b25b136e2f734ec496f9
   display: none;
   overflow-y: auto;
   overflow-x: hidden;
@@ -47,7 +39,6 @@
   font-weight: Bolder;
   font-size: 14px;
 }
-<<<<<<< HEAD
 
 .nestedSections {
   background: white;
@@ -75,5 +66,3 @@
   font-size: 12px;
   margin: 10px;
 }
-=======
->>>>>>> 497c467d8e8090e06a17b25b136e2f734ec496f9

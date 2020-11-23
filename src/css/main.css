@@ -91,15 +91,10 @@ li {
 }
 
 table {
-<<<<<<< HEAD
   text-align: center;
   margin-left: auto;
   margin-right:auto;
   padding: 0px 0px 10px 0px;
-=======
-  max-width: 400px;
-  text-align: center;
->>>>>>> 497c467d8e8090e06a17b25b136e2f734ec496f9
 }
 
 #sliderColumn {
