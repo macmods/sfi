@@ -628,6 +628,7 @@ require([
       return promiseUtils.eachAlways([
         queryKelpProductivity(),
         queryBathymetry(),
+        queryJurisdiction(),
       ]);
     });
 
@@ -731,5 +732,76 @@ require([
         depthInfoContainer.appendChild(depthInfoText);
       });
     }
+
+    var jurisdictionChart = null;
+
+    function queryJurisdiction() {
+      const statDefinitions = [
+        {
+          onStatisticField:
+            "CASE WHEN Jurisdiction <> 'Federal' THEN 1 ELSE 0 END",
+          outStatisticFieldName: "stateWaters",
+          statisticType: "sum",
+        },
+        {
+          onStatisticField:
+            "CASE WHEN Jurisdiction = 'Federal' THEN 1 ELSE 0 END",
+          outStatisticFieldName: "federalWaters",
+          statisticType: "sum",
+        },
+      ];
+
+      var query = federalAndStateWatersLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = statDefinitions;
+
+      federalAndStateWatersLayer.queryFeatures(query).then(function (response) {
+        const stats = response.features[0].attributes;
+        updateChart(jurisdictionChart, [
+          stats.federalWaters,
+          stats.stateWaters,
+        ]);
+      });
+    }
+
+    // Updates the given chart with new data
+    function updateChart(chart, dataValues) {
+      chart.data.datasets[0].data = dataValues;
+      chart.update();
+    }
+
+    function createJurisdictionChart() {
+      const jurisdictionCanvas = document.getElementById("jurisdictionChart");
+      jurisdictionChart = new Chart(jurisdictionCanvas.getContext("2d"), {
+        type: "doughnut",
+        data: {
+          labels: ["Federal", "State"],
+          datasets: [
+            {
+              backgroundColor: ["#FD7F6F", "#7EB0D5"],
+              borderWidth: 0,
+              data: [0, 0],
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          cutoutPercentage: 0,
+          legend: {
+            position: "bottom",
+          },
+          title: {
+            display: true,
+            text: "Federal vs State Waters",
+          },
+        },
+      });
+    }
+
+    function clearCharts() {
+      updateChart(jurisdictionChart, [0, 0]);
+    }
+
+    createJurisdictionChart();
   }
 });
