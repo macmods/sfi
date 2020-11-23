@@ -442,129 +442,349 @@ require([
     var maxOcDepth = 500;
     var FarmFactor = 0.5;
     var OCFactor = 0.5;
+    var isStateWaterExcluded = false;
+    var isFederalWaterExcluded = false;
+    var isRestrictedAreaExcluded = false;
+    var isShippingLanesExcluded = false;
+    var isMPAExcluded = false;
 
-    const minOCDepthSlider = new Slider({
-      container: "minOCDepthSlider",
-      min: 10,
-      max: 10000,
-      steps: 10,
-      values: [5000],
-      visibleElements: {
-        labels: true,
-        rangeLabels: true,
-      },
-    });
+    setupSliders();
+    setupToggles();
+    setupCalculateSFIButton();
 
-    const maxOCDepthSlider = new Slider({
-      container: "maxOCDepthSlider",
-      min: 10,
-      max: 10000,
-      steps: 10,
-      values: [5000],
-      visibleElements: {
-        labels: true,
-        rangeLabels: true,
-      },
-    });
-
-    const maxOCToPortSlider = new Slider({
-      container: "maxOCToPortSlider",
-      min: 1,
-      max: 10000,
-      steps: 10,
-      values: [5000],
-      visibleElements: {
-        labels: true,
-        rangeLabels: true,
-      },
-    });
-
-    const weightingFactorSlider = new Slider({
-      container: "weightingFactor",
-      min: 0,
-      max: 1,
-      steps: 0.1,
-      values: [0.5],
-      visibleElements: {
-        labels: true,
-        rangeLabels: false,
-      },
-      labelFormatFunction: (value, type) => {
-        return type === "value"
-          ? Math.round(value * 100) + " : " + Math.round(100 - value * 100)
-          : null;
-      },
-    });
-
-    minOCDepthSlider.on("thumb-drag", function (event) {
-      minOCDepth = event.value;
-    });
-
-    maxOCDepthSlider.on("thumb-drag", function (event) {
-      maxOcDepth = event.value;
-    });
-
-    weightingFactorSlider.on("thumb-drag", function (event) {
-      FarmFactor = event.value;
-      OCFactor = 1 - FarmFactor;
-      weightingFactorSlider.labelFormatFunction = function (value, type) {
-        if (type === "value") {
-          return (value < 0.5)
-            ? Math.round(100 - value * 100) + " : " + Math.round(value * 100)
-            : Math.round(100 - value * 100) + " : " + Math.round(value * 100);
-        }
-      };
-    });
-
-    const querySFI = document.getElementById("query-sfi");
-
-    querySFI.addEventListener("click", function () {
-      resultsLayer.removeAll();
-      const querySizeLimit = 5000;
-      const maxProductivity = 4;
-
-      for (let i = 1; i < 50000; i += querySizeLimit) {
-        queryData(i, querySizeLimit).then(displayResults);
-      }
-
-      function queryData(index, querySizeLimit) {
-        const query = kelpProductivityLayer.createQuery();
-        query.start = index;
-        query.num = querySizeLimit;
-        return kelpProductivityLayer.queryFeatures(query);
-      }
-      function displayResults(results) {
-        const features = results.features.map(function (graphic) {
-          let biomass = graphic.attributes.Maximum_An;
-          let bathymetry = graphic.attributes.Depth;
-          let sfi = 0;
-          const Bn = biomass / maxProductivity;
-          const OCz = 1 - Math.pow((bathymetry - minOCDepth) / maxOcDepth, 2);
-          if (bathymetry >= minOCDepth && bathymetry <= maxOcDepth) {
-            sfi = FarmFactor * Bn + OCFactor * OCz;
-          }
-          graphic.attributes = {
-            Biomass: biomass,
-            Bathymetry: bathymetry,
-            SFI: sfi,
-          };
-          graphic.symbol = {
-            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-            size: 1,
-            color: "green",
-          };
-          return graphic;
-        });
-        resultsLayer.addMany(features);
-      }
-    });
-
-    const clearSFI = document.getElementById("clear-report");
-    clearSFI.addEventListener("click", function () {
-      view.when(function () {
-        resultsLayer.removeAll();
+    function setupSliders() {
+      const minOCDepthSlider = new Slider({
+        container: "minOCDepthSlider",
+        min: 10,
+        max: 10000,
+        steps: 10,
+        values: [5000],
+        visibleElements: {
+          labels: true,
+          rangeLabels: true,
+        },
       });
-    });
+
+      const maxOCDepthSlider = new Slider({
+        container: "maxOCDepthSlider",
+        min: 10,
+        max: 10000,
+        steps: 10,
+        values: [5000],
+        visibleElements: {
+          labels: true,
+          rangeLabels: true,
+        },
+      });
+
+      const maxOCToPortSlider = new Slider({
+        container: "maxOCToPortSlider",
+        min: 1,
+        max: 10000,
+        steps: 10,
+        values: [5000],
+        visibleElements: {
+          labels: true,
+          rangeLabels: true,
+        },
+      });
+
+      const weightingFactorSlider = new Slider({
+        container: "weightingFactor",
+        min: 0,
+        max: 1,
+        steps: 0.1,
+        values: [0.5],
+        visibleElements: {
+          labels: true,
+          rangeLabels: false,
+        },
+        labelFormatFunction: (value, type) => {
+          return type === "value"
+            ? Math.round(value * 100) + " : " + Math.round(100 - value * 100)
+            : null;
+        },
+      });
+
+      minOCDepthSlider.on("thumb-drag", function (event) {
+        minOCDepth = event.value;
+      });
+
+      maxOCDepthSlider.on("thumb-drag", function (event) {
+        maxOcDepth = event.value;
+      });
+
+      weightingFactorSlider.on("thumb-drag", function (event) {
+        FarmFactor = event.value;
+        OCFactor = 1 - FarmFactor;
+        weightingFactorSlider.labelFormatFunction = function (value, type) {
+          if (type === "value") {
+            return value < 0.5
+              ? Math.round(100 - value * 100) + " : " + Math.round(value * 100)
+              : Math.round(100 - value * 100) + " : " + Math.round(value * 100);
+          }
+        };
+      });
+    }
+
+    function setupToggles() {
+      const excludeFederalToggle = document.getElementById("excludeFederal");
+      const excludeStateToggle = document.getElementById("excludeState");
+      const excludeShippingLanesToggle = document.getElementById(
+        "excludeShippingLanes"
+      );
+      const excludeRestrictedAreaToggle = document.getElementById(
+        "excludeRestrictedArea"
+      );
+
+      const excludeMPAToggle = document.getElementById("excludeMPA");
+
+      excludeFederalToggle.addEventListener("change", function () {
+        isFederalWaterExcluded = excludeFederalToggle.checked;
+      });
+      excludeStateToggle.addEventListener("change", function () {
+        isStateWaterExcluded = excludeStateToggle.checked;
+      });
+      excludeShippingLanesToggle.addEventListener("change", function () {
+        isShippingLanesExcluded = excludeShippingLanesToggle.checked;
+      });
+      excludeRestrictedAreaToggle.addEventListener("change", function () {
+        isRestrictedAreaExcluded = excludeRestrictedAreaToggle.checked;
+      });
+      excludeMPAToggle.addEventListener("change", function () {
+        isMPAExcluded = excludeMPAToggle.checked;
+      });
+    }
+
+    function setupCalculateSFIButton() {
+      const querySFI = document.getElementById("query-sfi");
+
+      querySFI.addEventListener("click", function () {
+        resultsLayer.removeAll();
+        const querySizeLimit = 5000;
+        const maxProductivity = 4;
+
+        for (let i = 1; i < 50000; i += querySizeLimit) {
+          queryData(i, querySizeLimit)
+            .then(getGraphics)
+            .then(waterTypeFilter)
+            .then(restrictAreaFilter)
+            .then(shippingLanesFilter)
+            .then(MPAInventoryFilter)
+            .then(displayResults);
+        }
+
+        function queryData(index, querySizeLimit) {
+          const query = kelpProductivityLayer.createQuery();
+          query.start = index;
+          query.num = querySizeLimit;
+          return kelpProductivityLayer.queryFeatures(query);
+        }
+
+        function getGraphics(results) {
+          const graphics = results.features.map(function (graphic) {
+            return graphic;
+          });
+          return graphics;
+        }
+
+        function waterTypeFilter(filteringArray) {
+          if (!isStateWaterExcluded && !isFederalWaterExcluded) {
+            // pass data to the next filter without filtering
+            return filteringArray;
+          } else {
+            // start filtering the data
+            const query = federalAndStateWatersLayer.createQuery();
+            return federalAndStateWatersLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                let filteredArray = [];
+                let stateWaterAreas = [];
+                let federalWaterAreas = [];
+                // implementation of the initialization of stateWaterAreas and federalWaterAreas needed once the url works,
+                // so that the details of the database table can be seen (which row is fedral and which rows are state)
+                // [implementation....]
+
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  if (isStateWaterExcluded) {
+                    stateWaterAreas.forEach(function (stateWaterArea) {
+                      if (isIntersected) return;
+                      else if (
+                        geometryEngine.intersects(
+                          stateWaterArea.geometry,
+                          graphic.geometry
+                        )
+                      ) {
+                        isIntersected = true;
+                        console.log("intersection spotted by State Water");
+                      }
+                    });
+                  }
+                  if (isFederalWaterExcluded) {
+                    federalWaterAreas.forEach(function (federalWaterArea) {
+                      if (isIntersected) return;
+                      else if (
+                        geometryEngine.intersects(
+                          federalWaterArea.geometry,
+                          graphic.geometry
+                        )
+                      ) {
+                        isIntersected = true;
+                        console.log("intersection spotted by Federal Water");
+                      }
+                    });
+                  }
+                  if (!isIntersected) filteredArray.push(graphic);
+                });
+                return filteredArray;
+              });
+          }
+        }
+
+        function restrictAreaFilter(filteringArray) {
+          if (isRestrictedAreaExcluded) {
+            // start filtering the data
+            const query = dangerZonesAndRestrictedAreasLayer.createQuery();
+            return dangerZonesAndRestrictedAreasLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                let filteredArray = [];
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  response.features.map(function (feature) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        graphic.geometry,
+                        feature.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                      console.log(
+                        "intersection spotted by Restricted Area Filter"
+                      );
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                });
+                return filteredArray;
+              });
+          } else {
+            // pass data to the next filter without filtering
+            return filteringArray;
+          }
+        }
+
+        function shippingLanesFilter(filteringArray) {
+          if (isShippingLanesExcluded) {
+            // start filtering the data
+            const query = shippingLanesLayer.createQuery();
+            return shippingLanesLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                let filteredArray = [];
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  response.features.map(function (feature) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        feature.geometry,
+                        graphic.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                      console.log(
+                        "intersection spotted by Shipping Lanes Filter"
+                      );
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                });
+                return filteredArray;
+              });
+          } else {
+            // pass data to the next filter without filtering
+            return filteringArray;
+          }
+        }
+
+        function MPAInventoryFilter(filteringArray) {
+          if (isMPAExcluded) {
+            // start filtering the data
+            const query = mpaInventoryLayer.createQuery();
+            return mpaInventoryLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                let filteredArray = [];
+                console.log(response);
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  response.features.map(function (feature) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        graphic.geometry,
+                        feature.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                      console.log("intersection spotted by MPA Filter");
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                });
+                return filteredArray;
+              });
+          } else {
+            // pass data to the next filter without filtering
+            return filteringArray;
+          }
+        }
+
+        function displayResults(resultArray) {
+          resultArray.forEach(function (graphic) {
+            let biomass = graphic.attributes.Maximum_An;
+            let bathymetry = graphic.attributes.Depth;
+            let sfi = 0;
+            const Bn = biomass / maxProductivity;
+            const OCz = 1 - Math.pow((bathymetry - minOCDepth) / maxOcDepth, 2);
+            if (bathymetry >= minOCDepth && bathymetry <= maxOcDepth) {
+              sfi = FarmFactor * Bn + OCFactor * OCz;
+            }
+            graphic.attributes = {
+              Biomass: biomass,
+              Bathymetry: bathymetry,
+              SFI: sfi,
+            };
+            graphic.symbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              size: 1,
+              color: "green",
+            };
+          });
+          resultsLayer.addMany(resultArray);
+        }
+      });
+
+      const clearSFI = document.getElementById("clear-report");
+      clearSFI.addEventListener("click", function () {
+        view.when(function () {
+          resultsLayer.removeAll();
+        });
+      });
+    }
   }
 
   /********************************************************************************
