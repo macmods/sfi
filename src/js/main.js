@@ -625,7 +625,10 @@ require([
 
       // make summary result pop up visible
       resultDiv.style.display = "block";
-      return promiseUtils.eachAlways([queryBathymetry()]);
+      return promiseUtils.eachAlways([
+        queryKelpProductivity(),
+        queryBathymetry(),
+      ]);
     });
 
     function runQuery() {
@@ -635,6 +638,43 @@ require([
         }
 
         console.error(error);
+      });
+    }
+
+    function queryKelpProductivity() {
+      // query for the average SFI of a selected area
+      const avgSFI = {
+        onStatisticField: "SFI_defaul",
+        outStatisticFieldName: "avgSFI",
+        statisticType: "avg",
+      };
+
+      // query for the minimum distance to port of a selected area
+      const distanceToPort = {
+        onStatisticField: "Distance_t",
+        outStatisticFieldName: "distanceToPort",
+        statisticType: "min",
+      };
+
+      var query = bathymetryLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = [avgSFI, distanceToPort];
+
+      kelpProductivityLayer.queryFeatures(query).then(function (response) {
+        var stats = response.features[0].attributes;
+
+        const sfiInfoContainer = document.getElementById("sfiInfoContainer");
+        var sfiInfoText = document.createElement("p");
+        sfiInfoText.innerHTML = "<b>" + "Average SFI:" + "</b> " + stats.avgSFI;
+        sfiInfoContainer.appendChild(sfiInfoText);
+
+        const distanceInfoContainer = document.getElementById(
+          "distanceInfoContainer"
+        );
+        var distanceInfoText = document.createElement("p");
+        distanceInfoText.innerHTML =
+          "<b>" + "Distance to Port:" + "</b> " + stats.distanceToPort;
+        distanceInfoContainer.appendChild(distanceInfoText);
       });
     }
 
@@ -660,7 +700,7 @@ require([
         statisticType: "max",
       };
 
-      const query = bathymetryLayer.createQuery();
+      var query = bathymetryLayer.createQuery();
       query.geometry = sketchGeometry;
       query.outStatistics = [minDepth, avgDepth, maxDepth];
 
@@ -669,7 +709,7 @@ require([
         const depthInfoContainer = document.getElementById(
           "depthInfoContainer"
         );
-        const depthInfoText = document.createElement("p");
+        var depthInfoText = document.createElement("p");
         depthInfoText.innerHTML =
           "<b>" +
           "Minimum Depth:" +
@@ -687,8 +727,7 @@ require([
           "Maximum Depth:" +
           "</b> " +
           stats.maxDepth +
-          "m" +
-          "<br>";
+          "m";
         depthInfoContainer.appendChild(depthInfoText);
       });
     }
