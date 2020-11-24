@@ -24,7 +24,7 @@ var bathymetryPopupTemplate = {
       type: "fields",
       fieldInfos: [
         {
-          fieldName: "Depth",
+          fieldName: "Contour",
           label: "Depth (meters)",
         },
       ],

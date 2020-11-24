@@ -28,6 +28,8 @@ require([
   "esri/Graphic",
   "esri/geometry/geometryEngine",
   "esri/core/promiseUtils",
+  "esri/geometry/support/geodesicUtils",
+  //"esri/units",
   // widgets
   "esri/widgets/Legend",
   "esri/widgets/Search",
@@ -47,6 +49,8 @@ require([
   Graphic,
   geometryEngine,
   promiseUtils,
+  geodesicUtils,
+  //Units,
   // widgets
   Legend,
   Search,
@@ -509,7 +513,7 @@ require([
       OCFactor = 1 - FarmFactor;
       weightingFactorSlider.labelFormatFunction = function (value, type) {
         if (type === "value") {
-          return (value < 0.5)
+          return value < 0.5
             ? Math.round(100 - value * 100) + " : " + Math.round(value * 100)
             : Math.round(100 - value * 100) + " : " + Math.round(value * 100);
         }
@@ -601,15 +605,13 @@ require([
       }
     });
 
-    // draw geometry buttons - use the selected geometry to sktech
-    document
-      .getElementById("point-geometry-button")
-      .addEventListener("click", geometryButtonsClickHandler);
+    // draw geometry buttons - use a polygon to sktech
     document
       .getElementById("polygon-geometry-button")
       .addEventListener("click", geometryButtonsClickHandler);
     function geometryButtonsClickHandler(event) {
       const geometryType = event.target.value;
+      console.log(geometryType);
       clearGeometry();
       sketchViewModel.create(geometryType);
     }
@@ -636,7 +638,12 @@ require([
 
       // make summary result pop up visible
       resultDiv.style.display = "block";
-      return;
+      return promiseUtils.eachAlways([
+        queryKelpProductivity(),
+        queryBathymetry(),
+        calculatePolygonArea(),
+        queryJurisdiction(),
+      ]);
     });
 
     function runQuery() {
@@ -648,5 +655,157 @@ require([
         console.error(error);
       });
     }
+
+    function queryKelpProductivity() {
+      // query for the average SFI of a selected area
+      const avgSFI = {
+        onStatisticField: "SFI_defaul",
+        outStatisticFieldName: "avgSFI",
+        statisticType: "avg",
+      };
+
+      // query for the minimum distance to port of a selected area
+      const distanceToPort = {
+        onStatisticField: "Distance_t",
+        outStatisticFieldName: "distanceToPort",
+        statisticType: "min",
+      };
+
+      var query = bathymetryLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = [avgSFI, distanceToPort];
+
+      kelpProductivityLayer.queryFeatures(query).then(function (response) {
+        var stats = response.features[0].attributes;
+
+        const sfiText = document.getElementById("sfiOutput");
+        sfiText.innerHTML =
+          Math.round((stats.avgSFI + Number.EPSILON) * 100000000) / 100000000;
+
+        const distanceToPrtText = document.getElementById("portOutput");
+        distanceToPrtText.innerHTML =
+          Math.round((stats.distanceToPort + Number.EPSILON) * 100) / 100;
+      });
+    }
+
+    function queryBathymetry() {
+      // query for the minimum depth of a selected area
+      const minDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "maxDepth",
+        statisticType: "min",
+      };
+
+      // query for the average depth of a selected area
+      const avgDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "avgDepth",
+        statisticType: "avg",
+      };
+
+      // query for the maximum depth of a selected area
+      const maxDepth = {
+        onStatisticField: "Contour",
+        outStatisticFieldName: "minDepth",
+        statisticType: "max",
+      };
+
+      var query = bathymetryLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = [minDepth, avgDepth, maxDepth];
+
+      bathymetryLayer.queryFeatures(query).then(function (response) {
+        var stats = response.features[0].attributes;
+
+        var minDepthText = document.getElementById("minDepth");
+        var avgDepthText = document.getElementById("avgDepth");
+        var maxDepthText = document.getElementById("maxDepth");
+
+        minDepthText.innerHTML = -1 * stats.minDepth;
+        avgDepthText.innerHTML =
+          (-1 * Math.round((stats.avgDepth + Number.EPSILON) * 100)) / 100;
+        maxDepthText.innerHTML = -1 * stats.maxDepth;
+      });
+    }
+
+    function calculatePolygonArea() {
+      //const areas = geodesicUtils.geodesicAreas(
+      //  [sketchGeometry],
+      //  "square-kilometers"
+      //);
+    }
+
+    var jurisdictionChart = null;
+
+    function queryJurisdiction() {
+      const statDefinitions = [
+        {
+          onStatisticField:
+            "CASE WHEN Jurisdiction <> 'Federal' THEN 1 ELSE 0 END",
+          outStatisticFieldName: "stateWaters",
+          statisticType: "sum",
+        },
+        {
+          onStatisticField:
+            "CASE WHEN Jurisdiction = 'Federal' THEN 1 ELSE 0 END",
+          outStatisticFieldName: "federalWaters",
+          statisticType: "sum",
+        },
+      ];
+
+      var query = federalAndStateWatersLayer.createQuery();
+      query.geometry = sketchGeometry;
+      query.outStatistics = statDefinitions;
+
+      federalAndStateWatersLayer.queryFeatures(query).then(function (response) {
+        const stats = response.features[0].attributes;
+        updateChart(jurisdictionChart, [
+          stats.federalWaters,
+          stats.stateWaters,
+        ]);
+      });
+    }
+
+    // Updates the given chart with new data
+    function updateChart(chart, dataValues) {
+      chart.data.datasets[0].data = dataValues;
+      chart.update();
+    }
+
+    function createJurisdictionPieChart() {
+      const jurisdictionCanvas = document.getElementById(
+        "jurisdictionPieChart"
+      );
+      jurisdictionChart = new Chart(jurisdictionCanvas.getContext("2d"), {
+        type: "doughnut",
+        data: {
+          labels: ["Federal", "State"],
+          datasets: [
+            {
+              backgroundColor: ["#FD7F6F", "#7EB0D5"],
+              borderWidth: 0,
+              data: [0, 0],
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          cutoutPercentage: 0,
+          legend: {
+            position: "bottom",
+          },
+          title: {
+            display: true,
+            text: "Federal vs State Waters",
+          },
+        },
+      });
+    }
+
+    function clearCharts() {
+      updateChart(jurisdictionChart, [0, 0]);
+    }
+
+    createJurisdictionPieChart();
   }
 });
