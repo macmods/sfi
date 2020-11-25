@@ -95,6 +95,7 @@ table {
   margin-left: auto;
   margin-right:auto;
   padding: 0px 0px 10px 0px;
+  border: 10px solid white;
 }
 
 #sliderColumn {
