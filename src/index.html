@@ -128,15 +128,9 @@
 
     <!-- Geometry Query -->
     <div id="queryDiv" class="esri-widget" style="display: none">
-      <b>Query by geometry</b><br />
-      <br />Draw a geometry to query by:
+      <b>Query by Polygon</b><br />
+      <br />Draw a polygon to query:
       <div class="geometry-options">
-        <button
-          class="esri-widget--button esri-icon-map-pin geometry-button"
-          id="point-geometry-button"
-          value="point"
-          title="Query by point"
-        ></button>
         <button
           class="esri-widget--button esri-icon-polygon geometry-button"
           id="polygon-geometry-button"
@@ -220,13 +214,13 @@
             <table>
               <tr>
                 <td>
-                  <div id="depthOutput">XX</div>
+                  <div id="avgDepth">XX</div>
                 </td>
                 <td>
-                  <div id="depthOutput">XX</div>
+                  <div id="minDepth">XX</div>
                 </td>
                 <td>
-                  <div id="depthOutput">XX</div>
+                  <div id="maxDepth">XX</div>
                 </td>
               </tr>
               <tr>
@@ -272,8 +266,8 @@
             addressed. The report shows the breakdown of the selected area which
             falls within federal versus state waters.
           </p>
-          <div class=statement>
-            <div id="jurisdictionPieChart">Chart Here</div>
+          <div class="statement">
+            <canvas id="jurisdictionPieChart" width="250" height="300"/>
           </div>
         </div>
       </div>
