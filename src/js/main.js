@@ -6,7 +6,6 @@ import {
   mpaInventoryLayerUrl,
   principalPortsLayerUrl,
   federalAndStateWatersLayerUrl,
-  locatorTaskUrl,
 } from "./config.js";
 import {
   kelpProductivityPopupTemplate,
@@ -40,14 +39,13 @@ require([
   "esri/widgets/DistanceMeasurement2D",
   "esri/widgets/AreaMeasurement2D",
   "esri/widgets/Sketch/SketchViewModel",
+  "esri/core/watchUtils",
 ], function (
   // mapping
   WebMap,
   MapView,
   FeatureLayer,
   GraphicsLayer,
-  Graphic,
-  geometryEngine,
   promiseUtils,
   geodesicUtils,
   //Units,
@@ -60,7 +58,8 @@ require([
   Slider,
   DistanceMeasurement2D,
   AreaMeasurement2D,
-  SketchViewModel
+  SketchViewModel,
+  watchUtils
 ) {
   /****************************************************
    * Declaration zone for data layers
@@ -80,15 +79,18 @@ require([
   var webmap;
   var view;
 
+  /****************************************************************
+   * Declaration zone for bookmark and legend widgets and handles
+   ****************************************************************/
+  var legendExpand;
+  var bookmarkExpand;
+  var legendHandle;
+  var bookmarkHandle;
+
   initiateDataLayersAndMapViewer();
   addWidgetsForTheMap();
   addCalculateSFIFeature();
   addReportSFIFeature();
-
-  // Create a locator task using the world geocoding service
-  const locatorTask = new Locator({
-    url: locatorTaskUrl,
-  });
 
   function initiateDataLayersAndMapViewer() {
     initiateDataLayers();
@@ -160,12 +162,14 @@ require([
       );
       kelpProductivityLayerToggle.addEventListener("change", function () {
         kelpProductivityLayer.visible = kelpProductivityLayerToggle.checked;
+        legendExpand.expanded = true;
       });
 
       // Toggle function of bathymetry layer
       const bathymetryLayerToggle = document.getElementById("bathymetryLayer");
       bathymetryLayerToggle.addEventListener("change", function () {
         bathymetryLayer.visible = bathymetryLayerToggle.checked;
+        legendExpand.expanded = true;
       });
 
       // Toggle function of shipping lanes layer
@@ -174,6 +178,7 @@ require([
       );
       shippingLanesLayerToggle.addEventListener("change", function () {
         shippingLanesLayer.visible = shippingLanesLayerToggle.checked;
+        legendExpand.expanded = true;
       });
 
       // Toggle function of danger zones and restricted areas layer
@@ -185,6 +190,7 @@ require([
         function () {
           dangerZonesAndRestrictedAreasLayer.visible =
             dangerZonesAndRestrictedAreasLayerToggle.checked;
+          legendExpand.expanded = true;
         }
       );
 
@@ -194,6 +200,7 @@ require([
       );
       mpaInventoryLayerToggle.addEventListener("change", function () {
         mpaInventoryLayer.visible = mpaInventoryLayerToggle.checked;
+        legendExpand.expanded = true;
       });
 
       // Toggle function of principal ports layer
@@ -202,6 +209,7 @@ require([
       );
       principalPortsLayerToggle.addEventListener("change", function () {
         principalPortsLayer.visible = principalPortsLayerToggle.checked;
+        legendExpand.expanded = true;
       });
 
       // Toggle function of federal and state waters layer
@@ -211,6 +219,7 @@ require([
       federalAndStateWatersLayerToggle.addEventListener("change", function () {
         federalAndStateWatersLayer.visible =
           federalAndStateWatersLayerToggle.checked;
+        legendExpand.expanded = true;
       });
     }
 
@@ -256,76 +265,111 @@ require([
   }
 
   function addWidgetsForTheMap() {
-    addLegendWidget();
+    addLegendAndBookmarkWidgets();
     addSearchWidget();
-    addBookmarksWidget();
     addMouseCoordinatesWidget();
     addGeometryQueryWidget();
     addSummaryReportWidget();
     addDistanceMeasurementWidget();
-    function addLegendWidget() {
+
+    function addLegendAndBookmarkWidgets() {
       // Widget #1: Legend
-      view.when(function () {
-        const legend = new Expand({
-          content: new Legend({
-            view: view,
-            layerInfos: [
-              {
-                layer: kelpProductivityLayer,
-                title: "Kelp Productivity (Biomass in kilogram-dry)",
-              },
-              {
-                layer: bathymetryLayer,
-                title: "Bathymetry (Depth in meters)",
-              },
-              {
-                layer: shippingLanesLayer,
-                title: "Shipping Lanes",
-              },
-              {
-                layer: dangerZonesAndRestrictedAreasLayer,
-                title: "Danger Zones and Restricted Areas",
-              },
-              {
-                layer: mpaInventoryLayer,
-                title: "Marine Protected Area Inventory",
-              },
-              {
-                layer: principalPortsLayer,
-                title: "Principal Ports",
-              },
-              {
-                layer: federalAndStateWatersLayer,
-                title: "Federal and State Waters",
-              },
-            ],
-          }),
+      legendExpand = new Expand({
+        content: new Legend({
           view: view,
-          expanded: true,
-        });
-        view.ui.add(legend, "top-left");
+          layerInfos: [
+            {
+              layer: kelpProductivityLayer,
+              title: "Kelp Productivity (Biomass in kilogram-dry)",
+            },
+            {
+              layer: bathymetryLayer,
+              title: "Bathymetry (Depth in meters)",
+            },
+            {
+              layer: shippingLanesLayer,
+              title: "Shipping Lanes",
+            },
+            {
+              layer: dangerZonesAndRestrictedAreasLayer,
+              title: "Danger Zones and Restricted Areas",
+            },
+            {
+              layer: mpaInventoryLayer,
+              title: "Marine Protected Area Inventory",
+            },
+            {
+              layer: principalPortsLayer,
+              title: "Principal Ports",
+            },
+            {
+              layer: federalAndStateWatersLayer,
+              title: "Federal and State Waters",
+            },
+          ],
+        }),
+        view: view,
+        expanded: false,
+        group: "top-left",
       });
+
+      // Widget #2: Bookmarks
+      bookmarkExpand = new Expand({
+        content: new Bookmarks({
+          view: view,
+          // allows bookmarks to be added, edited, or deleted
+          editingEnabled: true,
+        }),
+        view: view,
+        expanded: false,
+        group: "top-left",
+      });
+
+      // Handle Legend Widget
+      legendHandle = watchUtils.pausable(
+        legendExpand,
+        "expanded",
+        function (newValue) {
+          if (newValue === true) {
+            legendHandle.pause();
+            setTimeout(function () {
+              bookmarkHandle.resume();
+            }, 100);
+          } else {
+            legendHandle.resume();
+          }
+          if (bookmarkExpand.expanded) {
+            bookmarkExpand.collapse();
+          }
+        }
+      );
+
+      // Handle Bookmarks Widget
+      bookmarkHandle = watchUtils.pausable(
+        bookmarkExpand,
+        "expanded",
+        function (newValue) {
+          if (newValue === true) {
+            bookmarkHandle.pause();
+            setTimeout(function () {
+              legendHandle.resume();
+            }, 100);
+          } else {
+            bookmarkHandle.resume();
+          }
+          if (legendExpand.expanded) {
+            legendExpand.collapse();
+          }
+        }
+      );
+
+      view.ui.add([bookmarkExpand, legendExpand], "top-left");
     }
 
     function addSearchWidget() {
       // Widget #2: Search
       const searchWidget = new Search({ view });
       view.ui.add(searchWidget, "top-right");
-    }
-
-    function addBookmarksWidget() {
-      // widget #3: Bookmarks
-      const bookmarks = new Bookmarks({
-        view: view,
-        // allows bookmarks to be added, edited, or deleted
-        editingEnabled: true,
-      });
-      const bkExpand = new Expand({
-        view: view,
-        content: bookmarks,
-        expanded: false,
-      });
-      view.ui.add(bkExpand, "top-left");
     }
 
     function addMouseCoordinatesWidget() {
