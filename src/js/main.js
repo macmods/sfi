@@ -46,6 +46,8 @@ require([
   MapView,
   FeatureLayer,
   GraphicsLayer,
+  Graphic,
+  geometryEngine,
   promiseUtils,
   geodesicUtils,
   //Units,
