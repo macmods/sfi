@@ -492,6 +492,8 @@ require([
     var minOCDepth = 20;
     var maxOCDepth = 500;
     var maxOcToPort = 50;
+    var avgSFIValue = 0;
+    var numOfPoints = 0;
 
     /********************************************************************************
      *                         Under construction: Calculate SFI
@@ -630,6 +632,9 @@ require([
           lastValidMaxOCDepth = maxOCDepth;
           lastValidMaxOcToPort = maxOcToPort;
 
+          avgSFIValue = 0;
+          numOfPoints = 0;
+
           resultsLayer.removeAll();
           const querySizeLimit = 5000;
           const maxProductivity = 4;
@@ -645,6 +650,9 @@ require([
               .then(MPAInventoryFilter)
               .then(displayResults);
           }
+
+          console.log(resultsLayer);
+          console.log(kelpProductivityLayer);
 
           function queryData(index, querySizeLimit) {
             const query = kelpProductivityLayer.createQuery();
@@ -852,6 +860,7 @@ require([
               let bathymetry = graphic.attributes.Depth;
               let distanceToPort = graphic.attributes.Distance_t;
               let sfi = 0;
+
               if (
                 bathymetry >= minOCDepth &&
                 bathymetry <= maxOCDepth &&
@@ -864,6 +873,10 @@ require([
                 let OC = (OCz + OCp) / 2;
                 sfi = FarmFactor * Bn + OCFactor * OC;
               }
+
+              numOfPoints = numOfPoints + 1;
+              avgSFIValue = avgSFIValue + sfi;
+
               graphic.attributes = {
                 Biomass: biomass,
                 Bathymetry: bathymetry,
@@ -974,13 +987,6 @@ require([
       }
 
       function queryKelpProductivity() {
-        // query for the average SFI of a selected area
-        const avgSFI = {
-          onStatisticField: "SFI_defaul",
-          outStatisticFieldName: "avgSFI",
-          statisticType: "avg",
-        };
-
         // query for the minimum distance to port of a selected area
         const distanceToPort = {
           onStatisticField: "Distance_t",
@@ -988,27 +994,63 @@ require([
           statisticType: "min",
         };
 
-        var query = bathymetryLayer.createQuery();
-        query.geometry = sketchGeometry;
-        query.outStatistics = [avgSFI, distanceToPort];
+        // query for the average SFI of a selected area
+        let avgSFI = null;
+        let query = null;
 
-        kelpProductivityLayer.queryFeatures(query).then(function (response) {
-          var stats = response.features[0].attributes;
+        if (isSFICalculationPerformed) {
+          avgSFIValue = avgSFIValue / numOfPoints;
 
-          const sfiText = document.getElementById("sfiOutput");
-          sfiText.innerHTML =
-            Math.round((stats.avgSFI + Number.EPSILON) * 100000000) / 100000000;
+          query = kelpProductivityLayer.createQuery();
+          query.geometry = sketchGeometry;
+          query.outStatistics = [distanceToPort];
+          kelpProductivityLayer.queryFeatures(query).then(function (response) {
+            var stats = response.features[0].attributes;
 
-          const distanceToPortText = document.getElementById("portOutput");
-          distanceToPortText.innerHTML =
-            Math.round((stats.distanceToPort + Number.EPSILON) * 100) / 100 +
-            "km";
+            const sfiText = document.getElementById("sfiOutput");
+            sfiText.innerHTML =
+              Math.round((avgSFIValue + Number.EPSILON) * 100000000) /
+              100000000;
 
-          const maxAllowableDistanceToPort = document.getElementById(
-            "maxAllowableDistanceToPort"
-          );
-          maxAllowableDistanceToPort.innerHTML = lastValidMaxOcToPort + "km";
-        });
+            const distanceToPortText = document.getElementById("portOutput");
+            distanceToPortText.innerHTML =
+              Math.round((stats.distanceToPort + Number.EPSILON) * 100) / 100 +
+              "km";
+
+            const maxAllowableDistanceToPort = document.getElementById(
+              "maxAllowableDistanceToPort"
+            );
+            maxAllowableDistanceToPort.innerHTML = lastValidMaxOcToPort + "km";
+          });
+        } else {
+          avgSFI = {
+            onStatisticField: "SFI_defaul",
+            outStatisticFieldName: "avgSFI",
+            statisticType: "avg",
+          };
+
+          query = kelpProductivityLayer.createQuery();
+          query.geometry = sketchGeometry;
+          query.outStatistics = [avgSFI, distanceToPort];
+          kelpProductivityLayer.queryFeatures(query).then(function (response) {
+            var stats = response.features[0].attributes;
+
+            const sfiText = document.getElementById("sfiOutput");
+            sfiText.innerHTML =
+              Math.round((stats.avgSFI + Number.EPSILON) * 100000000) /
+              100000000;
+
+            const distanceToPortText = document.getElementById("portOutput");
+            distanceToPortText.innerHTML =
+              Math.round((stats.distanceToPort + Number.EPSILON) * 100) / 100 +
+              "km";
+
+            const maxAllowableDistanceToPort = document.getElementById(
+              "maxAllowableDistanceToPort"
+            );
+            maxAllowableDistanceToPort.innerHTML = lastValidMaxOcToPort + "km";
+          });
+        }
       }
 
       function queryBathymetry() {
