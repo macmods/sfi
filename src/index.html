@@ -108,18 +108,22 @@
       <h2>Marine Spatial Planning</h2>
 
       <div class="msp">
-        <input type="checkbox" id="includeFederal" /> Federal Water Included
+        <input type="checkbox" id="excludeFederal" /> Federal Water Excluded
       </div>
       <div class="msp">
-        <input type="checkbox" id="includeState" /> State Water Included
+        <input type="checkbox" id="excludeState" /> State Water Excluded
       </div>
       <div class="msp">
-        <input type="checkbox" id="includShippingLanes" /> Shipping Lanes
-        Included
+        <input type="checkbox" id="excludeShippingLanes" /> Shipping Lanes
+        Excluded
       </div>
       <div class="msp">
-        <input type="checkbox" id="includRestrictedArea" /> Restricted And
-        Dangerous Area Included
+        <input type="checkbox" id="excludeRestrictedArea" /> Restricted And
+        Dangerous Area Excluded
+      </div>
+      <div class="msp">
+        <input type="checkbox" id="excludeMPA" /> Marine Protected Area
+        Inventory Excluded
       </div>
 
       <button id="query-sfi" class="esri-widget">Calculate SFI</button>
@@ -175,7 +179,7 @@
           </p>
           <div class="statement">
             <span>The average value of the selected area is</span>
-            <div id="sfiOutput"> </div>
+            <div id="sfiOutput"></div>
             <span>Histogram of Seaweed Farming Index (SFI)</span>
             <div id="sfiHistogram">Histogram Here</div>
           </div>
@@ -214,25 +218,19 @@
             <table>
               <tr id="depthOutput">
                 <td>
-                  <div id="avgDepth"> </div>
+                  <div id="avgDepth"></div>
                 </td>
                 <td>
-                  <div id="minDepth"> </div>
+                  <div id="minDepth"></div>
                 </td>
                 <td>
-                  <div id="maxDepth"> </div>
+                  <div id="maxDepth"></div>
                 </td>
               </tr>
               <tr>
-                <td>
-                  average
-                </td>
-                <td>
-                  minimum
-                </td>
-                <td>
-                  maximum
-                </td>
+                <td>average</td>
+                <td>minimum</td>
+                <td>maximum</td>
               </tr>
             </table>
             <span
@@ -251,7 +249,9 @@
           </p>
           <div class="statement">
             <div id="portOutput">XX km to Port Name</div>
-            <span>The maximum allowable distance to port was selected as XX</span>
+            <span
+              >The maximum allowable distance to port was selected as XX</span
+            >
           </div>
         </div>
 
@@ -267,7 +267,7 @@
             falls within federal versus state waters.
           </p>
           <div class="statement">
-            <canvas id="jurisdictionPieChart" width="250" height="300"/>
+            <canvas id="jurisdictionPieChart" width="250" height="300" />
           </div>
         </div>
       </div>
