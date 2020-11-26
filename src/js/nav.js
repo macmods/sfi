@@ -1,13 +1,16 @@
 // This nav.js file contains functions needed for controlling the navigation bar
 // including the buttons for toggling on and off each feature
+var view = document.getElementById("viewDiv");
 
 function navButton(selectedButton) {
+  const reportSfi = document.getElementById("queryDiv"); // queryDiv is the id of widget
   if (selectedButton == "layer-toggle") {
     toggle("layer-toggle");
   } else if (selectedButton == "sfi-calc") {
     toggle("sfi-calc");
   } else if (selectedButton == "report-sfi") {
     toggle("report-sfi");
+    view.ui.move(reportSfi, "top-right");
   }
 }
 
