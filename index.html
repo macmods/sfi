@@ -2,24 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="initial-scale=1, maximum-scale=1, user-scalable=no"
-    />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <title>Seaweed Farming Index</title>
-    <link
-      rel="stylesheet"
-      href="https://js.arcgis.com/4.17/esri/themes/light/main.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.17/esri/themes/light/main.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto&display=swap"/>
     <!-- Load the Chart.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
     <script src="https://js.arcgis.com/4.17/"></script>
     <script type="module" src="js/main.js"></script>
     <script src="js/nav.js"></script>
+    <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/summary_report.css" />
   </head>
@@ -32,19 +24,29 @@
         id="layer-toggle"
         class="nav-button"
         onclick="navButton('layer-toggle')"
+        title="Data Layers"
       >
-        <input id="icons" type="image" src="images/nav-layer-toggle.png" />
+        <input class="icons" type="image" src="images/nav-layer-toggle.png" />
       </button>
-      <button id="sfi-calc" class="nav-button" onclick="navButton('sfi-calc')">
-        <input id="icons" type="image" src="images/nav-sfi-calc.png" />
+      <button
+        id="sfi-calc"
+        class="nav-button"
+        onclick="navButton('sfi-calc')"
+        title="Calculate Seaweed Farming Index"
+      >
+        <input class="icons" type="image" src="images/nav-sfi-calc.png" />
       </button>
       <button
         id="report-sfi"
         class="nav-button"
         onclick="navButton('report-sfi')"
+        title="Query Report"
       >
-        <input id="icons" type="image" src="images/nav-report.png" />
+        <input class="icons" type="image" src="images/nav-report.png" />
       </button>
+      <a href="https://faculty.sites.uci.edu/davis/" target="_blank">
+        <img class="icons" src="/images/Coastal_Dynamics_Sketches_NoText.png" title="Costal Dynamics Lab"/>
+      </a>
     </div>
 
     <div id="viewDiv"></div>
