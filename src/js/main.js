@@ -269,8 +269,8 @@ require([
     addLegendAndBookmarkWidgets();
     addSearchWidget();
     addMouseCoordinatesWidget();
-    addGeometryQueryWidget();
     addSummaryReportWidget();
+    addGeometryQueryWidget();
     addDistanceMeasurementWidget();
 
     function addLegendAndBookmarkWidgets() {
@@ -327,21 +327,23 @@ require([
       });
 
       // Handle Legend Widget
-      legendHandle = watchUtils.pausable(legendExpand, "expanded", function (
-        newValue
-      ) {
-        if (newValue === true) {
-          legendHandle.pause();
-          setTimeout(function () {
-            bookmarkHandle.resume();
-          }, 100);
-        } else {
-          legendHandle.resume();
+      legendHandle = watchUtils.pausable(
+        legendExpand,
+        "expanded",
+        function (newValue) {
+          if (newValue === true) {
+            legendHandle.pause();
+            setTimeout(function () {
+              bookmarkHandle.resume();
+            }, 100);
+          } else {
+            legendHandle.resume();
+          }
+          if (bookmarkExpand.expanded) {
+            bookmarkExpand.collapse();
+          }
         }
-        if (bookmarkExpand.expanded) {
-          bookmarkExpand.collapse();
-        }
-      });
+      );
 
       // Handle Bookmarks Widget
       bookmarkHandle = watchUtils.pausable(
@@ -396,14 +398,14 @@ require([
       });
     }
 
+    function addSummaryReportWidget() {
+      view.ui.add([resultDiv], "top-right");
+    }
+
     function addGeometryQueryWidget() {
       // widget #5: Geometry Query
       window.view = view;
-      view.ui.add([queryDiv], "bottom-left");
-    }
-
-    function addSummaryReportWidget() {
-      view.ui.add([resultDiv], "top-right");
+      view.ui.add([queryDiv], "top-right");
     }
 
     function addDistanceMeasurementWidget() {
@@ -925,6 +927,8 @@ require([
         if (event.state === "complete") {
           sketchGeometry = event.graphic.geometry;
           runQuery();
+          view.ui.move(queryDiv, "bottom-right");
+          view.ui.move(coordsWidget, "bottom-right");
         }
       });
 
@@ -932,6 +936,8 @@ require([
         if (event.state === "complete") {
           sketchGeometry = event.graphics[0].geometry;
           runQuery();
+          view.ui.move(queryDiv, "bottom-right");
+          view.ui.move(coordsWidget, "bottom-right");
         }
       });
 
@@ -939,6 +945,7 @@ require([
       document
         .getElementById("polygon-geometry-button")
         .addEventListener("click", geometryButtonsClickHandler);
+
       function geometryButtonsClickHandler(event) {
         const geometryType = event.target.value;
         console.log(geometryType);
@@ -958,6 +965,7 @@ require([
         sketchLayer.removeAll();
         // make summary result pop up invisible
         resultDiv.style.display = "none";
+        view.ui.move(queryDiv, "top-right");
       }
 
       // set the geometry query

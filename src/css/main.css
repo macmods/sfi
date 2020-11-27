@@ -22,7 +22,7 @@ h1 {
 }
 
 hr {
-  color: #E3E3E3;
+  color: #e3e3e3;
 }
 
 p {
@@ -35,7 +35,7 @@ p {
 
 .navbar {
   top: 10px;
-  right: 100px;
+  right: 10px;
   position: absolute;
 }
 
@@ -55,6 +55,10 @@ p {
 
 li {
   margin: 10px;
+}
+
+.searchWidget {
+  right: 100px;
 }
 
 #layerToggle {
@@ -79,13 +83,14 @@ li {
   position: absolute;
   z-index: 99;
   background-color: white;
-  padding: 30px;
+  padding: 27px;
   opacity: 1;
   overflow: auto;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .slider {
+  font-size: 13px;
   width: 100%;
   height: 60px;
 }
@@ -93,7 +98,7 @@ li {
 table {
   text-align: center;
   margin-left: auto;
-  margin-right:auto;
+  margin-right: auto;
   padding: 0px 0px 10px 0px;
   border: 10px solid white;
 }
@@ -138,21 +143,25 @@ table {
 }
 
 .msp {
+  font-size: 13px;
   margin: 14px 0px;
 }
 
-#clear-report {
-  position: absolute;
-  right: 30px;
-}
-
 #queryDiv {
+  height: auto;
+  margin-top: 35px;
   min-width: 250px;
   font-size: 14px;
   padding: 10px;
-  display: none;
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+@media only screen and (max-height: 790px) {
+  #queryDiv {
+    height: 20vh;
+  }
 }
 
 .geometry-options {

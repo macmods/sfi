@@ -2,7 +2,7 @@
   top: 140px;
   min-width: 400px;
   max-width: 40%;
-  max-height: 550px;
+  max-height: 50vh;
   font-size: 14px;
   font-family: Roboto;
   padding: 20px;
@@ -57,12 +57,17 @@
   color: #646464;
 }
 
-#sfiOutput, #sfiFormula, #reportAreaOut, #depthOutput, #portOutput {
+#sfiOutput,
+#sfiFormula,
+#reportAreaOut,
+#depthOutput,
+#portOutput {
   font-size: 30px;
   line-height: initial;
 }
 
-#sfiHistogram, #jurisdictionPieChart {
+#sfiHistogram,
+#jurisdictionPieChart {
   font-size: 12px;
   margin: 10px;
 }
