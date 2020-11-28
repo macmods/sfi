@@ -25,9 +25,13 @@ require([
   "esri/layers/FeatureLayer",
   "esri/layers/GraphicsLayer",
   "esri/Graphic",
+  "esri/geometry/Polygon",
   "esri/geometry/geometryEngine",
-  "esri/core/promiseUtils",
   "esri/geometry/support/geodesicUtils",
+  "esri/core/promiseUtils",
+  "esri/core/watchUtils",
+  "esri/smartMapping/statistics/histogram",
+  "esri/smartMapping/statistics/summaryStatistics",
   //"esri/units",
   // widgets
   "esri/widgets/Legend",
@@ -39,7 +43,7 @@ require([
   "esri/widgets/DistanceMeasurement2D",
   "esri/widgets/AreaMeasurement2D",
   "esri/widgets/Sketch/SketchViewModel",
-  "esri/core/watchUtils",
+  "esri/widgets/Histogram",
 ], function (
   // mapping
   WebMap,
@@ -47,9 +51,13 @@ require([
   FeatureLayer,
   GraphicsLayer,
   Graphic,
+  Polygon,
   geometryEngine,
-  promiseUtils,
   geodesicUtils,
+  promiseUtils,
+  watchUtils,
+  histogram,
+  summaryStatistics,
   //Units,
   // widgets
   Legend,
@@ -61,7 +69,7 @@ require([
   DistanceMeasurement2D,
   AreaMeasurement2D,
   SketchViewModel,
-  watchUtils
+  Histogram
 ) {
   /****************************************************
    * Declaration zone for data layers
@@ -327,23 +335,21 @@ require([
       });
 
       // Handle Legend Widget
-      legendHandle = watchUtils.pausable(
-        legendExpand,
-        "expanded",
-        function (newValue) {
-          if (newValue === true) {
-            legendHandle.pause();
-            setTimeout(function () {
-              bookmarkHandle.resume();
-            }, 100);
-          } else {
-            legendHandle.resume();
-          }
-          if (bookmarkExpand.expanded) {
-            bookmarkExpand.collapse();
-          }
+      legendHandle = watchUtils.pausable(legendExpand, "expanded", function (
+        newValue
+      ) {
+        if (newValue === true) {
+          legendHandle.pause();
+          setTimeout(function () {
+            bookmarkHandle.resume();
+          }, 100);
+        } else {
+          legendHandle.resume();
         }
-      );
+        if (bookmarkExpand.expanded) {
+          bookmarkExpand.collapse();
+        }
+      });
 
       // Handle Bookmarks Widget
       bookmarkHandle = watchUtils.pausable(
@@ -924,6 +930,7 @@ require([
       sketchViewModel.on("create", function (event) {
         if (event.state === "complete") {
           sketchGeometry = event.graphic.geometry;
+          console.log(sketchGeometry);
           runQuery();
           view.ui.move(queryDiv, "bottom-right");
           view.ui.move(coordsWidget, "bottom-right");
@@ -977,8 +984,7 @@ require([
           querySFIAndCreateHistogram(),
           queryDistanceToPort(),
           queryBathymetry(),
-          calculatePolygonArea(),
-          queryJurisdiction(),
+          areaMeasurementAndQueryJurisdiction(),
         ]);
       });
 
@@ -1066,6 +1072,23 @@ require([
             Math.round((stats.avgSFI + Number.EPSILON) * 100000000) / 100000000;
         }
 
+        function fetchStats(layer, field) {
+          const params = {
+            layer: layer,
+            field: field,
+            numBins: 200,
+          };
+
+          return promiseUtils.eachAlways([
+            histogram(params),
+            summaryStatistics(params),
+          ]);
+        }
+
+        function formatToDegrees(value) {
+          return Math.round((value + Number.EPSILON) * 100000000) / 100000000;
+        }
+
         function createHistogram(featureLayer, sfiFieldName) {
           var sfiHistogramArray = [];
 
@@ -1103,8 +1126,37 @@ require([
               source: sfiHistogramArray,
             });
 
-            console.log(sfiHistogramLayer);
             // Todo: Histogram Implementation Logic here
+            fetchStats(sfiHistogramLayer, "SFI")
+              .then(function (response) {
+                console.log(response);
+                const histogramResult = response[0].value;
+                console.log(histogramResult);
+                const statsResult = response[1].value;
+                console.log(statsResult);
+
+                const minElement = document.getElementById("minSFILabelText");
+                const maxElement = document.getElementById("maxSFILabelText");
+                minElement.innerText = formatToDegrees(
+                  histogramResult.minValue
+                );
+                maxElement.innerText = formatToDegrees(
+                  histogramResult.maxValue
+                );
+
+                // Creates a Histogram instance from the returned histogram result
+                const histogramWidget = Histogram.fromHistogramResult(
+                  histogramResult
+                );
+                histogramWidget.container = "histogram";
+                histogramWidget.average = statsResult.avg;
+                histogramWidget.labelFormatFunction = function (value, type) {
+                  return formatToDegrees(value);
+                };
+              })
+              .catch(function (error) {
+                console.error(error);
+              });
           });
         }
       }
@@ -1164,11 +1216,15 @@ require([
         bathymetryLayer.queryFeatures(query).then(function (response) {
           var stats = response.features[0].attributes;
 
-          var minDepthText = document.getElementById("minDepth");
-          var avgDepthText = document.getElementById("avgDepth");
-          var maxDepthText = document.getElementById("maxDepth");
-          var minDepthAvailable = document.getElementById("minDepthAvailable");
-          var maxDepthAvailable = document.getElementById("maxDepthAvailable");
+          const minDepthText = document.getElementById("minDepth");
+          const avgDepthText = document.getElementById("avgDepth");
+          const maxDepthText = document.getElementById("maxDepth");
+          const minDepthAvailable = document.getElementById(
+            "minDepthAvailable"
+          );
+          const maxDepthAvailable = document.getElementById(
+            "maxDepthAvailable"
+          );
 
           minDepthText.innerHTML = -1 * stats.minDepth;
           avgDepthText.innerHTML =
@@ -1179,16 +1235,27 @@ require([
         });
       }
 
-      function calculatePolygonArea() {
-        //const areas = geodesicUtils.geodesicAreas(
-        //  [sketchGeometry],
-        //  "square-kilometers"
-        //);
-      }
-
       var jurisdictionChart = null;
 
-      function queryJurisdiction() {
+      function areaMeasurementAndQueryJurisdiction() {
+        const polygonProperties = {
+          hasM: false,
+          hasZ: false,
+          rings: sketchGeometry.rings,
+        };
+        const sketchPolygon = new Polygon(polygonProperties);
+        console.log(sketchPolygon);
+
+        const areas = geodesicUtils.geodesicAreas(
+          [sketchPolygon],
+          "square-kilometers"
+        );
+        console.log(areas);
+        const area = Math.round((areas[0] + Number.EPSILON) * 100) / 100;
+        console.log(area);
+        const areaText = document.getElementById("reportAreaOut");
+        areaText.innerHTML = area + " km<sup>2</sup>";
+
         const statDefinitions = [
           {
             onStatisticField:
