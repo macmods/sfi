@@ -2,10 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
     <title>Seaweed Farming Index</title>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.17/esri/themes/light/main.css"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto&display=swap"/>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.17/esri/themes/light/main.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+    />
     <!-- Load the Chart.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
     <script src="https://js.arcgis.com/4.17/"></script>
@@ -17,36 +26,46 @@
   </head>
 
   <body>
-    <h1>Seaweed Farming Index</h1>
+    <div id="nav">
+      <div class="nav-logo">
+        <a href="https://faculty.sites.uci.edu/davis/" target="_blank">
+          <img
+            class="logo"
+            src="/images/Coastal_Dynamics_Sketches_Background.png"
+            title="Costal Dynamics Lab"
+          />
+        </a>
+      </div>
+      <div class="nav-logo">
+        <div class="title-desktop">Seaweed Farming Index</div>
+      </div>
 
-    <div class="navbar">
-      <button
-        id="layer-toggle"
-        class="nav-button"
-        onclick="navButton('layer-toggle')"
-        title="Data Layers"
-      >
-        <input class="icons" type="image" src="images/nav-layer-toggle.png" />
-      </button>
-      <button
-        id="sfi-calc"
-        class="nav-button"
-        onclick="navButton('sfi-calc')"
-        title="Calculate Seaweed Farming Index"
-      >
-        <input class="icons" type="image" src="images/nav-sfi-calc.png" />
-      </button>
-      <button
-        id="report-sfi"
-        class="nav-button"
-        onclick="navButton('report-sfi')"
-        title="Query Report"
-      >
-        <input class="icons" type="image" src="images/nav-report.png" />
-      </button>
-      <a href="https://faculty.sites.uci.edu/davis/" target="_blank">
-        <img class="icons" src="/images/Coastal_Dynamics_Sketches_NoText.png" title="Costal Dynamics Lab"/>
-      </a>
+      <div class="navbar">
+        <button
+          id="layer-toggle"
+          class="nav-button"
+          onclick="navButton('layer-toggle')"
+          title="Data Layers"
+        >
+          <input class="icons" type="image" src="images/nav-layer-toggle.png" />
+        </button>
+        <button
+          id="sfi-calc"
+          class="nav-button"
+          onclick="navButton('sfi-calc')"
+          title="Calculate Seaweed Farming Index"
+        >
+          <input class="icons" type="image" src="images/nav-sfi-calc.png" />
+        </button>
+        <button
+          id="report-sfi"
+          class="nav-button"
+          onclick="navButton('report-sfi')"
+          title="Query Report"
+        >
+          <input class="icons" type="image" src="images/nav-report.png" />
+        </button>
+      </div>
     </div>
 
     <div id="viewDiv"></div>
