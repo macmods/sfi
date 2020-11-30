@@ -683,6 +683,7 @@ require([
               let depth = graphic.attributes.Depth;
               if (depth <= maxOCDepth && depth >= minOCDepth)
                 filteredArray.push(graphic);
+              else collectFilteredPoint(graphic);
             });
             return filteredArray;
           }
@@ -692,6 +693,7 @@ require([
             filteringArray.forEach(function (graphic) {
               let distanceToPort = graphic.attributes.Distance_t;
               if (distanceToPort <= maxOcToPort) filteredArray.push(graphic);
+              else collectFilteredPoint(graphic);
             });
             return filteredArray;
           }
@@ -746,6 +748,7 @@ require([
                       });
                     }
                     if (!isIntersected) filteredArray.push(graphic);
+                    else collectFilteredPoint(graphic);
                   });
                   return filteredArray;
                 });
@@ -780,6 +783,7 @@ require([
                       }
                     });
                     if (!isIntersected) filteredArray.push(graphic);
+                    else collectFilteredPoint(graphic);
                   });
                   return filteredArray;
                 });
@@ -818,6 +822,7 @@ require([
                       }
                     });
                     if (!isIntersected) filteredArray.push(graphic);
+                    else collectFilteredPoint(graphic);
                   });
                   return filteredArray;
                 });
@@ -854,6 +859,7 @@ require([
                       }
                     });
                     if (!isIntersected) filteredArray.push(graphic);
+                    else collectFilteredPoint(graphic);
                   });
                   return filteredArray;
                 });
@@ -898,12 +904,26 @@ require([
             });
             resultsLayer.addMany(resultArray);
           }
+
+          function collectFilteredPoint(filteredPoint) {
+            let biomass = filteredPoint.attributes.Maximum_An;
+            let bathymetry = filteredPoint.attributes.Depth;
+
+            filteredPoint.attributes = {
+              Biomass: biomass,
+              Bathymetry: bathymetry,
+              SFI: 0,
+            };
+
+            sfiResultGraphicsArray.push(filteredPoint);
+          }
         });
 
         const clearSFI = document.getElementById("clear-report");
         clearSFI.addEventListener("click", function () {
           view.when(function () {
             resultsLayer.removeAll();
+            isSFICalculationPerformed = false;
           });
         });
       }
