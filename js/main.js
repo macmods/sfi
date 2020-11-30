@@ -28,11 +28,11 @@ require([
   "esri/geometry/Polygon",
   "esri/geometry/geometryEngine",
   "esri/geometry/support/geodesicUtils",
+  "esri/geometry/support/webMercatorUtils",
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/smartMapping/statistics/histogram",
   "esri/smartMapping/statistics/summaryStatistics",
-  //"esri/units",
   // widgets
   "esri/widgets/Legend",
   "esri/widgets/Search",
@@ -54,11 +54,11 @@ require([
   Polygon,
   geometryEngine,
   geodesicUtils,
+  webMercatorUtils,
   promiseUtils,
   watchUtils,
   histogram,
   summaryStatistics,
-  //Units,
   // widgets
   Legend,
   Search,
@@ -335,21 +335,23 @@ require([
       });
 
       // Handle Legend Widget
-      legendHandle = watchUtils.pausable(legendExpand, "expanded", function (
-        newValue
-      ) {
-        if (newValue === true) {
-          legendHandle.pause();
-          setTimeout(function () {
-            bookmarkHandle.resume();
-          }, 100);
-        } else {
-          legendHandle.resume();
+      legendHandle = watchUtils.pausable(
+        legendExpand,
+        "expanded",
+        function (newValue) {
+          if (newValue === true) {
+            legendHandle.pause();
+            setTimeout(function () {
+              bookmarkHandle.resume();
+            }, 100);
+          } else {
+            legendHandle.resume();
+          }
+          if (bookmarkExpand.expanded) {
+            bookmarkExpand.collapse();
+          }
         }
-        if (bookmarkExpand.expanded) {
-          bookmarkExpand.collapse();
-        }
-      });
+      );
 
       // Handle Bookmarks Widget
       bookmarkHandle = watchUtils.pausable(
@@ -1085,7 +1087,7 @@ require([
           ]);
         }
 
-        function formatToDegrees(value) {
+        function formatToEightDecimalPlaces(value) {
           return Math.round((value + Number.EPSILON) * 100000000) / 100000000;
         }
 
@@ -1093,12 +1095,9 @@ require([
           var sfiHistogramArray = [];
 
           var featureQuery = featureLayer.createQuery();
-          console.log(featureLayer);
           featureQuery.geometry = sketchGeometry;
           featureLayer.queryFeatures(featureQuery).then(function (response) {
-            console.log(response);
             sfiHistogramArray = response.features.map(function (graphic) {
-              console.log(graphic);
               let sfi = null;
               if (sfiFieldName == "SFI") {
                 sfi = graphic.attributes.SFI;
@@ -1108,10 +1107,10 @@ require([
               graphic.attributes = {
                 SFI: sfi,
               };
-              //console.log(graphic);
               return graphic;
             });
 
+            // generate a feature layer for histogram-related queries
             let sfiHistogramLayer = new FeatureLayer({
               fields: [
                 {
@@ -1130,8 +1129,6 @@ require([
               source: sfiHistogramArray,
             });
 
-            console.log(sfiHistogramLayer);
-
             fetchStats(sfiHistogramLayer, "SFI")
               .then(function (response) {
                 const histogramResult = response[0].value;
@@ -1139,10 +1136,10 @@ require([
 
                 const minElement = document.getElementById("minSFILabelText");
                 const maxElement = document.getElementById("maxSFILabelText");
-                minElement.innerText = formatToDegrees(
+                minElement.innerText = formatToEightDecimalPlaces(
                   histogramResult.minValue
                 );
-                maxElement.innerText = formatToDegrees(
+                maxElement.innerText = formatToEightDecimalPlaces(
                   histogramResult.maxValue
                 );
 
@@ -1155,7 +1152,7 @@ require([
                 histogramWidget.container = "histogram";
                 histogramWidget.average = statsResult.avg;
                 histogramWidget.labelFormatFunction = function (value, type) {
-                  return formatToDegrees(value);
+                  return formatToEightDecimalPlaces(value);
                 };
               })
               .catch(function (error) {
@@ -1242,10 +1239,21 @@ require([
       var jurisdictionChart = null;
 
       function areaMeasurementAndQueryJurisdiction() {
+        // translate the Web Mercator coordinates to Longitude and Latitude values
+        var processedRings = [];
+        sketchGeometry.rings.forEach(function (ring) {
+          var processedRing = [];
+          ring.forEach(function (pair) {
+            pair = webMercatorUtils.xyToLngLat(pair[0], pair[1]);
+            processedRing.push(pair);
+          });
+          processedRings.push(processedRing);
+        });
+
         const polygonProperties = {
           hasM: false,
           hasZ: false,
-          rings: sketchGeometry.rings,
+          rings: processedRings,
         };
         const sketchPolygon = new Polygon(polygonProperties);
         console.log(sketchPolygon);
@@ -1254,9 +1262,9 @@ require([
           [sketchPolygon],
           "square-kilometers"
         );
-        console.log(areas);
-        const area = Math.round((areas[0] + Number.EPSILON) * 100) / 100;
-        console.log(area);
+        const area = Math.abs(
+          Math.round((areas[0] + Number.EPSILON) * 100) / 100
+        );
         const areaText = document.getElementById("reportAreaOut");
         areaText.innerHTML = area + " km<sup>2</sup>";
 
