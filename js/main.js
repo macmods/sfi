@@ -17,6 +17,7 @@ import {
   principalPortsPopupTemplate,
 } from "./popup_template.js";
 import { referenceScale, kelpProductivityRenderer } from "./renderer.js";
+import { DataLayers } from "./DataLayers.js";
 
 require([
   // mapping
@@ -128,7 +129,7 @@ require([
       shippingLanesLayer = new FeatureLayer({
         url: shippingLanesLayerUrl,
         visible: false,
-        definitionExpression: "(OBJECTID < 3 OR " + "OBJECTID > 4)",
+        definitionExpression: "(FID < 3 OR " + "FID > 4)",
         popupTemplate: shippingLanesPopupTemplate,
       });
 
@@ -648,274 +649,316 @@ require([
           const querySizeLimit = 5000;
           const maxProductivity = 4;
 
-          for (let i = 1; i < 50000; i += querySizeLimit) {
-            queryData(i, querySizeLimit)
-              .then(getGraphics)
-              .then(waterDepthFilter)
-              .then(distanceToPortFilter)
-              .then(waterTypeFilter)
-              .then(restrictAreaFilter)
-              .then(shippingLanesFilter)
-              .then(MPAInventoryFilter)
-              .then(displayResults);
-          }
+          getStateAndFederalWaterData()
+          .then(getRestrictedZonesData)
+          .then(getMPAData)
+          .then(getShippingLanesData)
+          .then(calculateSFI);
 
-          console.log(resultsLayer);
-          console.log(kelpProductivityLayer);
-
-          function queryData(index, querySizeLimit) {
-            const query = kelpProductivityLayer.createQuery();
-            query.start = index;
-            query.num = querySizeLimit;
-            return kelpProductivityLayer.queryFeatures(query);
-          }
-
-          function getGraphics(results) {
-            const graphics = results.features.map(function (graphic) {
-              return graphic;
-            });
-            return graphics;
-          }
-
-          function waterDepthFilter(filteringArray) {
-            let filteredArray = [];
-            filteringArray.forEach(function (graphic) {
-              let depth = graphic.attributes.Depth;
-              if (depth <= maxOCDepth && depth >= minOCDepth)
-                filteredArray.push(graphic);
-              else collectFilteredPoint(graphic);
-            });
-            return filteredArray;
-          }
-
-          function distanceToPortFilter(filteringArray) {
-            let filteredArray = [];
-            filteringArray.forEach(function (graphic) {
-              let distanceToPort = graphic.attributes.Distance_t;
-              if (distanceToPort <= maxOcToPort) filteredArray.push(graphic);
-              else collectFilteredPoint(graphic);
-            });
-            return filteredArray;
-          }
-
-          function waterTypeFilter(filteringArray) {
-            if (!isStateWaterExcluded && !isFederalWaterExcluded) {
-              // pass data to the next filter without filtering
-              return filteringArray;
-            } else {
-              // start filtering the data
-              const query = federalAndStateWatersLayer.createQuery();
-              return federalAndStateWatersLayer
-                .queryFeatures(query)
-                .then(function (response) {
-                  let filteredArray = [];
-                  let stateWaterAreas = [];
-                  let federalWaterAreas = [];
-                  response.features.map(function (feature) {
-                    if (feature.attributes.Jurisdicti == "Federal") {
-                      federalWaterAreas.push(feature);
-                    } else stateWaterAreas.push(feature);
-                  });
-                  filteringArray.forEach(function (graphic) {
-                    // The mark of whether this data point intersects with the filter
-                    let isIntersected = false;
-                    if (isStateWaterExcluded) {
-                      stateWaterAreas.forEach(function (stateWaterArea) {
-                        if (isIntersected) return;
-                        else if (
-                          geometryEngine.intersects(
-                            stateWaterArea.geometry,
-                            graphic.geometry
-                          )
-                        ) {
-                          isIntersected = true;
-                          console.log("intersection spotted by State Water");
-                        }
-                      });
-                    }
-                    if (isFederalWaterExcluded) {
-                      federalWaterAreas.forEach(function (federalWaterArea) {
-                        if (isIntersected) return;
-                        else if (
-                          geometryEngine.intersects(
-                            federalWaterArea.geometry,
-                            graphic.geometry
-                          )
-                        ) {
-                          isIntersected = true;
-                          console.log("intersection spotted by Federal Water");
-                        }
-                      });
-                    }
-                    if (!isIntersected) filteredArray.push(graphic);
-                    else collectFilteredPoint(graphic);
-                  });
-                  return filteredArray;
+          function getStateAndFederalWaterData() {
+            const dataLayers = new DataLayers();
+            const query = federalAndStateWatersLayer.createQuery();
+            return federalAndStateWatersLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                const stateWaterAreas = [];
+                const federalWaterAreas = [];
+                response.features.map(function (feature) {
+                  if (feature.attributes.Jurisdicti == "Federal") {
+                    federalWaterAreas.push(feature);
+                  } else stateWaterAreas.push(feature);
                 });
-            }
+                dataLayers.setFederalAreas(federalWaterAreas);
+                dataLayers.setStateAreas(stateWaterAreas);
+                return dataLayers;
+              });
           }
+  
+          function getRestrictedZonesData(dataLayers) {
+            if (!isRestrictedAreaExcluded) return dataLayers;
+            const query = dangerZonesAndRestrictedAreasLayer.createQuery();
+            return dangerZonesAndRestrictedAreasLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                const restrictedAZones = [];
+                response.features.map(function (feature) {
+                  restrictedAZones.push(feature);
+                });
+                dataLayers.setRestrictedZones(restrictedAZones);
+                return dataLayers;
+              });
+          }
+  
+          function getMPAData(dataLayers) {
+            if (!isMPAExcluded) return dataLayers;
+            const query = mpaInventoryLayer.createQuery();
+            return mpaInventoryLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                const MPAInventory = [];
+                response.features.map(function (feature) {
+                  MPAInventory.push(feature);
+                });
+                dataLayers.setMPAInventory(MPAInventory);
+                return dataLayers;
+              });
+          }
+  
+          function getShippingLanesData(dataLayers) {
+            if (!isShippingLanesExcluded) return dataLayers;
+            const query = shippingLanesLayer.createQuery();
+            return shippingLanesLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                const shippingLanes = [];
+                response.features.map(function (feature) {
+                  shippingLanes.push(feature);
+                });
+                dataLayers.setShippingLanes(shippingLanes);
+                return dataLayers;
+              });
+          }
+          
+          function calculateSFI(dataLayers) {
+            console.log(dataLayers);
+            for (let i = 1; i < 50000; i += querySizeLimit) {
+              queryData(i, querySizeLimit)
+                .then(getGraphics)
+                .then(waterDepthFilter)
+                .then(distanceToPortFilter)
+                .then(restrictAreaFilter)
+                .then(shippingLanesFilter)
+                .then(MPAInventoryFilter)
+                .then(waterTypeFilter)
+                .then(displayResults);
+            }
 
-          function restrictAreaFilter(filteringArray) {
-            if (isRestrictedAreaExcluded) {
-              // start filtering the data
-              const query = dangerZonesAndRestrictedAreasLayer.createQuery();
-              return dangerZonesAndRestrictedAreasLayer
-                .queryFeatures(query)
-                .then(function (response) {
-                  let filteredArray = [];
-                  filteringArray.forEach(function (graphic) {
-                    // The mark of whether this data point intersects with the filter
-                    let isIntersected = false;
-                    response.features.map(function (feature) {
-                      // iterate through each restrict zone
-                      // if intersection spotted, set isIntersected mark to be true then break the loop
+            function queryData(index, querySizeLimit) {
+              const query = kelpProductivityLayer.createQuery();
+              query.start = index;
+              query.num = querySizeLimit;
+              return kelpProductivityLayer.queryFeatures(query);
+            }
+  
+            function getGraphics(results) {
+              const graphics = results.features.map(function (graphic) {
+                return graphic;
+              });
+              return graphics;
+            }
+  
+            function waterDepthFilter(filteringArray) {
+              let filteredArray = [];
+              filteringArray.forEach(function (graphic) {
+                let depth = graphic.attributes.Depth;
+                if (depth <= maxOCDepth && depth >= minOCDepth)
+                  filteredArray.push(graphic);
+                else collectFilteredPoint(graphic);
+              });
+              return filteredArray;
+            }
+  
+            function distanceToPortFilter(filteringArray) {
+              let filteredArray = [];
+              filteringArray.forEach(function (graphic) {
+                let distanceToPort = graphic.attributes.Distance_t;
+                if (distanceToPort <= maxOcToPort) filteredArray.push(graphic);
+                else collectFilteredPoint(graphic);
+              });
+              return filteredArray;
+            }
+  
+            function waterTypeFilter(filteringArray) {
+              if (!isStateWaterExcluded && !isFederalWaterExcluded) {
+                // pass data to the next filter without filtering
+                return filteringArray;
+              } else {
+                // start filtering the data
+                let filteredArray = [];
+                let stateWaterAreas = dataLayers.getStateAreas();
+                let federalWaterAreas = dataLayers.getFederalAreas();
+  
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  if (isStateWaterExcluded) {
+                    stateWaterAreas.forEach(function (stateWaterArea) {
                       if (isIntersected) return;
                       else if (
                         geometryEngine.intersects(
-                          graphic.geometry,
-                          feature.geometry
-                        )
-                      ) {
-                        isIntersected = true;
-                        console.log(
-                          "intersection spotted by Restricted Area Filter"
-                        );
-                      }
-                    });
-                    if (!isIntersected) filteredArray.push(graphic);
-                    else collectFilteredPoint(graphic);
-                  });
-                  return filteredArray;
-                });
-            } else {
-              // pass data to the next filter without filtering
-              return filteringArray;
-            }
-          }
-
-          function shippingLanesFilter(filteringArray) {
-            if (isShippingLanesExcluded) {
-              // start filtering the data
-              const query = shippingLanesLayer.createQuery();
-              return shippingLanesLayer
-                .queryFeatures(query)
-                .then(function (response) {
-                  console.log(response);
-                  let filteredArray = [];
-                  filteringArray.forEach(function (graphic) {
-                    // The mark of whether this data point intersects with the filter
-                    let isIntersected = false;
-                    response.features.map(function (feature) {
-                      // iterate through each restrict zone
-                      // if intersection spotted, set isIntersected mark to be true then break the loop
-                      if (isIntersected) return;
-                      else if (
-                        geometryEngine.intersects(
-                          feature.geometry,
+                          stateWaterArea.geometry,
                           graphic.geometry
                         )
                       ) {
                         isIntersected = true;
-                        console.log(
-                          "intersection spotted by Shipping Lanes Filter"
-                        );
+                        console.log("intersection spotted by State Water");
                       }
                     });
-                    if (!isIntersected) filteredArray.push(graphic);
-                    else collectFilteredPoint(graphic);
-                  });
-                  return filteredArray;
-                });
-            } else {
-              // pass data to the next filter without filtering
-              return filteringArray;
-            }
-          }
-
-          function MPAInventoryFilter(filteringArray) {
-            if (isMPAExcluded) {
-              // start filtering the data
-              const query = mpaInventoryLayer.createQuery();
-              return mpaInventoryLayer
-                .queryFeatures(query)
-                .then(function (response) {
-                  let filteredArray = [];
-                  console.log(response);
-                  filteringArray.forEach(function (graphic) {
-                    // The mark of whether this data point intersects with the filter
-                    let isIntersected = false;
-                    response.features.map(function (feature) {
-                      // iterate through each restrict zone
-                      // if intersection spotted, set isIntersected mark to be true then break the loop
+                  }
+                  if (isFederalWaterExcluded) {
+                    federalWaterAreas.forEach(function (federalWaterArea) {
                       if (isIntersected) return;
                       else if (
                         geometryEngine.intersects(
-                          graphic.geometry,
-                          feature.geometry
+                          federalWaterArea.geometry,
+                          graphic.geometry
                         )
                       ) {
                         isIntersected = true;
-                        console.log("intersection spotted by MPA Filter");
+                        console.log("intersection spotted by Federal Water");
                       }
                     });
-                    if (!isIntersected) filteredArray.push(graphic);
-                    else collectFilteredPoint(graphic);
-                  });
-                  return filteredArray;
+                  }
+                  if (!isIntersected) filteredArray.push(graphic);
+                  else collectFilteredPoint(graphic);
                 });
-            } else {
-              // pass data to the next filter without filtering
-              return filteringArray;
-            }
-          }
-
-          function displayResults(resultArray) {
-            resultArray.forEach(function (graphic) {
-              let biomass = graphic.attributes.Maximum_An;
-              let bathymetry = graphic.attributes.Depth;
-              let distanceToPort = graphic.attributes.Distance_t;
-              let sfi = 0;
-
-              if (
-                bathymetry >= minOCDepth &&
-                bathymetry <= maxOCDepth &&
-                distanceToPort <= maxOcToPort
-              ) {
-                let Bn = biomass / maxProductivity;
-                let OCz =
-                  1 - Math.pow((bathymetry - minOCDepth) / maxOCDepth, 2);
-                let OCp = 1 - distanceToPort / maxOcToPort;
-                let OC = (OCz + OCp) / 2;
-                sfi = FarmFactor * Bn + OCFactor * OC;
+                return filteredArray;
               }
+            }
+  
+            function restrictAreaFilter(filteringArray) {
+              if (isRestrictedAreaExcluded) {
+                // start filtering the data
+                let filteredArray = [];
+                let restrictedZones = dataLayers.getRestrictedZones();
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  restrictedZones.forEach(function (restrictedZone) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        graphic.geometry,
+                        restrictedZone.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                      console.log(
+                        "intersection spotted by Restricted Area Filter"
+                      );
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                  else collectFilteredPoint(graphic);
+                });
+                return filteredArray;
+              } else {
+                // pass data to the next filter without filtering
+                return filteringArray;
+              }
+            }
+  
+            function shippingLanesFilter(filteringArray) {
+              if (isShippingLanesExcluded) {
+                // start filtering the data
+                let filteredArray = [];
+                let shippingLanes = dataLayers.getShippingLanes();
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  shippingLanes.forEach(function (shippingLane) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        graphic.geometry,
+                        shippingLane.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                      console.log("intersection spotted by shippingLanesFilter");
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                  else collectFilteredPoint(graphic);
+                });
+                return filteredArray;
+              } else {
+                // pass data to the next filter without filtering
+                return filteringArray;
+              }
+            }
+  
+            function MPAInventoryFilter(filteringArray) {
+              if (isMPAExcluded) {
+                // start filtering the data
+                let filteredArray = [];
+                let MPAInventory = dataLayers.getMPAInventory();
+                filteringArray.forEach(function (graphic) {
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  MPAInventory.forEach(function (MPA) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(graphic.geometry, MPA.geometry)
+                    ) {
+                      isIntersected = true;
+                      console.log("intersection spotted by MPAInventoryFilter");
+                    }
+                  });
+                  if (!isIntersected) filteredArray.push(graphic);
+                  else collectFilteredPoint(graphic);
+                });
+                return filteredArray;
+              } else {
+                // pass data to the next filter without filtering
+                return filteringArray;
+              }
+            }
 
-              sfiResultGraphicsArray.push(graphic);
+            function displayResults(resultArray) {
+              resultArray.forEach(function (graphic) {
+                let biomass = graphic.attributes.Maximum_An;
+                let bathymetry = graphic.attributes.Depth;
+                let distanceToPort = graphic.attributes.Distance_t;
+                let sfi = 0;
+  
+                if (
+                  bathymetry >= minOCDepth &&
+                  bathymetry <= maxOCDepth &&
+                  distanceToPort <= maxOcToPort
+                ) {
+                  let Bn = biomass / maxProductivity;
+                  let OCz =
+                    1 - Math.pow((bathymetry - minOCDepth) / maxOCDepth, 2);
+                  let OCp = 1 - distanceToPort / maxOcToPort;
+                  let OC = (OCz + OCp) / 2;
+                  sfi = FarmFactor * Bn + OCFactor * OC;
+                }
+  
+                sfiResultGraphicsArray.push(graphic);
+  
+                graphic.attributes = {
+                  Biomass: biomass,
+                  Bathymetry: bathymetry,
+                  SFI: sfi,
+                };
+                graphic.symbol = {
+                  type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                  size: 1,
+                  color: "green",
+                };
+              });
+              resultsLayer.addMany(resultArray);
+            }
 
-              graphic.attributes = {
+            function collectFilteredPoint(filteredPoint) {
+              let biomass = filteredPoint.attributes.Maximum_An;
+              let bathymetry = filteredPoint.attributes.Depth;
+  
+              filteredPoint.attributes = {
                 Biomass: biomass,
                 Bathymetry: bathymetry,
-                SFI: sfi,
+                SFI: 0,
               };
-              graphic.symbol = {
-                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-                size: 1,
-                color: "green",
-              };
-            });
-            resultsLayer.addMany(resultArray);
-          }
-
-          function collectFilteredPoint(filteredPoint) {
-            let biomass = filteredPoint.attributes.Maximum_An;
-            let bathymetry = filteredPoint.attributes.Depth;
-
-            filteredPoint.attributes = {
-              Biomass: biomass,
-              Bathymetry: bathymetry,
-              SFI: 0,
-            };
-
-            sfiResultGraphicsArray.push(filteredPoint);
+  
+              sfiResultGraphicsArray.push(filteredPoint);
+            }
           }
         });
 
