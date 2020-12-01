@@ -12,6 +12,20 @@
   overflow-x: hidden;
 }
 
+.printBtn {
+  border: none;
+  color: #0079c1;
+  padding: 0px;
+  font-size: 16px;
+  cursor: pointer;
+  float: right;
+  background-color: #ffffff00;
+}
+
+.printBtn:hover {
+  color: grey;
+}
+
 .progress-container {
   height: 4px;
   background: #162b36;

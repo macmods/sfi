@@ -15,6 +15,10 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <!-- Load the Chart.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
     <script src="https://js.arcgis.com/4.17/"></script>
@@ -173,14 +177,12 @@
         Clear
       </button>
       <br />
-      <button class="esri-button" id="printPage" type="button">
-        Print Page
-      </button>
     </div>
 
     <!-- Summary Report -->
     <div id="resultDiv" class="esri-widget">
       <span class="reportHead">Seaweed Farming Index Report</span>
+      <button class="printBtn"><i class="fa fa-print"></i></button>
       <div class="progress-container">
         <div class="progress-bar" id="myBar"></div>
       </div>
