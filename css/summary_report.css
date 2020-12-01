@@ -72,7 +72,6 @@
 }
 
 #sfiOutput,
-#sfiFormula,
 #reportAreaOut,
 #depthOutput,
 #portOutput {
@@ -84,4 +83,41 @@
 #jurisdictionPieChart {
   font-size: 12px;
   margin: 10px;
+}
+
+#sfiFormula {
+  font-size: 25px;
+}
+
+@media screen and (max-width: 1000px) {
+  #sfiFormula {
+    font-size: 18px;
+  }
+  sub {
+    font-size: 10px;
+  }
+}
+
+#sfiTable {
+  width: 100%;
+}
+
+#sfiFormula td {
+  outline: 1px solid grey;
+}
+
+#sfiFormula ul {
+  list-style: none;
+  padding: 0;
+  display: block;
+}
+
+#sfiFormula li {
+  padding: 5px;
+  margin: 0px;
+  display: block;
+}
+
+sub {
+  font-size: 13px;
 }
