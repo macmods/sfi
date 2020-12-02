@@ -500,9 +500,13 @@ require([
     var lastValidMinOCDepth = 20;
     var lastValidMaxOCDepth = 500;
     var lastValidMaxOcToPort = 50;
+    var lastValidBiomassRatio = 0.5;
+    var lastValidOperationalConstraint = 0.5;
     var minOCDepth = 20;
     var maxOCDepth = 500;
     var maxOcToPort = 50;
+    var biomassRatio = 0.5;
+    var operationalConstraint = 0.5;
 
     // data points array for generating the SFI result feature layer
     var sfiResultGraphicsArray = [];
@@ -511,8 +515,6 @@ require([
      *                         Under construction: Calculate SFI
      * ******************************************************************************/
     function addCalculateSFIFeature() {
-      var FarmFactor = 0.5;
-      var OCFactor = 0.5;
       var isStateWaterExcluded = false;
       var isFederalWaterExcluded = false;
       var isRestrictedAreaExcluded = false;
@@ -590,8 +592,8 @@ require([
         });
 
         weightingFactorSlider.on("thumb-drag", function (event) {
-          FarmFactor = event.value;
-          OCFactor = 1 - FarmFactor;
+          biomassRatio = event.value;
+          operationalConstraint = 1 - biomassRatio;
           weightingFactorSlider.labelFormatFunction = function (value, type) {
             if (type === "value") {
               return value < 0.5
@@ -643,6 +645,8 @@ require([
           lastValidMinOCDepth = minOCDepth;
           lastValidMaxOCDepth = maxOCDepth;
           lastValidMaxOcToPort = maxOcToPort;
+          lastValidBiomassRatio = biomassRatio;
+          lastValidOperationalConstraint = operationalConstraint;
 
           sfiResultGraphicsArray = [];
           resultsLayer.removeAll();
@@ -650,10 +654,11 @@ require([
           const maxProductivity = 4;
 
           getStateAndFederalWaterData()
-          .then(getRestrictedZonesData)
-          .then(getMPAData)
-          .then(getShippingLanesData)
-          .then(calculateSFI);
+            .then(getRestrictedZonesData)
+            .then(getMPAData)
+            .then(getShippingLanesData)
+            //getShippingLanesData()
+            .then(calculateSFI);
 
           function getStateAndFederalWaterData() {
             const dataLayers = new DataLayers();
@@ -673,7 +678,7 @@ require([
                 return dataLayers;
               });
           }
-  
+
           function getRestrictedZonesData(dataLayers) {
             if (!isRestrictedAreaExcluded) return dataLayers;
             const query = dangerZonesAndRestrictedAreasLayer.createQuery();
@@ -688,7 +693,7 @@ require([
                 return dataLayers;
               });
           }
-  
+
           function getMPAData(dataLayers) {
             if (!isMPAExcluded) return dataLayers;
             const query = mpaInventoryLayer.createQuery();
@@ -703,8 +708,9 @@ require([
                 return dataLayers;
               });
           }
-  
+
           function getShippingLanesData(dataLayers) {
+            //const dataLayers = new DataLayers();
             if (!isShippingLanesExcluded) return dataLayers;
             const query = shippingLanesLayer.createQuery();
             return shippingLanesLayer
@@ -718,9 +724,8 @@ require([
                 return dataLayers;
               });
           }
-          
+
           function calculateSFI(dataLayers) {
-            console.log(dataLayers);
             for (let i = 1; i < 50000; i += querySizeLimit) {
               queryData(i, querySizeLimit)
                 .then(getGraphics)
@@ -739,14 +744,14 @@ require([
               query.num = querySizeLimit;
               return kelpProductivityLayer.queryFeatures(query);
             }
-  
+
             function getGraphics(results) {
               const graphics = results.features.map(function (graphic) {
                 return graphic;
               });
               return graphics;
             }
-  
+
             function waterDepthFilter(filteringArray) {
               let filteredArray = [];
               filteringArray.forEach(function (graphic) {
@@ -757,7 +762,7 @@ require([
               });
               return filteredArray;
             }
-  
+
             function distanceToPortFilter(filteringArray) {
               let filteredArray = [];
               filteringArray.forEach(function (graphic) {
@@ -767,7 +772,7 @@ require([
               });
               return filteredArray;
             }
-  
+
             function waterTypeFilter(filteringArray) {
               if (!isStateWaterExcluded && !isFederalWaterExcluded) {
                 // pass data to the next filter without filtering
@@ -777,7 +782,7 @@ require([
                 let filteredArray = [];
                 let stateWaterAreas = dataLayers.getStateAreas();
                 let federalWaterAreas = dataLayers.getFederalAreas();
-  
+
                 filteringArray.forEach(function (graphic) {
                   // The mark of whether this data point intersects with the filter
                   let isIntersected = false;
@@ -815,7 +820,7 @@ require([
                 return filteredArray;
               }
             }
-  
+
             function restrictAreaFilter(filteringArray) {
               if (isRestrictedAreaExcluded) {
                 // start filtering the data
@@ -849,7 +854,7 @@ require([
                 return filteringArray;
               }
             }
-  
+
             function shippingLanesFilter(filteringArray) {
               if (isShippingLanesExcluded) {
                 // start filtering the data
@@ -869,7 +874,9 @@ require([
                       )
                     ) {
                       isIntersected = true;
-                      console.log("intersection spotted by shippingLanesFilter");
+                      console.log(
+                        "intersection spotted by shippingLanesFilter"
+                      );
                     }
                   });
                   if (!isIntersected) filteredArray.push(graphic);
@@ -881,7 +888,7 @@ require([
                 return filteringArray;
               }
             }
-  
+
             function MPAInventoryFilter(filteringArray) {
               if (isMPAExcluded) {
                 // start filtering the data
@@ -917,26 +924,30 @@ require([
                 let bathymetry = graphic.attributes.Depth;
                 let distanceToPort = graphic.attributes.Distance_t;
                 let sfi = 0;
-  
+                let Bn = 0;
+                let OC = 0;
+
                 if (
                   bathymetry >= minOCDepth &&
                   bathymetry <= maxOCDepth &&
                   distanceToPort <= maxOcToPort
                 ) {
-                  let Bn = biomass / maxProductivity;
+                  Bn = biomass / maxProductivity;
                   let OCz =
                     1 - Math.pow((bathymetry - minOCDepth) / maxOCDepth, 2);
                   let OCp = 1 - distanceToPort / maxOcToPort;
-                  let OC = (OCz + OCp) / 2;
-                  sfi = FarmFactor * Bn + OCFactor * OC;
+                  OC = (OCz + OCp) / 2;
+                  sfi = biomassRatio * Bn + operationalConstraint * OC;
                 }
-  
+
                 sfiResultGraphicsArray.push(graphic);
-  
+
                 graphic.attributes = {
                   Biomass: biomass,
                   Bathymetry: bathymetry,
                   SFI: sfi,
+                  BiomassRatio: Bn,
+                  OperationalConstraint: OC,
                 };
                 graphic.symbol = {
                   type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
@@ -950,13 +961,15 @@ require([
             function collectFilteredPoint(filteredPoint) {
               let biomass = filteredPoint.attributes.Maximum_An;
               let bathymetry = filteredPoint.attributes.Depth;
-  
+
               filteredPoint.attributes = {
                 Biomass: biomass,
                 Bathymetry: bathymetry,
                 SFI: 0,
+                BiomassRatio: 0,
+                OperationalConstraint: 0,
               };
-  
+
               sfiResultGraphicsArray.push(filteredPoint);
             }
           }
@@ -975,6 +988,18 @@ require([
     /********************************************************************************
      *                         Under construction: Report SFI
      * ******************************************************************************/
+    function formatToOneDecimalPlace(value) {
+      return Math.round((value + Number.EPSILON) * 10) / 10;
+    }
+
+    function formatToTwoDecimalPlaces(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
+    }
+
+    function formatToEightDecimalPlaces(value) {
+      return Math.round((value + Number.EPSILON) * 100000000) / 100000000;
+    }
+
     function addReportSFIFeature() {
       // add a GraphicsLayer for the sketches and the buffer
       const sketchLayer = new GraphicsLayer();
@@ -995,7 +1020,6 @@ require([
       sketchViewModel.on("create", function (event) {
         if (event.state === "complete") {
           sketchGeometry = event.graphic.geometry;
-          console.log(sketchGeometry);
           runQuery();
           view.ui.move(queryDiv, "bottom-right");
           view.ui.move(coordsWidget, "bottom-right");
@@ -1066,9 +1090,10 @@ require([
       function querySFIAndCreateHistogram() {
         let query = null;
         let avgSFI = null;
+        let avgBiomassRatio = null;
+        let avgOperationalConstraint = null;
 
         if (isSFICalculationPerformed) {
-          console.log(sfiResultGraphicsArray);
           // create the SFI result feature layer
           let sfiResultLayer = new FeatureLayer({
             fields: [
@@ -1092,38 +1117,82 @@ require([
                 alias: "SFI",
                 type: "double",
               },
+              {
+                name: "BiomassRatio",
+                alias: "BiomassRatio",
+                type: "double",
+              },
+              {
+                name: "OperationalConstraint",
+                alias: "OperationalConstraint",
+                type: "double",
+              },
             ],
             objectIdField: "ObjectID",
             geometryType: "point",
             source: sfiResultGraphicsArray,
           });
 
-          console.log(sfiResultLayer);
-
+          // query for the average SFI of a selected area (feature 2 used)
           avgSFI = {
             onStatisticField: "SFI",
             outStatisticFieldName: "avgSFI",
             statisticType: "avg",
           };
 
-          // query for the average SFI of a selected area (feature 2 used)
+          // query for the average biomass ratio of a selected area (feature 2 used)
+          avgBiomassRatio = {
+            onStatisticField: "BiomassRatio",
+            outStatisticFieldName: "avgBiomassRatio",
+            statisticType: "avg",
+          };
+
+          // query for the average operational constraint of a selected area (feature 2 used)
+          avgOperationalConstraint = {
+            onStatisticField: "OperationalConstraint",
+            outStatisticFieldName: "avgOperationalConstraint",
+            statisticType: "avg",
+          };
+
           query = sfiResultLayer.createQuery();
           query.geometry = sketchGeometry;
-          query.outStatistics = [avgSFI];
+          query.outStatistics = [
+            avgSFI,
+            avgBiomassRatio,
+            avgOperationalConstraint,
+          ];
           sfiResultLayer.queryFeatures(query).then(displaySFIText);
 
           createHistogram(sfiResultLayer, "SFI");
         } else {
+          // query for the average SFI of a selected area (feature 2 not used)
           avgSFI = {
             onStatisticField: "SFI_defaul",
             outStatisticFieldName: "avgSFI",
             statisticType: "avg",
           };
 
-          // query for the average SFI of a selected area (feature 2 not used)
+          // query for the average biomass ratio of a selected area (feature 2 not used)
+          avgBiomassRatio = {
+            onStatisticField: "SFI_bn",
+            outStatisticFieldName: "avgBiomassRatio",
+            statisticType: "avg",
+          };
+
+          // query for the average operational constraint of a selected area (feature 2 not used)
+          avgOperationalConstraint = {
+            onStatisticField: "SFI_OC",
+            outStatisticFieldName: "avgOperationalConstraint",
+            statisticType: "avg",
+          };
+
           query = kelpProductivityLayer.createQuery();
           query.geometry = sketchGeometry;
-          query.outStatistics = [avgSFI];
+          query.outStatistics = [
+            avgSFI,
+            avgBiomassRatio,
+            avgOperationalConstraint,
+          ];
           kelpProductivityLayer.queryFeatures(query).then(displaySFIText);
 
           createHistogram(kelpProductivityLayer, "SFI_defaul");
@@ -1133,8 +1202,21 @@ require([
           var stats = response.features[0].attributes;
 
           const sfiText = document.getElementById("sfiOutput");
-          sfiText.innerHTML =
-            Math.round((stats.avgSFI + Number.EPSILON) * 100000000) / 100000000;
+          sfiText.innerHTML = formatToEightDecimalPlaces(stats.avgSFI);
+
+          const sfiTextFormula = document.getElementById("sfiTextFormula");
+          const weightBText = document.getElementById("weightBTextFormula");
+          const BText = document.getElementById("BTextFormula");
+          const weightOCText = document.getElementById("weightOCTextFormula");
+          const OCText = document.getElementById("OCTextFormula");
+
+          sfiTextFormula.innerHTML = formatToTwoDecimalPlaces(stats.avgSFI);
+          weightBText.innerHTML = lastValidBiomassRatio;
+          BText.innerHTML = formatToTwoDecimalPlaces(stats.avgBiomassRatio);
+          weightOCText.innerHTML = lastValidOperationalConstraint;
+          OCText.innerHTML = formatToTwoDecimalPlaces(
+            stats.avgOperationalConstraint
+          );
         }
 
         function fetchStats(layer, field) {
@@ -1148,10 +1230,6 @@ require([
             histogram(params),
             summaryStatistics(params),
           ]);
-        }
-
-        function formatToEightDecimalPlaces(value) {
-          return Math.round((value + Number.EPSILON) * 100000000) / 100000000;
         }
 
         function createHistogram(featureLayer, sfiFieldName) {
@@ -1241,8 +1319,7 @@ require([
 
           const distanceToPortText = document.getElementById("portOutput");
           distanceToPortText.innerHTML =
-            Math.round((stats.distanceToPort + Number.EPSILON) * 100) / 100 +
-            "km";
+            formatToOneDecimalPlace(stats.distanceToPort) + "km";
 
           const maxAllowableDistanceToPort = document.getElementById(
             "maxAllowableDistanceToPort"
@@ -1292,7 +1369,7 @@ require([
 
           minDepthText.innerHTML = -1 * stats.minDepth;
           avgDepthText.innerHTML =
-            (-1 * Math.round((stats.avgDepth + Number.EPSILON) * 100)) / 100;
+            -1 * Math.round(stats.avgDepth + Number.EPSILON);
           maxDepthText.innerHTML = -1 * stats.maxDepth;
           minDepthAvailable.innerHTML = lastValidMinOCDepth + "m";
           maxDepthAvailable.innerHTML = lastValidMaxOCDepth + "m";
@@ -1319,15 +1396,12 @@ require([
           rings: processedRings,
         };
         const sketchPolygon = new Polygon(polygonProperties);
-        console.log(sketchPolygon);
 
         const areas = geodesicUtils.geodesicAreas(
           [sketchPolygon],
           "square-kilometers"
         );
-        const area = Math.abs(
-          Math.round((areas[0] + Number.EPSILON) * 100) / 100
-        );
+        const area = Math.abs(Math.round(areas[0]));
         const areaText = document.getElementById("reportAreaOut");
         areaText.innerHTML = area + " km<sup>2</sup>";
 
