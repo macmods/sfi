@@ -45,6 +45,7 @@ require([
   "esri/widgets/AreaMeasurement2D",
   "esri/widgets/Sketch/SketchViewModel",
   "esri/widgets/Histogram",
+  "esri/widgets/Print",
 ], function (
   // mapping
   WebMap,
@@ -70,7 +71,8 @@ require([
   DistanceMeasurement2D,
   AreaMeasurement2D,
   SketchViewModel,
-  Histogram
+  Histogram,
+  Print
 ) {
   /****************************************************
    * Declaration zone for data layers
@@ -1056,6 +1058,21 @@ require([
         view.ui.move(queryDiv, "top-right");
       }
 
+      // print the report when the corresponding button is clicked
+      const printButton = document.getElementById("printBtn");
+
+      printButton.addEventListener("click", function () {
+        var print = new Print({
+          view: view,
+          // specify your own print service
+          printServiceUrl:
+            "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        });
+
+        // Add widget to the top right corner of the view
+        view.ui.add(print, "bottom-right");
+      });
+
       // set the geometry query
       var debouncedRunQuery = promiseUtils.debounce(function () {
         if (!sketchGeometry) {
@@ -1068,7 +1085,8 @@ require([
           querySFIAndCreateHistogram(),
           queryDistanceToPort(),
           queryBathymetry(),
-          areaMeasurementAndQueryJurisdiction(),
+          areaMeasurement(),
+          queryJurisdiction(),
         ]);
       });
 
@@ -1371,9 +1389,7 @@ require([
         });
       }
 
-      var jurisdictionChart = null;
-
-      function areaMeasurementAndQueryJurisdiction() {
+      function areaMeasurement() {
         // translate the Web Mercator coordinates to Longitude and Latitude values
         var processedRings = [];
         sketchGeometry.rings.forEach(function (ring) {
@@ -1396,37 +1412,62 @@ require([
           [sketchPolygon],
           "square-kilometers"
         );
-        const area = Math.abs(Math.round(areas[0]));
+        const area = Math.abs(Math.round(areas[0]) + Number.EPSILON);
         const areaText = document.getElementById("reportAreaOut");
         areaText.innerHTML = area + " km<sup>2</sup>";
+      }
 
-        const statDefinitions = [
-          {
-            onStatisticField:
-              "CASE WHEN Jurisdiction <> 'Federal' THEN 1 ELSE 0 END",
-            outStatisticFieldName: "stateWaters",
-            statisticType: "sum",
-          },
-          {
-            onStatisticField:
-              "CASE WHEN Jurisdiction = 'Federal' THEN 1 ELSE 0 END",
-            outStatisticFieldName: "federalWaters",
-            statisticType: "sum",
-          },
-        ];
+      var jurisdictionChart = null;
 
-        var query = federalAndStateWatersLayer.createQuery();
-        query.geometry = sketchGeometry;
-        query.outStatistics = statDefinitions;
+      function queryJurisdiction() {
+        var federalWaters = [];
+        var numOfFederalWatersPoints = 0;
+        var numOfPoints = 0;
 
+        // get federal waters data
+        var outerQuery = federalAndStateWatersLayer.createQuery();
         federalAndStateWatersLayer
-          .queryFeatures(query)
+          .queryFeatures(outerQuery)
           .then(function (response) {
-            const stats = response.features[0].attributes;
-            updateChart(jurisdictionChart, [
-              stats.federalWaters,
-              stats.stateWaters,
-            ]);
+            response.features.map(function (feature) {
+              if (feature.attributes.Jurisdicti == "Federal") {
+                federalWaters.push(feature);
+              }
+            });
+
+            var innerQuery = kelpProductivityLayer.createQuery();
+            innerQuery.geometry = sketchGeometry;
+            kelpProductivityLayer
+              .queryFeatures(innerQuery)
+              .then(function (response) {
+                response.features.map(function (graphic) {
+                  numOfPoints = response.features.length;
+                  // The mark of whether this data point intersects with the filter
+                  let isIntersected = false;
+                  federalWaters.forEach(function (federalWater) {
+                    // iterate through each restrict zone
+                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    if (isIntersected) return;
+                    else if (
+                      geometryEngine.intersects(
+                        graphic.geometry,
+                        federalWater.geometry
+                      )
+                    ) {
+                      isIntersected = true;
+                    }
+                  });
+                  if (isIntersected)
+                    numOfFederalWatersPoints = numOfFederalWatersPoints + 1;
+                });
+
+                updateChart(jurisdictionChart, [
+                  numOfFederalWatersPoints,
+                  numOfPoints - numOfFederalWatersPoints,
+                ]);
+                console.log("numOfPoints", numOfPoints);
+                console.log("numOfFWPoints", numOfFederalWatersPoints);
+              });
           });
       }
 
