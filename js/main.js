@@ -1418,7 +1418,9 @@ require([
           .queryFeatures(outerQuery)
           .then(function (response) {
             response.features.map(function (feature) {
-              federalWaters.push(feature);
+              if (feature.attributes.Jurisdicti == "Federal") {
+                federalWaters.push(feature);
+              }
             });
 
             var innerQuery = kelpProductivityLayer.createQuery();
