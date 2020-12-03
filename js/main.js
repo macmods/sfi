@@ -740,7 +740,7 @@ require([
                 .then(displayResults);
             }
 
-            indicator.innerText = "SFI Calculation done, results are beling plotted on the map";
+            indicator.innerText = "SFI Calculation done, results are being plotted on the map";
 
             function queryData(index, querySizeLimit) {
               const query = kelpProductivityLayer.createQuery();
