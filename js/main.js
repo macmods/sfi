@@ -292,7 +292,7 @@ require([
           layerInfos: [
             {
               layer: kelpProductivityLayer,
-              title: "Kelp Productivity (Biomass in kilogram-dry)",
+              title: "Kelp Potential (Biomass in kilogram-dry)",
             },
             {
               layer: bathymetryLayer,
