@@ -520,9 +520,9 @@ require([
     function addCalculateSFIFeature() {
       var isStateWaterExcluded = false;
       var isFederalWaterExcluded = false;
-      var isRestrictedAreaExcluded = false;
-      var isShippingLanesExcluded = false;
-      var isMPAExcluded = false;
+      var isRestrictedAreaExcluded = true;
+      var isShippingLanesExcluded = true;
+      var isMPAExcluded = true;
 
       setupSliders();
       setupToggles();
