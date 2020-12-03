@@ -7,6 +7,63 @@ body {
   background-color: #162b36;
 }
 
+/* Alert message box for mobile view */
+
+.alert {
+  display: none;
+}
+
+.closebtn {
+  display: none;
+}
+
+@media screen and (max-width: 550px) {
+  .alert {
+    display: block;
+    position: absolute;
+    padding: 20px;
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-top: 200px;
+    margin-bottom: 15px;
+    z-index: 99 !important;
+    font-family: Roboto;
+    font-weight: Regular;
+  }
+
+  .closebtn {
+    display: block;
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .closebtn:hover {
+    color: black;
+  }
+}
+
+@media screen and (min-width: 551px){
+  .alert {
+    display: none;
+  }
+
+  .closebtn {
+    display: none;
+  }
+
+  .closebtn:hover {
+    color: black;
+  }
+}
+
+/* Website CSS */
+
 #viewDiv {
   padding: 0;
   margin: 0;
@@ -43,12 +100,6 @@ body {
   font-size: 25px;
   opacity: 1;
   text-align: left;
-}
-
-@media screen and (max-width: 530px) {
-  .title-desktop {
-    display: none;
-  }
 }
 
 a {
@@ -106,7 +157,7 @@ li {
   top: 140px;
   right: 20px;
   position: absolute;
-  z-index: 99;
+  z-index: 98;
   background-color: white;
   border-radius: 8px;
   padding: 10px;
@@ -131,6 +182,11 @@ li {
 }
 
 @media screen and (max-width: 530px) {
+
+  .title-desktop {
+    display: none;
+  }
+
   #sfiCalc {
     height: 50vh;
     width: 35vh;
