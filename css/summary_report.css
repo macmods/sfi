@@ -83,6 +83,7 @@
 #jurisdictionPieChart {
   font-size: 12px;
   margin: 10px;
+  display: inline;
 }
 
 #sfiFormula {

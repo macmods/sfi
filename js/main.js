@@ -1465,8 +1465,12 @@ require([
                   numOfFederalWatersPoints,
                   numOfPoints - numOfFederalWatersPoints,
                 ]);
+
                 console.log("numOfPoints", numOfPoints);
                 console.log("numOfFWPoints", numOfFederalWatersPoints);
+ 
+                const jurisdictionDist = document.getElementById("pieDist");
+                jurisdictionDist.innerHTML = formatToTwoDecimalPlaces(numOfFederalWatersPoints/numOfPoints*100)+ "% are in Federal Waters and " + formatToTwoDecimalPlaces((numOfPoints - numOfFederalWatersPoints)/numOfPoints*100)+ "% are in State Waters";
               });
           });
       }

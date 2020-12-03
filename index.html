@@ -190,7 +190,9 @@
     <!-- Summary Report -->
     <div id="resultDiv" class="esri-widget">
       <span class="reportHead">Seaweed Farming Index Report</span>
-      <button class="printBtn" id="printBtn" type="button"><i class="fa fa-print"></i></button>
+      <button class="printBtn" id="printBtn" type="button">
+        <i class="fa fa-print"></i>
+      </button>
       <div class="progress-container">
         <div class="progress-bar" id="myBar"></div>
       </div>
@@ -357,7 +359,10 @@
             falls within federal versus state waters.
           </p>
           <div class="statement">
-            <canvas id="jurisdictionPieChart" width="250" height="300" />
+            <canvas id="jurisdictionPieChart" width="250" height="300" style="display:inline;"></canvas>
+            <span>
+              <span id="pieDist" style="display: block;"></div>
+            </span>
           </div>
         </div>
       </div>
