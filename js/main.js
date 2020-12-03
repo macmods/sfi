@@ -136,7 +136,7 @@ require([
         url: shippingLanesLayerUrl,
         visible: false,
         definitionExpression:
-          "(FID < 3 OR " + "FID > 4 AND THEMELAYER NOT LIKE '%Avoided%')",
+          "((FID < 3 OR " + "FID > 4) AND THEMELAYER NOT LIKE '%Avoided%')",
         popupTemplate: shippingLanesPopupTemplate,
       });
 
