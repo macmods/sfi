@@ -647,9 +647,11 @@ require([
           lastValidMaxOcToPort = maxOcToPort;
           lastValidBiomassRatio = biomassRatio;
           lastValidOperationalConstraint = operationalConstraint;
+          const indicator = document.getElementById("calculating-indication");
 
           sfiResultGraphicsArray = [];
           resultsLayer.removeAll();
+          indicator.innerText = "Calculating SFI, wait please....";
           const querySizeLimit = 5000;
           const maxProductivity = 4;
 
@@ -738,6 +740,8 @@ require([
                 .then(displayResults);
             }
 
+            indicator.innerText = "SFI Calculation done, results are beling plotted on the map";
+
             function queryData(index, querySizeLimit) {
               const query = kelpProductivityLayer.createQuery();
               query.start = index;
@@ -796,7 +800,6 @@ require([
                         )
                       ) {
                         isIntersected = true;
-                        console.log("intersection spotted by State Water");
                       }
                     });
                   }
@@ -810,7 +813,6 @@ require([
                         )
                       ) {
                         isIntersected = true;
-                        console.log("intersection spotted by Federal Water");
                       }
                     });
                   }
@@ -840,9 +842,6 @@ require([
                       )
                     ) {
                       isIntersected = true;
-                      console.log(
-                        "intersection spotted by Restricted Area Filter"
-                      );
                     }
                   });
                   if (!isIntersected) filteredArray.push(graphic);
@@ -874,9 +873,6 @@ require([
                       )
                     ) {
                       isIntersected = true;
-                      console.log(
-                        "intersection spotted by shippingLanesFilter"
-                      );
                     }
                   });
                   if (!isIntersected) filteredArray.push(graphic);
@@ -905,7 +901,6 @@ require([
                       geometryEngine.intersects(graphic.geometry, MPA.geometry)
                     ) {
                       isIntersected = true;
-                      console.log("intersection spotted by MPAInventoryFilter");
                     }
                   });
                   if (!isIntersected) filteredArray.push(graphic);
