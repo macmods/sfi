@@ -16,7 +16,7 @@ import {
   mpaInventoryPopupTeamplate,
   principalPortsPopupTemplate,
 } from "./popup_template.js";
-import { referenceScale, kelpProductivityRenderer } from "./renderer.js";
+import { referenceScale, kelpProductivityRenderer, principalPortsRenderer } from "./renderer.js";
 import { DataLayers } from "./DataLayers.js";
 
 require([
@@ -154,6 +154,7 @@ require([
       principalPortsLayer = new FeatureLayer({
         url: principalPortsLayerUrl,
         visible: false,
+        renderer: principalPortsRenderer,
         popupTemplate: principalPortsPopupTemplate,
       });
 
@@ -312,7 +313,7 @@ require([
             },
             {
               layer: principalPortsLayer,
-              title: "Principal Ports",
+              title: "Ports and Harbors",
             },
             {
               layer: federalAndStateWatersLayer,
