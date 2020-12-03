@@ -26,7 +26,17 @@ const kelpProductivityRenderer = {
   ],
 };
 
-export {
-  referenceScale,
-  kelpProductivityRenderer,
+const principalPortsRenderer = {
+  type: "simple",
+  symbol: {
+    type: "simple-marker",
+    size: 12,
+    color: "orange",
+    outline: {
+      width: 0.5,
+      color: "white",
+    },
+  },
 };
+
+export { referenceScale, kelpProductivityRenderer, principalPortsRenderer };

@@ -1,7 +1,7 @@
 // Popup template for kelp productivity layer
 var kelpProductivityPopupTemplate = {
   // autocasts as new PopupTemplate()
-  title: "Kelp Productivity",
+  title: "Kelp Potential",
   content: [
     {
       type: "fields",
@@ -98,7 +98,7 @@ var mpaInventoryPopupTeamplate = {
 // Popup template for principal ports layer
 var principalPortsPopupTemplate = {
   // autocasts as new PopupTemplate()
-  title: "Principal Ports",
+  title: "Ports and Harbors",
   content: [
     {
       type: "fields",
