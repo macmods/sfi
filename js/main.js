@@ -45,6 +45,7 @@ require([
   "esri/widgets/AreaMeasurement2D",
   "esri/widgets/Sketch/SketchViewModel",
   "esri/widgets/Histogram",
+  "esri/widgets/Print",
 ], function (
   // mapping
   WebMap,
@@ -70,7 +71,8 @@ require([
   DistanceMeasurement2D,
   AreaMeasurement2D,
   SketchViewModel,
-  Histogram
+  Histogram,
+  Print
 ) {
   /****************************************************
    * Declaration zone for data layers
@@ -1060,6 +1062,21 @@ require([
         resultDiv.style.display = "none";
         view.ui.move(queryDiv, "top-right");
       }
+
+      // print the report when the corresponding button is clicked
+      const printButton = document.getElementById("printBtn");
+
+      printButton.addEventListener("click", function () {
+        var print = new Print({
+          view: view,
+          // specify your own print service
+          printServiceUrl:
+            "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        });
+
+        // Add widget to the top right corner of the view
+        view.ui.add(print, "bottom-right");
+      });
 
       // set the geometry query
       var debouncedRunQuery = promiseUtils.debounce(function () {
