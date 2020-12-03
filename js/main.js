@@ -16,7 +16,11 @@ import {
   mpaInventoryPopupTeamplate,
   principalPortsPopupTemplate,
 } from "./popup_template.js";
-import { referenceScale, kelpProductivityRenderer, principalPortsRenderer } from "./renderer.js";
+import {
+  referenceScale,
+  kelpProductivityRenderer,
+  principalPortsRenderer,
+} from "./renderer.js";
 import { DataLayers } from "./DataLayers.js";
 
 require([
@@ -131,7 +135,8 @@ require([
       shippingLanesLayer = new FeatureLayer({
         url: shippingLanesLayerUrl,
         visible: false,
-        definitionExpression: "(FID < 3 OR " + "FID > 4)",
+        definitionExpression:
+          "(FID < 3 OR " + "FID > 4 AND THEMELAYER NOT LIKE '%Avoided%')",
         popupTemplate: shippingLanesPopupTemplate,
       });
 
@@ -743,7 +748,8 @@ require([
                 .then(displayResults);
             }
 
-            indicator.innerText = "SFI Calculation done, results are being plotted on the map";
+            indicator.innerText =
+              "SFI Calculation done, results are being plotted on the map";
 
             function queryData(index, querySizeLimit) {
               const query = kelpProductivityLayer.createQuery();
@@ -1469,9 +1475,18 @@ require([
 
                 console.log("numOfPoints", numOfPoints);
                 console.log("numOfFWPoints", numOfFederalWatersPoints);
- 
+
                 const jurisdictionDist = document.getElementById("pieDist");
-                jurisdictionDist.innerHTML = formatToTwoDecimalPlaces(numOfFederalWatersPoints/numOfPoints*100)+ "% are in Federal Waters and " + formatToTwoDecimalPlaces((numOfPoints - numOfFederalWatersPoints)/numOfPoints*100)+ "% are in State Waters";
+                jurisdictionDist.innerHTML =
+                  formatToTwoDecimalPlaces(
+                    (numOfFederalWatersPoints / numOfPoints) * 100
+                  ) +
+                  "% are in Federal Waters and " +
+                  formatToTwoDecimalPlaces(
+                    ((numOfPoints - numOfFederalWatersPoints) / numOfPoints) *
+                      100
+                  ) +
+                  "% are in State Waters";
               });
           });
       }
