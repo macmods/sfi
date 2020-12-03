@@ -238,7 +238,7 @@ require([
     function initiateMapViewer() {
       webmap = new WebMap({
         portalItem: {
-          id: "ab809d7d499b4ba9b7c87dbdefc4bbf7",
+          id: "401c823992004a93aef4401f89b65060",
         },
         layers: [
           kelpProductivityLayer,
@@ -292,7 +292,7 @@ require([
           layerInfos: [
             {
               layer: kelpProductivityLayer,
-              title: "Kelp Productivity (Biomass in kilogram-dry)",
+              title: "Kelp Potential",
             },
             {
               layer: bathymetryLayer,
