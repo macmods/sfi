@@ -1430,14 +1430,14 @@ require([
                   numOfPoints = response.features.length;
                   // The mark of whether this data point intersects with the filter
                   let isIntersected = false;
-                  shippingLanes.forEach(function (shippingLane) {
+                  federalWaters.forEach(function (federalWater) {
                     // iterate through each restrict zone
                     // if intersection spotted, set isIntersected mark to be true then break the loop
                     if (isIntersected) return;
                     else if (
                       geometryEngine.intersects(
                         graphic.geometry,
-                        shippingLane.geometry
+                        federalWater.geometry
                       )
                     ) {
                       isIntersected = true;
