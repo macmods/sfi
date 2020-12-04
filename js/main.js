@@ -1332,21 +1332,37 @@ require([
           statisticType: "min",
         };
 
-        var query = kelpProductivityLayer.createQuery();
-        query.geometry = sketchGeometry;
-        query.outStatistics = [distanceToPort];
-        kelpProductivityLayer.queryFeatures(query).then(function (response) {
-          var stats = response.features[0].attributes;
+        var outerQuery = kelpProductivityLayer.createQuery();
+        outerQuery.geometry = sketchGeometry;
+        outerQuery.outStatistics = [distanceToPort];
+        kelpProductivityLayer
+          .queryFeatures(outerQuery)
+          .then(function (response) {
+            var stats = response.features[0].attributes;
 
-          const distanceToPortText = document.getElementById("portOutput");
-          distanceToPortText.innerHTML =
-            formatToOneDecimalPlace(stats.distanceToPort) + "km";
+            var innerQuery = kelpProductivityLayer.createQuery();
+            innerQuery.where = "Distance_t = " + stats.distanceToPort;
+            innerQuery.outFields = ["Port_ID"];
+            kelpProductivityLayer
+              .queryFeatures(innerQuery)
+              .then(function (result) {
+                var portObject = result.features[0].attributes;
 
-          const maxAllowableDistanceToPort = document.getElementById(
-            "maxAllowableDistanceToPort"
-          );
-          maxAllowableDistanceToPort.innerHTML = lastValidMaxOcToPort + "km";
-        });
+                const distanceToPortText = document.getElementById(
+                  "portOutput"
+                );
+                distanceToPortText.innerHTML =
+                  formatToOneDecimalPlace(stats.distanceToPort) +
+                  "km to<br />" +
+                  portObject.Port_ID;
+
+                const maxAllowableDistanceToPort = document.getElementById(
+                  "maxAllowableDistanceToPort"
+                );
+                maxAllowableDistanceToPort.innerHTML =
+                  lastValidMaxOcToPort + "km";
+              });
+          });
       }
 
       function queryBathymetry() {
