@@ -926,7 +926,7 @@ require([
             function displayResults(resultArray) {
               resultArray.forEach(function (graphic) {
                 let biomass = graphic.attributes.Maximum_An;
-                let bathymetry = graphic.attributes.Depth;
+                let bathymetry = graphic.attributes.depth_m;
                 let distanceToPort = graphic.attributes.Distance_t;
                 let sfi = 0;
                 let Bn = 0;
@@ -965,7 +965,7 @@ require([
 
             function collectFilteredPoint(filteredPoint) {
               let biomass = filteredPoint.attributes.Maximum_An;
-              let bathymetry = filteredPoint.attributes.Depth;
+              let bathymetry = filteredPoint.attributes.depth_m;
 
               filteredPoint.attributes = {
                 Biomass: biomass,
@@ -1188,7 +1188,7 @@ require([
         } else {
           // query for the average SFI of a selected area (feature 2 not used)
           avgSFI = {
-            onStatisticField: "SFI_defaul",
+            onStatisticField: "SFI_default",
             outStatisticFieldName: "avgSFI",
             statisticType: "avg",
           };
@@ -1216,7 +1216,7 @@ require([
           ];
           kelpProductivityLayer.queryFeatures(query).then(displaySFIText);
 
-          createHistogram(kelpProductivityLayer, "SFI_defaul");
+          createHistogram(kelpProductivityLayer, "t");
         }
 
         function displaySFIText(response) {
@@ -1263,8 +1263,8 @@ require([
               let sfi = null;
               if (sfiFieldName == "SFI") {
                 sfi = graphic.attributes.SFI;
-              } else if (sfiFieldName == "SFI_defaul") {
-                sfi = graphic.attributes.SFI_defaul;
+              } else if (sfiFieldName == "SFI_default") {
+                sfi = graphic.attributes.SFI_default;
               }
               graphic.attributes = {
                 SFI: sfi,
