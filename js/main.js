@@ -956,8 +956,12 @@ require([
                 };
                 graphic.symbol = {
                   type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-                  size: 1,
-                  color: "green",
+                  size: 5,
+                  color: "purple",
+                  outline: {
+                    width: 0,
+                    color: "white",
+                  },
                 };
               });
               resultsLayer.addMany(resultArray);
@@ -1188,7 +1192,7 @@ require([
         } else {
           // query for the average SFI of a selected area (feature 2 not used)
           avgSFI = {
-            onStatisticField: "SFI_default",
+            onStatisticField: "SFI_defaul",
             outStatisticFieldName: "avgSFI",
             statisticType: "avg",
           };
@@ -1216,7 +1220,7 @@ require([
           ];
           kelpProductivityLayer.queryFeatures(query).then(displaySFIText);
 
-          createHistogram(kelpProductivityLayer, "SFI_default");
+          createHistogram(kelpProductivityLayer, "SFI_defaul");
         }
 
         function displaySFIText(response) {
@@ -1263,8 +1267,8 @@ require([
               let sfi = null;
               if (sfiFieldName == "SFI") {
                 sfi = graphic.attributes.SFI;
-              } else if (sfiFieldName == "SFI_default") {
-                sfi = graphic.attributes.SFI_default;
+              } else if (sfiFieldName == "SFI_defaul") {
+                sfi = graphic.attributes.SFI_defaul;
               }
               graphic.attributes = {
                 SFI: sfi,
