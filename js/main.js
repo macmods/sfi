@@ -521,7 +521,7 @@ require([
     var sfiResultGraphicsArray = [];
 
     /********************************************************************************
-     *                         Under construction: Calculate SFI
+     *                                  Calculate SFI
      * ******************************************************************************/
     function addCalculateSFIFeature() {
       var isStateWaterExcluded = false;
@@ -1216,7 +1216,7 @@ require([
           ];
           kelpProductivityLayer.queryFeatures(query).then(displaySFIText);
 
-          createHistogram(kelpProductivityLayer, "t");
+          createHistogram(kelpProductivityLayer, "SFI_default");
         }
 
         function displaySFIText(response) {
