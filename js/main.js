@@ -926,7 +926,7 @@ require([
             function displayResults(resultArray) {
               resultArray.forEach(function (graphic) {
                 let biomass = graphic.attributes.Maximum_An;
-                let bathymetry = graphic.attributes.depth_m;
+                let bathymetry = graphic.attributes.Depth;
                 let distanceToPort = graphic.attributes.Distance_t;
                 let sfi = 0;
                 let Bn = 0;
@@ -965,7 +965,7 @@ require([
 
             function collectFilteredPoint(filteredPoint) {
               let biomass = filteredPoint.attributes.Maximum_An;
-              let bathymetry = filteredPoint.attributes.depth_m;
+              let bathymetry = filteredPoint.attributes.Depth;
 
               filteredPoint.attributes = {
                 Biomass: biomass,
