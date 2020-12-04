@@ -20,6 +20,7 @@ import {
   referenceScale,
   kelpProductivityRenderer,
   principalPortsRenderer,
+  bathymetryRenderer,
 } from "./renderer.js";
 import { DataLayers } from "./DataLayers.js";
 
@@ -127,7 +128,7 @@ require([
       bathymetryLayer = new FeatureLayer({
         url: bathymetryLayerUrl,
         visible: false,
-        // renderer: bathymetryRenderer,
+        renderer: bathymetryRenderer,
         popupTemplate: bathymetryPopupTemplate,
       });
 
@@ -1351,21 +1352,21 @@ require([
       function queryBathymetry() {
         // query for the minimum depth of a selected area
         const minDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "maxDepth",
           statisticType: "min",
         };
 
         // query for the average depth of a selected area
         const avgDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "avgDepth",
           statisticType: "avg",
         };
 
         // query for the maximum depth of a selected area
         const maxDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "minDepth",
           statisticType: "max",
         };
