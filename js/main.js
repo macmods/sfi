@@ -1280,7 +1280,7 @@ require([
           var stats = response.features[0].attributes;
 
           const sfiText = document.getElementById("sfiOutput");
-          sfiText.innerHTML = formatToEightDecimalPlaces(stats.avgSFI);
+          sfiText.innerHTML = formatToTwoDecimalPlaces(stats.avgSFI);
 
           const sfiTextFormula = document.getElementById("sfiTextFormula");
           const weightBText = document.getElementById("weightBTextFormula");
@@ -1355,10 +1355,10 @@ require([
 
                 const minElement = document.getElementById("minSFILabelText");
                 const maxElement = document.getElementById("maxSFILabelText");
-                minElement.innerText = formatToEightDecimalPlaces(
+                minElement.innerText = formatToTwoDecimalPlaces(
                   histogramResult.minValue
                 );
-                maxElement.innerText = formatToEightDecimalPlaces(
+                maxElement.innerText = formatToTwoDecimalPlaces(
                   histogramResult.maxValue
                 );
 
@@ -1371,7 +1371,7 @@ require([
                 histogramWidget.container = "histogram";
                 histogramWidget.average = statsResult.avg;
                 histogramWidget.labelFormatFunction = function (value, type) {
-                  return formatToEightDecimalPlaces(value);
+                  return formatToTwoDecimalPlaces(value);
                 };
               })
               .catch(function (error) {
