@@ -954,15 +954,68 @@ require([
                   BiomassRatio: Bn,
                   OperationalConstraint: OC,
                 };
-                graphic.symbol = {
-                  type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-                  size: 5,
-                  color: "purple",
-                  outline: {
-                    width: 0,
-                    color: "white",
-                  },
-                };
+
+                if (sfi === 0) {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#FFFFFF",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                } else if (sfi < 0.2) {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#E5D1F1",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                } else if (sfi < 0.4) {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#CBA3E4",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                } else if (sfi < 0.6) {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#B175D6",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                } else if (sfi < 0.8) {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#9747C9",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                } else {
+                  graphic.symbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    size: 5,
+                    color: "#7E19BC",
+                    outline: {
+                      width: 0,
+                      color: "white",
+                    },
+                  };
+                }
               });
               resultsLayer.addMany(resultArray);
             }
