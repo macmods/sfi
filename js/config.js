@@ -1,7 +1,7 @@
 const kelpProductivityLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/ArcGIS/rest/services/l2scb_maxcanopy_1km/FeatureServer/0";
 const bathymetryLayerUrl =
-  "https://coast.noaa.gov/arcgis/rest/services/OceanReportingTool/BathymetricContours/MapServer/0";
+  "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/ArcGIS/rest/services/cowbat_shp/FeatureServer/0";
 const shippingLanesLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/arcgis/rest/services/shippinglanes/FeatureServer/0";
 const dangerZonesAndRestrictedAreasLayerUrl =

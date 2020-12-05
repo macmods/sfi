@@ -20,6 +20,7 @@ import {
   referenceScale,
   kelpProductivityRenderer,
   principalPortsRenderer,
+  bathymetryRenderer,
 } from "./renderer.js";
 import { DataLayers } from "./DataLayers.js";
 
@@ -127,7 +128,7 @@ require([
       bathymetryLayer = new FeatureLayer({
         url: bathymetryLayerUrl,
         visible: false,
-        // renderer: bathymetryRenderer,
+        renderer: bathymetryRenderer,
         popupTemplate: bathymetryPopupTemplate,
       });
 
@@ -520,7 +521,7 @@ require([
     var sfiResultGraphicsArray = [];
 
     /********************************************************************************
-     *                         Under construction: Calculate SFI
+     *                                  Calculate SFI
      * ******************************************************************************/
     function addCalculateSFIFeature() {
       var isStateWaterExcluded = false;
@@ -955,8 +956,12 @@ require([
                 };
                 graphic.symbol = {
                   type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-                  size: 1,
-                  color: "green",
+                  size: 5,
+                  color: "purple",
+                  outline: {
+                    width: 0,
+                    color: "white",
+                  },
                 };
               });
               resultsLayer.addMany(resultArray);
@@ -1367,21 +1372,21 @@ require([
       function queryBathymetry() {
         // query for the minimum depth of a selected area
         const minDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "maxDepth",
           statisticType: "min",
         };
 
         // query for the average depth of a selected area
         const avgDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "avgDepth",
           statisticType: "avg",
         };
 
         // query for the maximum depth of a selected area
         const maxDepth = {
-          onStatisticField: "Contour",
+          onStatisticField: "depth_m",
           outStatisticFieldName: "minDepth",
           statisticType: "max",
         };
