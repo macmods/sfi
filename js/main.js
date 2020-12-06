@@ -1318,7 +1318,7 @@ require([
           featureLayer.queryFeatures(featureQuery).then(function (response) {
             sfiHistogramArray = response.features.map(function (graphic) {
               let sfi = null;
-              if (sfiFieldName == "SFI") {
+              if (sfiFieldName == "SFI" && graphic.attributes.SFI > 0) {
                 sfi = graphic.attributes.SFI;
               } else if (sfiFieldName == "SFI_defaul") {
                 sfi = graphic.attributes.SFI_defaul;
