@@ -13,9 +13,6 @@ const principalPortsLayerUrl =
 const federalAndStateWatersLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/arcgis/rest/services/FederalAndStateWaters/FeatureServer/0";
 
-const locatorTaskUrl =
-  "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
-
 export {
   kelpProductivityLayerUrl,
   bathymetryLayerUrl,
@@ -24,5 +21,4 @@ export {
   mpaInventoryLayerUrl,
   principalPortsLayerUrl,
   federalAndStateWatersLayerUrl,
-  locatorTaskUrl,
 };

@@ -30,7 +30,6 @@ require([
   "esri/views/MapView",
   "esri/layers/FeatureLayer",
   "esri/layers/GraphicsLayer",
-  "esri/Graphic",
   "esri/geometry/Polygon",
   "esri/geometry/geometryEngine",
   "esri/geometry/support/geodesicUtils",
@@ -43,7 +42,6 @@ require([
   "esri/widgets/Legend",
   "esri/widgets/Search",
   "esri/widgets/Expand",
-  "esri/tasks/Locator",
   "esri/widgets/Bookmarks",
   "esri/widgets/Slider",
   "esri/widgets/DistanceMeasurement2D",
@@ -57,7 +55,6 @@ require([
   MapView,
   FeatureLayer,
   GraphicsLayer,
-  Graphic,
   Polygon,
   geometryEngine,
   geodesicUtils,
@@ -70,7 +67,6 @@ require([
   Legend,
   Search,
   Expand,
-  Locator,
   Bookmarks,
   Slider,
   DistanceMeasurement2D,
@@ -1312,16 +1308,28 @@ require([
 
         function createHistogram(featureLayer, sfiFieldName) {
           var sfiHistogramArray = [];
+          var totalPointsInSelectedArea = 0;
+          var farmablePointsInSelectedArea = 0;
 
           var featureQuery = featureLayer.createQuery();
           featureQuery.geometry = sketchGeometry;
           featureLayer.queryFeatures(featureQuery).then(function (response) {
+            totalPointsInSelectedArea = response.features.length;
+
             sfiHistogramArray = response.features.map(function (graphic) {
               let sfi = null;
               if (sfiFieldName == "SFI") {
-                sfi = graphic.attributes.SFI;
+                if (graphic.attributes.SFI > 0) {
+                  sfi = graphic.attributes.SFI;
+                  farmablePointsInSelectedArea =
+                    farmablePointsInSelectedArea + 1;
+                }
               } else if (sfiFieldName == "SFI_defaul") {
-                sfi = graphic.attributes.SFI_defaul;
+                if (graphic.attributes.SFI_defaul > 0) {
+                  sfi = graphic.attributes.SFI_defaul;
+                  farmablePointsInSelectedArea =
+                    farmablePointsInSelectedArea + 1;
+                }
               }
               graphic.attributes = {
                 SFI: sfi,
@@ -1349,9 +1357,17 @@ require([
             });
 
             fetchStats(sfiHistogramLayer, "SFI")
-              .then(function (response) {
-                const histogramResult = response[0].value;
-                const statsResult = response[1].value;
+              .then(function (sfiResponse) {
+                const histogramResult = sfiResponse[0].value;
+                const statsResult = sfiResponse[1].value;
+
+                const farmableAreaRatioText = document.getElementById(
+                  "farmableAreaRatioText"
+                );
+                farmableAreaRatioText.innerHTML = formatToTwoDecimalPlaces(
+                  (farmablePointsInSelectedArea / totalPointsInSelectedArea) *
+                    100
+                );
 
                 const minElement = document.getElementById("minSFILabelText");
                 const maxElement = document.getElementById("maxSFILabelText");
@@ -1546,9 +1562,6 @@ require([
                   numOfFederalWatersPoints,
                   numOfPoints - numOfFederalWatersPoints,
                 ]);
-
-                console.log("numOfPoints", numOfPoints);
-                console.log("numOfFWPoints", numOfFederalWatersPoints);
 
                 const jurisdictionDist = document.getElementById("pieDist");
                 jurisdictionDist.innerHTML =
