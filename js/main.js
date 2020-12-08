@@ -1442,7 +1442,7 @@ require([
         // query for the minimum depth of a selected area
         const minDepth = {
           onStatisticField: "Depth",
-          outStatisticFieldName: "maxDepth",
+          outStatisticFieldName: "minDepth",
           statisticType: "min",
         };
 
@@ -1456,7 +1456,7 @@ require([
         // query for the maximum depth of a selected area
         const maxDepth = {
           onStatisticField: "Depth",
-          outStatisticFieldName: "minDepth",
+          outStatisticFieldName: "maxDepth",
           statisticType: "max",
         };
 
