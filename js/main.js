@@ -644,6 +644,7 @@ require([
 
       function setupCalculateSFIButton() {
         const querySFI = document.getElementById("query-sfi");
+        const sfiLegend= document.getElementById("SFI-legend");
 
         querySFI.addEventListener("click", function () {
           isSFICalculationPerformed = true;
@@ -657,6 +658,7 @@ require([
           sfiResultGraphicsArray = [];
           resultsLayer.removeAll();
           indicator.innerText = "Calculating SFI, wait please....";
+          sfiLegend.style.display = "block";
           const querySizeLimit = 5000;
           const maxProductivity = 4;
 
@@ -1038,6 +1040,7 @@ require([
           view.when(function () {
             resultsLayer.removeAll();
             isSFICalculationPerformed = false;
+            sfiLegend.style.display = "none";
           });
         });
       }
