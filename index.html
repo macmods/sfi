@@ -42,7 +42,7 @@
         <a href="https://faculty.sites.uci.edu/davis/" target="_blank">
           <img
             class="logo"
-            src="images/Coastal_Dynamics_Sketches_Background.png"
+            src="/images/Coastal_Dynamics_Sketches_Background.png"
             title="Costal Dynamics Lab"
           />
         </a>
@@ -167,7 +167,7 @@
         Clear Report
       </button>
     </div>
-    
+
     <div id="SFI-legend" class="esri-widget" style="display: none">
       <div style="font-weight: bold">Seaweed Farming Index</div>
       <div class="msp"><span class="dot" style="background-color: #E5D1F1; font-size: 40px"></span>0 - 0.2</span></div>
@@ -205,6 +205,9 @@
       <div class="progress-container">
         <div class="progress-bar" id="myBar"></div>
       </div>
+      <div>
+        <p id="generatingReportIndication"></p>
+      </div>
       <div id="content">
         <span class="subHead">GENERAL INFORMATION</span>
         <p>
@@ -227,8 +230,14 @@
           <div class="statement">
             <span>The average value of the selected area is</span>
             <div id="sfiOutput"></div>
-            <span><span id="farmableAreaRatioText">XX</span>% of the selected area is farmable</span>
+            <span>
+              <span id="farmableAreaRatioText">XX</span>% of the selected area 
+              is farmable
+            </span>
             <br />
+            <br />
+            <span>The average value within the farmable area is</span>
+            <div id="sfiFarmableOutput"></div>
             <br />
             <span>
               Histogram of Seaweed Farming Index (SFI)<br />
@@ -298,6 +307,14 @@
                 </tr>
               </table>
             </div>
+          </div>
+          <div>
+            <p>
+              <b>SFI</b>: Seaweed Farming Index<br />
+              <b>&alpha;<sub>B</sub></b>: Weight of Normalized Biomass Ratio<br />
+              <b>B</b>: Normalized Biomass Ratio<br />
+              <b>&alpha;<sub>OC</sub></b>: Weight of Operational Constraint<br />
+              <b>OC</b>: Operational Constraint</p>
           </div>
         </div>
 
