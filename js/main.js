@@ -644,7 +644,7 @@ require([
 
       function setupCalculateSFIButton() {
         const querySFI = document.getElementById("query-sfi");
-        const sfiLegend= document.getElementById("SFI-legend");
+        const sfiLegend = document.getElementById("SFI-legend");
 
         querySFI.addEventListener("click", function () {
           isSFICalculationPerformed = true;
@@ -666,7 +666,6 @@ require([
             .then(getRestrictedZonesData)
             .then(getMPAData)
             .then(getShippingLanesData)
-            //getShippingLanesData()
             .then(calculateSFI);
 
           function getStateAndFederalWaterData() {
@@ -719,7 +718,6 @@ require([
           }
 
           function getShippingLanesData(dataLayers) {
-            //const dataLayers = new DataLayers();
             if (!isShippingLanesExcluded) return dataLayers;
             const query = shippingLanesLayer.createQuery();
             return shippingLanesLayer
@@ -1057,14 +1055,12 @@ require([
       return Math.round((value + Number.EPSILON) * 100) / 100;
     }
 
-    function formatToEightDecimalPlaces(value) {
-      return Math.round((value + Number.EPSILON) * 100000000) / 100000000;
-    }
-
     function addReportSFIFeature() {
       // add a GraphicsLayer for the sketches and the buffer
       const sketchLayer = new GraphicsLayer();
       view.map.addMany([sketchLayer]);
+
+      const printButton = document.getElementById("printBtn");
 
       // use SketchViewModel to draw polygons that are used as a query
       let sketchGeometry = null;
@@ -1123,18 +1119,23 @@ require([
       }
 
       // print the report when the corresponding button is clicked
-      const printButton = document.getElementById("printBtn");
-
       printButton.addEventListener("click", function () {
-        var print = new Print({
-          view: view,
-          // specify your own print service
-          printServiceUrl:
-            "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
-        });
+        var reportWindow = window.open("", "PRINT");
 
-        // Add widget to the top right corner of the view
-        view.ui.add(print, "bottom-right");
+        reportWindow.document.write(
+          "<html><head><title>SFI Summary Report</title>"
+        );
+        reportWindow.document.write(
+          '<link rel="stylesheet" type="text/css" href="css/summary_report.css" />'
+        );
+        reportWindow.document.write("</head><body>");
+        reportWindow.document.write(
+          document.getElementById("resultDiv").innerHTML
+        );
+        reportWindow.document.write("</body></html>");
+        reportWindow.document.close();
+        reportWindow.focus();
+        reportWindow.print();
       });
 
       // set the geometry query
@@ -1367,9 +1368,15 @@ require([
                 const farmableAreaRatioText = document.getElementById(
                   "farmableAreaRatioText"
                 );
-                farmableAreaRatioText.innerHTML = formatToTwoDecimalPlaces(
+                const sfiInFarmableArea = document.getElementById(
+                  "sfiFarmableOutput"
+                );
+                farmableAreaRatioText.innerHTML = Math.round(
                   (farmablePointsInSelectedArea / totalPointsInSelectedArea) *
                     100
+                );
+                sfiInFarmableArea.innerHTML = formatToTwoDecimalPlaces(
+                  statsResult.avg
                 );
 
                 const minElement = document.getElementById("minSFILabelText");
