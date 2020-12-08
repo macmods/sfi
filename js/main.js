@@ -1441,30 +1441,30 @@ require([
       function queryBathymetry() {
         // query for the minimum depth of a selected area
         const minDepth = {
-          onStatisticField: "depth_m",
+          onStatisticField: "Depth",
           outStatisticFieldName: "maxDepth",
           statisticType: "min",
         };
 
         // query for the average depth of a selected area
         const avgDepth = {
-          onStatisticField: "depth_m",
+          onStatisticField: "Depth",
           outStatisticFieldName: "avgDepth",
           statisticType: "avg",
         };
 
         // query for the maximum depth of a selected area
         const maxDepth = {
-          onStatisticField: "depth_m",
+          onStatisticField: "Depth",
           outStatisticFieldName: "minDepth",
           statisticType: "max",
         };
 
-        var query = bathymetryLayer.createQuery();
+        var query = kelpProductivityLayer.createQuery();
         query.geometry = sketchGeometry;
         query.outStatistics = [minDepth, avgDepth, maxDepth];
 
-        bathymetryLayer.queryFeatures(query).then(function (response) {
+        kelpProductivityLayer.queryFeatures(query).then(function (response) {
           var stats = response.features[0].attributes;
 
           const minDepthText = document.getElementById("minDepth");
@@ -1477,10 +1477,9 @@ require([
             "maxDepthAvailable"
           );
 
-          minDepthText.innerHTML = -1 * stats.minDepth;
-          avgDepthText.innerHTML =
-            -1 * Math.round(stats.avgDepth + Number.EPSILON);
-          maxDepthText.innerHTML = -1 * stats.maxDepth;
+          minDepthText.innerHTML = Math.round(stats.minDepth);
+          avgDepthText.innerHTML = Math.round(stats.avgDepth + Number.EPSILON);
+          maxDepthText.innerHTML = Math.round(stats.maxDepth);
           minDepthAvailable.innerHTML = lastValidMinOCDepth + "m";
           maxDepthAvailable.innerHTML = lastValidMaxOCDepth + "m";
         });
