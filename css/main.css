@@ -167,7 +167,7 @@ li {
 #sfiCalc {
   top: 140px;
   right: 20px;
-  max-height: 540px;
+  max-height: 40vh;
   position: absolute;
   z-index: 99;
   background-color: white;
@@ -177,23 +177,29 @@ li {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-#SFI-legend {
-  top: 700px;
-  right: 20px;
+#sfiLegend {
+  height: auto;
+  max-height: 25vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  margin-top: 35px;
   width: 220px;
-  height: 245px;
-  position: absolute;
   z-index: 99;
-  padding: 25px 27px 0px 27px;
+  padding: 15px 15px 0px 15px;
   overflow: auto;
   background-color: white;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.legend{
+  font-size: 12px;
+  margin: 8px 0px;
+}
+
 .dot {
   margin-right: 30px;
-  height: 15px;
-  width: 15px;
+  height: 5px;
+  width: 5px;
   border-radius: 50%;
   display: inline-block;
 }
