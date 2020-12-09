@@ -6,6 +6,7 @@ import {
   mpaInventoryLayerUrl,
   principalPortsLayerUrl,
   federalAndStateWatersLayerUrl,
+  printServiceUrl,
 } from "./config.js";
 import {
   kelpProductivityPopupTemplate,
@@ -287,10 +288,11 @@ require([
     addSummaryReportWidget();
     addGeometryQueryWidget();
     addDistanceMeasurementWidget();
+    addMapViewScreenshotPrintWidget();
 
 
     function addLegendAndBookmarkWidgets() {
-      // Widget #1: Legend
+      // widget #1.1: Legend
       legendExpand = new Expand({
         content: new Legend({
           view: view,
@@ -330,7 +332,7 @@ require([
         group: "top-left",
       });
 
-      // Widget #2: Bookmarks
+      // widget #1.2: Bookmarks
       bookmarkExpand = new Expand({
         content: new Bookmarks({
           view: view,
@@ -384,9 +386,15 @@ require([
     }
 
     function addSearchWidget() {
-      // Widget #2: Search
+      // widget #2: Search
       const searchWidget = new Search({ view });
       view.ui.add(searchWidget, "top-right");
+    }
+    
+    function addSFILegend() {
+      // widget #3: Geometry Query
+      window.view = view;
+      view.ui.add([sfiLegend], "bottom-right");
     }
 
     function addMouseCoordinatesWidget() {
@@ -424,14 +432,20 @@ require([
       view.ui.add([queryDiv], "top-right");
     }
 
-    function addSFILegend() {
-      // widget #5: Geometry Query
-      window.view = view;
-      view.ui.add([sfiLegend], "bottom-right");
+    function addMapViewScreenshotPrintWidget() {
+      // widget #6: Print Widget
+      const print = new Print({
+        view: view,
+        // specify your own print service
+        printServiceUrl: printServiceUrl,
+      });
+
+      // Add widget to the top right corner of the view
+      view.ui.add(print, "bottom-left");
     }
 
     function addDistanceMeasurementWidget() {
-      // widget #6: Distance measurement
+      // widget #7: Distance measurement
       view.ui.add("measureBar", "bottom-left");
 
       var activeWidget = null;
@@ -1128,22 +1142,7 @@ require([
 
       // print the report when the corresponding button is clicked
       printButton.addEventListener("click", function () {
-        var reportWindow = window.open("", "PRINT");
-
-        reportWindow.document.write(
-          "<html><head><title>SFI Summary Report</title>"
-        );
-        reportWindow.document.write(
-          '<link rel="stylesheet" type="text/css" href="css/summary_report.css" />'
-        );
-        reportWindow.document.write("</head><body>");
-        reportWindow.document.write(
-          document.getElementById("resultDiv").innerHTML
-        );
-        reportWindow.document.write("</body></html>");
-        reportWindow.document.close();
-        reportWindow.focus();
-        reportWindow.print();
+        printSummaryReport();
       });
 
       // set the geometry query
@@ -1171,6 +1170,25 @@ require([
 
           console.error(error);
         });
+      }
+
+      function printSummaryReport() {
+        var reportWindow = window.open("", "PRINT");
+
+        reportWindow.document.write(
+          "<html><head><title>SFI Summary Report</title>"
+        );
+        reportWindow.document.write(
+          '<link rel="stylesheet" type="text/css" href="css/summary_report.css" />'
+        );
+        reportWindow.document.write("</head><body>");
+        reportWindow.document.write(
+          document.getElementById("resultDiv").innerHTML
+        );
+        reportWindow.document.write("</body></html>");
+        reportWindow.document.close();
+        reportWindow.focus();
+        reportWindow.print();
       }
 
       function querySFIAndCreateHistogram() {
