@@ -287,9 +287,8 @@ require([
     addMouseCoordinatesWidget();
     addSummaryReportWidget();
     addGeometryQueryWidget();
-    addDistanceMeasurementWidget();
     addMapViewScreenshotPrintWidget();
-
+    addDistanceMeasurementWidget();
 
     function addLegendAndBookmarkWidgets() {
       // widget #1.1: Legend
@@ -390,7 +389,7 @@ require([
       const searchWidget = new Search({ view });
       view.ui.add(searchWidget, "top-right");
     }
-    
+
     function addSFILegend() {
       // widget #3: Geometry Query
       window.view = view;
@@ -1600,9 +1599,7 @@ require([
 
                 const jurisdictionDist = document.getElementById("pieDist");
                 jurisdictionDist.innerHTML =
-                  Math.round(
-                    (numOfFederalWatersPoints / numOfPoints) * 100
-                  ) +
+                  Math.round((numOfFederalWatersPoints / numOfPoints) * 100) +
                   "% are in Federal Waters and " +
                   Math.round(
                     ((numOfPoints - numOfFederalWatersPoints) / numOfPoints) *
