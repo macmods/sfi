@@ -241,7 +241,7 @@ require([
     function initiateMapViewer() {
       webmap = new WebMap({
         portalItem: {
-          id: "401c823992004a93aef4401f89b65060",
+          id: "cdb700c328784388828fb79b9ddbf7dd",
         },
         layers: [
           kelpProductivityLayer,
@@ -282,10 +282,12 @@ require([
   function addWidgetsForTheMap() {
     addLegendAndBookmarkWidgets();
     addSearchWidget();
+    addSFILegend();
     addMouseCoordinatesWidget();
     addSummaryReportWidget();
     addGeometryQueryWidget();
     addDistanceMeasurementWidget();
+
 
     function addLegendAndBookmarkWidgets() {
       // Widget #1: Legend
@@ -420,6 +422,12 @@ require([
       // widget #5: Geometry Query
       window.view = view;
       view.ui.add([queryDiv], "top-right");
+    }
+
+    function addSFILegend() {
+      // widget #5: Geometry Query
+      window.view = view;
+      view.ui.add([sfiLegend], "bottom-right");
     }
 
     function addDistanceMeasurementWidget() {
@@ -644,7 +652,7 @@ require([
 
       function setupCalculateSFIButton() {
         const querySFI = document.getElementById("query-sfi");
-        const sfiLegend = document.getElementById("SFI-legend");
+        const sfiLegend = document.getElementById("sfiLegend");
 
         querySFI.addEventListener("click", function () {
           isSFICalculationPerformed = true;
@@ -657,7 +665,7 @@ require([
 
           sfiResultGraphicsArray = [];
           resultsLayer.removeAll();
-          indicator.innerText = "Calculating SFI, wait please....";
+          indicator.innerText = "Calculating SFI, please wait....";
           sfiLegend.style.display = "block";
           const querySizeLimit = 5000;
           const maxProductivity = 4;
