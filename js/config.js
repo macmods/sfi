@@ -13,6 +13,9 @@ const principalPortsLayerUrl =
 const federalAndStateWatersLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/arcgis/rest/services/FederalAndStateWaters/FeatureServer/0";
 
+const printServiceUrl =
+  "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+
 export {
   kelpProductivityLayerUrl,
   bathymetryLayerUrl,
@@ -21,4 +24,5 @@ export {
   mpaInventoryLayerUrl,
   principalPortsLayerUrl,
   federalAndStateWatersLayerUrl,
+  printServiceUrl,
 };

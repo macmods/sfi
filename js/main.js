@@ -6,6 +6,7 @@ import {
   mpaInventoryLayerUrl,
   principalPortsLayerUrl,
   federalAndStateWatersLayerUrl,
+  printServiceUrl,
 } from "./config.js";
 import {
   kelpProductivityPopupTemplate,
@@ -286,6 +287,7 @@ require([
     addSummaryReportWidget();
     addGeometryQueryWidget();
     addDistanceMeasurementWidget();
+    addMapViewScreenshotPrintWidget();
 
     function addLegendAndBookmarkWidgets() {
       // Widget #1: Legend
@@ -422,8 +424,20 @@ require([
       view.ui.add([queryDiv], "top-right");
     }
 
+    function addMapViewScreenshotPrintWidget() {
+      // Widget #6: Print Widget
+      var print = new Print({
+        view: view,
+        // specify your own print service
+        printServiceUrl: printServiceUrl,
+      });
+
+      // Add widget to the top right corner of the view
+      view.ui.add(print, "bottom-left");
+    }
+
     function addDistanceMeasurementWidget() {
-      // widget #6: Distance measurement
+      // widget #7: Distance measurement
       view.ui.add("measureBar", "bottom-left");
 
       var activeWidget = null;
@@ -1120,22 +1134,7 @@ require([
 
       // print the report when the corresponding button is clicked
       printButton.addEventListener("click", function () {
-        var reportWindow = window.open("", "PRINT");
-
-        reportWindow.document.write(
-          "<html><head><title>SFI Summary Report</title>"
-        );
-        reportWindow.document.write(
-          '<link rel="stylesheet" type="text/css" href="css/summary_report.css" />'
-        );
-        reportWindow.document.write("</head><body>");
-        reportWindow.document.write(
-          document.getElementById("resultDiv").innerHTML
-        );
-        reportWindow.document.write("</body></html>");
-        reportWindow.document.close();
-        reportWindow.focus();
-        reportWindow.print();
+        printSummaryReport();
       });
 
       // set the geometry query
@@ -1163,6 +1162,25 @@ require([
 
           console.error(error);
         });
+      }
+
+      function printSummaryReport() {
+        var reportWindow = window.open("", "PRINT");
+
+        reportWindow.document.write(
+          "<html><head><title>SFI Summary Report</title>"
+        );
+        reportWindow.document.write(
+          '<link rel="stylesheet" type="text/css" href="css/summary_report.css" />'
+        );
+        reportWindow.document.write("</head><body>");
+        reportWindow.document.write(
+          document.getElementById("resultDiv").innerHTML
+        );
+        reportWindow.document.write("</body></html>");
+        reportWindow.document.close();
+        reportWindow.focus();
+        reportWindow.print();
       }
 
       function querySFIAndCreateHistogram() {
