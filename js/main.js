@@ -241,7 +241,7 @@ require([
     function initiateMapViewer() {
       webmap = new WebMap({
         portalItem: {
-          id: "cdb700c328784388828fb79b9ddbf7dd",
+          id: "5a210e718b6246d59a53b46db6cb1853",
         },
         layers: [
           kelpProductivityLayer,
