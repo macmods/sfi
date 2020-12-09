@@ -242,7 +242,7 @@ require([
     function initiateMapViewer() {
       webmap = new WebMap({
         portalItem: {
-          id: "401c823992004a93aef4401f89b65060",
+          id: "5a210e718b6246d59a53b46db6cb1853",
         },
         layers: [
           kelpProductivityLayer,
@@ -283,14 +283,16 @@ require([
   function addWidgetsForTheMap() {
     addLegendAndBookmarkWidgets();
     addSearchWidget();
+    addSFILegend();
     addMouseCoordinatesWidget();
     addSummaryReportWidget();
     addGeometryQueryWidget();
     addDistanceMeasurementWidget();
     addMapViewScreenshotPrintWidget();
 
+
     function addLegendAndBookmarkWidgets() {
-      // Widget #1: Legend
+      // widget #1.1: Legend
       legendExpand = new Expand({
         content: new Legend({
           view: view,
@@ -330,7 +332,7 @@ require([
         group: "top-left",
       });
 
-      // Widget #2: Bookmarks
+      // widget #1.2: Bookmarks
       bookmarkExpand = new Expand({
         content: new Bookmarks({
           view: view,
@@ -384,9 +386,15 @@ require([
     }
 
     function addSearchWidget() {
-      // Widget #2: Search
+      // widget #2: Search
       const searchWidget = new Search({ view });
       view.ui.add(searchWidget, "top-right");
+    }
+    
+    function addSFILegend() {
+      // widget #3: Geometry Query
+      window.view = view;
+      view.ui.add([sfiLegend], "bottom-right");
     }
 
     function addMouseCoordinatesWidget() {
@@ -425,8 +433,8 @@ require([
     }
 
     function addMapViewScreenshotPrintWidget() {
-      // Widget #6: Print Widget
-      var print = new Print({
+      // widget #6: Print Widget
+      const print = new Print({
         view: view,
         // specify your own print service
         printServiceUrl: printServiceUrl,
@@ -658,7 +666,7 @@ require([
 
       function setupCalculateSFIButton() {
         const querySFI = document.getElementById("query-sfi");
-        const sfiLegend = document.getElementById("SFI-legend");
+        const sfiLegend = document.getElementById("sfiLegend");
 
         querySFI.addEventListener("click", function () {
           isSFICalculationPerformed = true;
@@ -671,7 +679,7 @@ require([
 
           sfiResultGraphicsArray = [];
           resultsLayer.removeAll();
-          indicator.innerText = "Calculating SFI, wait please....";
+          indicator.innerText = "Calculating SFI, please wait....";
           sfiLegend.style.display = "block";
           const querySizeLimit = 5000;
           const maxProductivity = 4;
@@ -1592,11 +1600,11 @@ require([
 
                 const jurisdictionDist = document.getElementById("pieDist");
                 jurisdictionDist.innerHTML =
-                  formatToTwoDecimalPlaces(
+                  Math.round(
                     (numOfFederalWatersPoints / numOfPoints) * 100
                   ) +
                   "% are in Federal Waters and " +
-                  formatToTwoDecimalPlaces(
+                  Math.round(
                     ((numOfPoints - numOfFederalWatersPoints) / numOfPoints) *
                       100
                   ) +
