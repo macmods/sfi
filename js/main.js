@@ -1582,11 +1582,11 @@ require([
 
                 const jurisdictionDist = document.getElementById("pieDist");
                 jurisdictionDist.innerHTML =
-                  formatToTwoDecimalPlaces(
+                  Math.round(
                     (numOfFederalWatersPoints / numOfPoints) * 100
                   ) +
                   "% are in Federal Waters and " +
-                  formatToTwoDecimalPlaces(
+                  Math.round(
                     ((numOfPoints - numOfFederalWatersPoints) / numOfPoints) *
                       100
                   ) +
