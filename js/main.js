@@ -684,31 +684,14 @@ require([
           const querySizeLimit = 5000;
           const maxProductivity = 4;
 
-          getShippingLanesData()
-          .then(getRestrictedZonesData)
-          .then(getMPAData)
-          .then(getStateAndFederalWaterData)
-          .then(calculateSFI);
+          getStateAndFederalWaterData()
+            .then(getRestrictedZonesData)
+            .then(getMPAData)
+            .then(getShippingLanesData)
+            .then(calculateSFI);
 
-          function getShippingLanesData() {
+          function getStateAndFederalWaterData() {
             const dataLayers = new DataLayers();
-            const query = shippingLanesLayer.createQuery();
-            return shippingLanesLayer
-              .queryFeatures(query)
-              .then(function (response) {
-                const shippingLanes = [];
-                response.features.map(function (feature) {
-                  shippingLanes.push(feature);
-                });
-                dataLayers.setShippingLanes(shippingLanes);
-                return dataLayers;
-              });
-          }
-
-          function getStateAndFederalWaterData(dataLayers) {
-            
-            if (!isStateWaterExcluded && isFederalWaterExcluded) return dataLayers;
-
             const query = federalAndStateWatersLayer.createQuery();
             return federalAndStateWatersLayer
               .queryFeatures(query)
@@ -752,6 +735,21 @@ require([
                   MPAInventory.push(feature);
                 });
                 dataLayers.setMPAInventory(MPAInventory);
+                return dataLayers;
+              });
+          }
+
+          function getShippingLanesData(dataLayers) {
+            if (!isShippingLanesExcluded) return dataLayers;
+            const query = shippingLanesLayer.createQuery();
+            return shippingLanesLayer
+              .queryFeatures(query)
+              .then(function (response) {
+                const shippingLanes = [];
+                response.features.map(function (feature) {
+                  shippingLanes.push(feature);
+                });
+                dataLayers.setShippingLanes(shippingLanes);
                 return dataLayers;
               });
           }
