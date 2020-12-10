@@ -101,6 +101,7 @@ require([
   var bookmarkExpand;
   var legendHandle;
   var bookmarkHandle;
+  var printWidget;
 
   initiateDataLayersAndMapViewer();
   addWidgetsForTheMap();
@@ -433,13 +434,13 @@ require([
 
     function addMapViewScreenshotPrintWidget() {
       // widget #6: Print Widget
-      const print = new Print({
+      printWidget = document.getElementById("printWidget");
+      var print = new Print({
         view: view,
         // specify your own print service
         printServiceUrl: printServiceUrl,
+        container: printWidget,
       });
-
-      // Add widget to the top right corner of the view
       view.ui.add(print, "bottom-left");
     }
 
@@ -1110,6 +1111,7 @@ require([
           runQuery();
           view.ui.move(queryDiv, "bottom-right");
           view.ui.move(coordsWidget, "bottom-right");
+          printWidget.style.display = "none";
         }
       });
 
@@ -1137,6 +1139,7 @@ require([
         // make summary result pop up invisible
         resultDiv.style.display = "none";
         view.ui.move(queryDiv, "top-right");
+        printWidget.style.display = "none";
       }
 
       // print the report when the corresponding button is clicked
@@ -1188,6 +1191,9 @@ require([
         reportWindow.document.close();
         reportWindow.focus();
         reportWindow.print();
+
+        // Add widget to the bottom left corner of the view
+        printWidget.style.display = "block";
       }
 
       function querySFIAndCreateHistogram() {
