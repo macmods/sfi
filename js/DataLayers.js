@@ -1,3 +1,8 @@
+/**********************************************************************************
+ * This DataLayers.js file contains the accessors for each data layer used for    *
+ * querying                                                                       *    
+ **********************************************************************************/
+
 class DataLayers {
     federalAreas = [];
     stateAreas = [];

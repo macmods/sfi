@@ -1,5 +1,8 @@
-// This nav.js file contains functions needed for controlling the navigation bar
-// including the buttons for toggling on and off each feature
+/**********************************************************************************
+ * This nav.js file contains functions needed for controlling the navigation bar  *
+ * including the buttons for toggling on and off each feature                     *    
+ **********************************************************************************/
+
 var view = document.getElementById("viewDiv");
 
 function navButton(selectedButton) {

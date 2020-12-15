@@ -1,4 +1,8 @@
-// Display kelp productivity with simple renderer
+/**********************************************************************************
+ * This renderer.js file contains custom renderer properties that determine how   *
+ * the feature layers are symbolized on the map                                   *    
+ **********************************************************************************/
+
 const referenceScale = 900000;
 
 const kelpProductivityRenderer = {
