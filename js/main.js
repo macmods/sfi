@@ -89,7 +89,7 @@ require([
   var resultsLayer;
 
   /****************************************************
-   * Declaration zone for the map and the view
+   * Declaration zone for the map and the map view
    ****************************************************/
   var webmap;
   var view;
@@ -143,7 +143,6 @@ require([
       dangerZonesAndRestrictedAreasLayer = new FeatureLayer({
         url: dangerZonesAndRestrictedAreasLayerUrl,
         visible: false,
-        // renderer: dangerZonesAndRestrictedAreasRenderer,
         popupTemplate: dangerZonesAndRestrictedAreasPopupTemplate,
       });
 
@@ -243,7 +242,7 @@ require([
     function initiateMapViewer() {
       webmap = new WebMap({
         portalItem: {
-          id: "5a210e718b6246d59a53b46db6cb1853",
+          id: "5a210e718b6246d59a53b46db6cb1853", // web map item id from ArcGIS online
         },
         layers: [
           kelpProductivityLayer,
@@ -257,7 +256,7 @@ require([
         ],
       });
 
-      // Reorder layers - sink federal and state waters and bathymetry layers to the bottom
+      // Order layers - largest coverage (or area) layers to smallest coverage (or point) layers
       webmap.layers.reorder(bathymetryLayer, 0);
       webmap.layers.reorder(federalAndStateWatersLayer, 1);
       webmap.layers.reorder(kelpProductivityLayer, 2);
@@ -336,7 +335,6 @@ require([
       bookmarkExpand = new Expand({
         content: new Bookmarks({
           view: view,
-          // allows bookmarks to be added, edited, or deleted
           editingEnabled: true,
         }),
         view: view,
@@ -423,17 +421,18 @@ require([
     }
 
     function addSummaryReportWidget() {
+      // widget #5: Summary Report
       view.ui.add([resultDiv], "top-right");
     }
 
     function addGeometryQueryWidget() {
-      // widget #5: Geometry Query
+      // widget #6: Geometry Query
       window.view = view;
       view.ui.add([queryDiv], "top-right");
     }
 
     function addMapViewScreenshotPrintWidget() {
-      // widget #6: Print Widget
+      // widget #7: Print Widget
       printWidget = document.getElementById("printWidget");
       var print = new Print({
         view: view,
@@ -445,7 +444,7 @@ require([
     }
 
     function addDistanceMeasurementWidget() {
-      // widget #7: Distance measurement
+      // widget #8: Distance measurement
       view.ui.add("measureBar", "bottom-left");
 
       var activeWidget = null;
@@ -539,7 +538,7 @@ require([
     var sfiResultGraphicsArray = [];
 
     /********************************************************************************
-     *                                  Calculate SFI
+     *                          SFI User-Input Feature
      * ******************************************************************************/
     function addCalculateSFIFeature() {
       var isStateWaterExcluded = false;
@@ -685,10 +684,10 @@ require([
           const maxProductivity = 4;
 
           getShippingLanesData()
-          .then(getRestrictedZonesData)
-          .then(getMPAData)
-          .then(getStateAndFederalWaterData)
-          .then(calculateSFI);
+            .then(getRestrictedZonesData)
+            .then(getMPAData)
+            .then(getStateAndFederalWaterData)
+            .then(calculateSFI);
 
           function getShippingLanesData() {
             const dataLayers = new DataLayers();
@@ -706,8 +705,8 @@ require([
           }
 
           function getStateAndFederalWaterData(dataLayers) {
-            
-            if (!isStateWaterExcluded && isFederalWaterExcluded) return dataLayers;
+            if (!isStateWaterExcluded && isFederalWaterExcluded)
+              return dataLayers;
 
             const query = federalAndStateWatersLayer.createQuery();
             return federalAndStateWatersLayer
@@ -818,7 +817,7 @@ require([
                 let federalWaterAreas = dataLayers.getFederalAreas();
 
                 filteringArray.forEach(function (graphic) {
-                  // The mark of whether this data point intersects with the filter
+                  // indicate whether the data point intersects with the filter
                   let isIntersected = false;
                   if (isStateWaterExcluded) {
                     stateWaterAreas.forEach(function (stateWaterArea) {
@@ -859,11 +858,11 @@ require([
                 let filteredArray = [];
                 let restrictedZones = dataLayers.getRestrictedZones();
                 filteringArray.forEach(function (graphic) {
-                  // The mark of whether this data point intersects with the filter
+                  // indicate whether the data point intersects with the filter
                   let isIntersected = false;
                   restrictedZones.forEach(function (restrictedZone) {
-                    // iterate through each restrict zone
-                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    // iterate through each restricted zone
+                    // if intersection is detected, set isIntersected as true then break the loop
                     if (isIntersected) return;
                     else if (
                       geometryEngine.intersects(
@@ -890,11 +889,11 @@ require([
                 let filteredArray = [];
                 let shippingLanes = dataLayers.getShippingLanes();
                 filteringArray.forEach(function (graphic) {
-                  // The mark of whether this data point intersects with the filter
+                  // indicate whether the data point intersects with the filter
                   let isIntersected = false;
                   shippingLanes.forEach(function (shippingLane) {
-                    // iterate through each restrict zone
-                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    // iterate through each shipping lane area
+                    // if intersection is detected, set isIntersected as true then break the loop
                     if (isIntersected) return;
                     else if (
                       geometryEngine.intersects(
@@ -921,11 +920,11 @@ require([
                 let filteredArray = [];
                 let MPAInventory = dataLayers.getMPAInventory();
                 filteringArray.forEach(function (graphic) {
-                  // The mark of whether this data point intersects with the filter
+                  // indicate whether this data point intersects with the filter
                   let isIntersected = false;
                   MPAInventory.forEach(function (MPA) {
-                    // iterate through each restrict zone
-                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    // iterate through each MPA inventory area
+                    // if intersection is detected, set isIntersected as true then break the loop
                     if (isIntersected) return;
                     else if (
                       geometryEngine.intersects(graphic.geometry, MPA.geometry)
@@ -987,7 +986,7 @@ require([
                   };
                 } else if (sfi < 0.2) {
                   graphic.symbol = {
-                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    type: "simple-marker",
                     size: 5,
                     color: "#E5D1F1",
                     outline: {
@@ -997,7 +996,7 @@ require([
                   };
                 } else if (sfi < 0.4) {
                   graphic.symbol = {
-                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    type: "simple-marker",
                     size: 5,
                     color: "#CBA3E4",
                     outline: {
@@ -1007,7 +1006,7 @@ require([
                   };
                 } else if (sfi < 0.6) {
                   graphic.symbol = {
-                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    type: "simple-marker",
                     size: 5,
                     color: "#B175D6",
                     outline: {
@@ -1017,7 +1016,7 @@ require([
                   };
                 } else if (sfi < 0.8) {
                   graphic.symbol = {
-                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    type: "simple-marker",
                     size: 5,
                     color: "#9747C9",
                     outline: {
@@ -1027,7 +1026,7 @@ require([
                   };
                 } else {
                   graphic.symbol = {
-                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    type: "simple-marker", 
                     size: 5,
                     color: "#7E19BC",
                     outline: {
@@ -1069,7 +1068,7 @@ require([
     }
 
     /********************************************************************************
-     *                         Under construction: Report SFI
+     *                           SFI Summary Report Feature
      * ******************************************************************************/
     function formatToOneDecimalPlace(value) {
       return Math.round((value + Number.EPSILON) * 10) / 10;
@@ -1117,7 +1116,7 @@ require([
         }
       });
 
-      // draw geometry buttons - use a polygon to sktech
+      // draw geometry button - use a polygon to sktech
       document
         .getElementById("polygon-geometry-button")
         .addEventListener("click", geometryButtonsClickHandler);
@@ -1133,7 +1132,6 @@ require([
         .getElementById("clearGeometry")
         .addEventListener("click", clearGeometry);
 
-      // Clear the geometry and set the default renderer
       function clearGeometry() {
         sketchGeometry = null;
         sketchViewModel.cancel();
@@ -1581,11 +1579,11 @@ require([
               .then(function (response) {
                 response.features.map(function (graphic) {
                   numOfPoints = response.features.length;
-                  // The mark of whether this data point intersects with the filter
+                  // indicate whether this data point intersects with the filter
                   let isIntersected = false;
                   federalWaters.forEach(function (federalWater) {
-                    // iterate through each restrict zone
-                    // if intersection spotted, set isIntersected mark to be true then break the loop
+                    // iterate through each federal water area
+                    // if intersection is detected, set isIntersected as true then break the loop
                     if (isIntersected) return;
                     else if (
                       geometryEngine.intersects(
@@ -1618,7 +1616,7 @@ require([
           });
       }
 
-      // Updates the given chart with new data
+      // Update chart with new data
       function updateChart(chart, dataValues) {
         chart.data.datasets[0].data = dataValues;
         chart.update();

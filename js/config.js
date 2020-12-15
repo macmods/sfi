@@ -1,3 +1,9 @@
+/**********************************************************************************
+ * This config.js file contains the feature service URL for each data layer that  *
+ * is used on the map as well as the URL for print configuration                  *    
+ **********************************************************************************/
+
+/* feature service url */ 
 const kelpProductivityLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/ArcGIS/rest/services/l2scb_maxcanopy_1km/FeatureServer/0";
 const bathymetryLayerUrl =
@@ -13,6 +19,7 @@ const principalPortsLayerUrl =
 const federalAndStateWatersLayerUrl =
   "https://services2.arcgis.com/zzN1kKcv4jyJtkCg/arcgis/rest/services/FederalAndStateWaters/FeatureServer/0";
 
+  /* print service url */ 
 const printServiceUrl =
   "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 

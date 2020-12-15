@@ -1,4 +1,8 @@
-// Popup template for kelp productivity layer
+/**********************************************************************************
+ * This popup_template.js file configures the popup template for each data layer  *
+ * that is visualized on the map                                                  *    
+ **********************************************************************************/
+
 var kelpProductivityPopupTemplate = {
   // autocasts as new PopupTemplate()
   title: "Kelp Potential",
@@ -15,9 +19,7 @@ var kelpProductivityPopupTemplate = {
   ],
 };
 
-// Popup template for bathymetry layer
 var bathymetryPopupTemplate = {
-  //autocasts as new PopupTemplate()
   title: "Bathymetry",
   content: [
     {
@@ -32,9 +34,7 @@ var bathymetryPopupTemplate = {
   ],
 };
 
-// Popup template for shipping lanes layer
 var shippingLanesPopupTemplate = {
-  // autocasts as new PopupTemplate()
   title: "Shipping Lanes",
   content: [
     {
@@ -49,9 +49,7 @@ var shippingLanesPopupTemplate = {
   ],
 };
 
-// Popup template for danger zones and restricted areas layer
 var dangerZonesAndRestrictedAreasPopupTemplate = {
-  // autocasts as new PopupTemplate()
   title: "Danger Zones and Restricted Areas",
   content: [
     {
@@ -74,9 +72,7 @@ var dangerZonesAndRestrictedAreasPopupTemplate = {
   ],
 };
 
-// Popup template for MPA inventory layer
 var mpaInventoryPopupTeamplate = {
-  // autocasts as new PopupTemplate()
   title: "Marine Protected Area Inventory",
   content: [
     {
@@ -95,9 +91,7 @@ var mpaInventoryPopupTeamplate = {
   ],
 };
 
-// Popup template for principal ports layer
 var principalPortsPopupTemplate = {
-  // autocasts as new PopupTemplate()
   title: "Ports and Harbors",
   content: [
     {
@@ -112,9 +106,7 @@ var principalPortsPopupTemplate = {
   ],
 };
 
-// Popup template for federal and state waters layer
 var federalAndStateWatersPopupTemplate = {
-  // autocasts as new PopupTemplate()
   title: "Federal and State Waters",
   content: [
     {

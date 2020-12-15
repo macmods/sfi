@@ -7,7 +7,7 @@ body {
   background-color: #162b36;
 }
 
-/* Alert message box for mobile view */
+/* Alert message box for mobile view - responsive to window size change */
 
 .alert {
   display: none;
@@ -22,7 +22,7 @@ body {
     display: block;
     position: absolute;
     padding: 20px;
-    background-color: #f44336; /* Red */
+    background-color: #f44336;
     color: white;
     margin-top: 200px;
     margin-bottom: 15px;
@@ -48,7 +48,7 @@ body {
   }
 }
 
-@media screen and (min-width: 551px){
+@media screen and (min-width: 551px) {
   .alert {
     display: none;
   }
@@ -139,8 +139,6 @@ p {
   width: auto;
 }
 
-/* feature css - TODO: need to isolate */
-
 li {
   margin: 10px;
 }
@@ -191,7 +189,7 @@ li {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.legend{
+.legend {
   font-size: 12px;
   margin: 8px 0px;
 }
@@ -203,8 +201,8 @@ li {
   border-radius: 50%;
   display: inline-block;
 }
-@media screen and (max-width: 530px) {
 
+@media screen and (max-width: 530px) {
   .title-desktop {
     display: none;
   }
@@ -212,7 +210,7 @@ li {
   #sfiCalc {
     height: 50vh;
     width: 35vh;
-    overflow:scroll;
+    overflow: scroll;
   }
 }
 
